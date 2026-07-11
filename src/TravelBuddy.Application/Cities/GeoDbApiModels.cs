@@ -1,4 +1,6 @@
-﻿namespace TravelBuddy.Cities;
+﻿using System.Text.Json.Serialization;
+
+namespace TravelBuddy.Cities;
 internal sealed class GeoDbSingleResponse
 {
     [JsonPropertyName("data")] public GeoDbCityData Data { get; set; } = null!;
