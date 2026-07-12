@@ -18,17 +18,13 @@ public class UserProfileController : TravelBuddyController
         _userProfileAppService = userProfileAppService;
     }
 
-    [HttpPut("me")]
-    public async Task UpdateMyProfileAsync(UpdateUserProfileDto input)
+    [HttpDelete("me")]
+    public async Task DeleteMyAccountAsync()
     {
-        var userId = CurrentUser.Id;
-
-        if (!userId.HasValue)
-        {
+        if (!CurrentUser.Id.HasValue)
             throw new UnauthorizedAccessException();
-        }
 
-        await _userProfileAppService.UpdateMyProfileAsync(userId.Value, input);
+        await _userProfileAppService.DeleteMyAccountAsync(CurrentUser.Id.Value);
     }
 
     [HttpGet("{userId}")]
