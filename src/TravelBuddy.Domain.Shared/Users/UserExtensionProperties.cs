@@ -1,5 +1,4 @@
-﻿using Volo.Abp.Identity;
-using Volo.Abp.ObjectExtending;
+namespace TravelBuddy.Users;
 
 public static class UserExtensionProperties
 {

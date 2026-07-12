@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using Volo.Abp.Identity;
 using Volo.Abp.ObjectExtending;
 using Volo.Abp.Threading;
@@ -17,9 +17,11 @@ public static class TravelBuddyModuleExtensionConfigurator
             ConfigureExistingProperties();
             ConfigureExtraProperties();
         });
-    }
+  }
 
-    private static void ConfigureExistingProperties() { }
+    private static void ConfigureExistingProperties()
+    {
+    }
 
     private static void ConfigureExtraProperties()
     {
