@@ -16,21 +16,19 @@ public class UserProfileAppService : ApplicationService, IUserProfileAppService
     {
         _userManager = userManager;
     }
-
-    public async Task UpdateMyProfileAsync(Guid userId, UpdateUserProfileDto input)
+       public async Task UpdateMyProfileAsync(Guid userId, UpdateUserProfileDto input)
     {
-        var user = await _userManager.GetByIdAsync(userId)
-                   ?? throw new EntityNotFoundException(typeof(IdentityUser), userId);
-
+        var user = await _userManager.GetByIdAsync(userId) ?? throw new
+        EntityNotFoundException(typeof(IdentityUser), userId);
         user.Name = input.Nombre;
         user.Surname = input.Apellido;
-
-        user.SetProperty("FotoPerfilUrl", input.FotoPerfilUrl);
-        user.SetProperty("Preferencias", input.Preferencias);
-
-        var result = await _userManager.UpdateAsync(user);
-        result.CheckErrors();
+        if (!string.IsNullOrWhiteSpace(input.Email)) await _userManager.SetEmailAsync(user, input.Email);
+        user.SetProfilePicture(input.FotoPerfilUrl);
+        user.SetPreferences(input.Preferencias);
+        (await _userManager.UpdateAsync(user)).CheckErrors();
     }
+
+    
 
     public async Task<PublicUserProfileDto> GetPublicProfileAsync(Guid userId)
     {
