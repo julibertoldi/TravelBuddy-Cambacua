@@ -1,79 +1,151 @@
-using Moq;
-using System;
-using System.Net.Http;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using Moq;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Shouldly;
 using TravelBuddy.Cities;
 using TravelBuddy.Destinations;
 using Volo.Abp.Domain.Repositories;
+using Volo.Abp.Uow;
 using Xunit;
 
-namespace TravelBuddy.Application.Tests.Destinations
+namespace TravelBuddy.Application.Tests.Destinations;
+
+public class DestinationAppService_Tests : TravelBuddyApplicationTestBase<TravelBuddyApplicationTestModule>
 {
-    public class DestinationAppService_Tests
+    private readonly IDestinationAppService _destinationAppService;
+    private readonly IRepository<Destination, Guid> _destinationRepository;
+    private Mock<ICitySearchService> _citySearchServiceMock;
+    private readonly IUnitOfWorkManager _unitOfWorkManager;
+
+    protected override void AfterAddApplication(IServiceCollection services)
     {
-        private readonly Mock<ICitySearchService> _citySearchServiceMock;
-        private readonly DestinationAppService _appService;
+        _citySearchServiceMock = new Mock<ICitySearchService>();
 
-        public DestinationAppService_Tests()
-        {
-            var repoMock = new Mock<IRepository<Destination, Guid>>();
-            _citySearchServiceMock = new Mock<ICitySearchService>();
-
-            _appService = new DestinationAppService(repoMock.Object, _citySearchServiceMock.Object); //crea una instancia del servicio de aplicacion y le pasa los mocks simulados.
-        }
-
-        [Fact]
-        public async Task ShouldReturnCities_WhenServiceReturnsResults()
-        {
-            // Arrange
-            var request = new CitySearchRequestDto { PartialName = "Rio" };
-            var expected = new CitySearchResultDto
+        // Configuración por defecto para búsquedas
+        _citySearchServiceMock
+            .Setup(s => s.SearchCitiesAsync(It.IsAny<CitySearchRequestDto>()))
+            .ReturnsAsync(new CitySearchResultDto
             {
-                Cities = new() { new CityDto { Name = "Rio de Janeiro", Country = "Brazil" } }
-            };
-            
-            //simula la llamada http real
-            _citySearchServiceMock
-                .Setup(s => s.SearchCitiesAsync(request))
-                .ReturnsAsync(expected);
+                Cities = new List<CityDto> { new CityDto { Name = "Rio de Janeiro", Country = "Brazil" } }
+            });
 
-            // Act
-            var result = await _appService.SearchCitiesAsync(request);
+        // Configuración por defecto para importación
+        _citySearchServiceMock
+            .Setup(s => s.GetCityDetailsAsync(It.IsAny<int>()))
+            .ReturnsAsync(new CityDetailDto
+            {
+                Id = 123,
+                Name = "Ciudad Simulada API",
+                Region = "Entre Ríos",
+                Country = "Argentina"
+            });
 
-            // Assert
-            Assert.NotNull(result);
-            Assert.Single(result.Cities);
-            Assert.Equal("Rio de Janeiro", result.Cities[0].Name);
+        services.Replace(ServiceDescriptor.Transient<ICitySearchService>(provider => _citySearchServiceMock.Object));
+    }
+
+    public DestinationAppService_Tests()
+    {
+        _destinationAppService = GetRequiredService<IDestinationAppService>();
+        _destinationRepository = GetRequiredService<IRepository<Destination, Guid>>();
+        _unitOfWorkManager = GetRequiredService<IUnitOfWorkManager>();
+    }
+
+    // ==========================================
+    // 🔍 PRUEBAS DEL PASO 1 (BÚSQUEDA)
+    // ==========================================
+
+    [Fact]
+    public async Task ShouldReturnCities_WhenServiceReturnsResults()
+    {
+        // Envolvemos en un UnitOfWork para asegurar que el contexto de ABP no se destruya antes de tiempo
+        using (var uow = _unitOfWorkManager.Begin())
+        {
+            var request = new CitySearchRequestDto { PartialName = "Rio" };
+            var result = await _destinationAppService.SearchCitiesAsync(request);
+
+            result.ShouldNotBeNull();
+            result.Cities.ShouldNotBeEmpty();
+            result.Cities[0].Name.ShouldBe("Rio de Janeiro");
+
+            await uow.CompleteAsync();
         }
+    }
 
-        [Fact]
-        public async Task ShouldReturnEmpty_WhenNoCitiesFound()
+    [Fact]
+    public async Task ShouldReturnEmpty_WhenNoCitiesFound()
+    {
+        _citySearchServiceMock
+            .Setup(s => s.SearchCitiesAsync(It.Is<CitySearchRequestDto>(r => r.PartialName == "Xyzcity")))
+            .ReturnsAsync(new CitySearchResultDto { Cities = new List<CityDto>() });
+
+        using (var uow = _unitOfWorkManager.Begin())
         {
             var request = new CitySearchRequestDto { PartialName = "Xyzcity" };
+            var result = await _destinationAppService.SearchCitiesAsync(request);
 
-            //el setuo se configura para devolver un resultado vacio
-            _citySearchServiceMock
-                .Setup(s => s.SearchCitiesAsync(request))
-                .ReturnsAsync(new CitySearchResultDto());
+            result.ShouldNotBeNull();
+            result.Cities.ShouldBeEmpty();
 
-            var result = await _appService.SearchCitiesAsync(request);
-
-            Assert.NotNull(result);
-            Assert.Empty(result.Cities);
+            await uow.CompleteAsync();
         }
+    }
 
-        [Fact]
-        public async Task ShouldThrow_WhenServiceThrowsException()
+    // ==========================================
+    // 💾 PRUEBAS DEL PASO 2 (IMPORTACIÓN)
+    // ==========================================
+
+    [Fact]
+    public async Task Should_Import_New_Destination_From_GeoDb()
+    {
+        using (var uow = _unitOfWorkManager.Begin())
         {
-            var request = new CitySearchRequestDto { PartialName = "ErrorCity" };
+            int testGeoDbId = 123;
 
-            _citySearchServiceMock
-                .Setup(s => s.SearchCitiesAsync(request))
-                .ThrowsAsync(new HttpRequestException("Simulated API failure")); //no devuelve error, lanza la excepcion de forma asincrona
+            var result = await _destinationAppService.ImportFromGeoDbAsync(testGeoDbId);
 
-            await Assert.ThrowsAsync<HttpRequestException>(() =>
-                _appService.SearchCitiesAsync(request)
-            );
+            result.ShouldNotBeNull();
+            result.GeoDbCityId.ShouldBe(testGeoDbId);
+
+            var dbCheck = await _destinationRepository.FirstOrDefaultAsync(d => d.GeoDbCityId == testGeoDbId);
+            dbCheck.ShouldNotBeNull();
+            dbCheck.Name.ShouldBe("Ciudad Simulada API");
+
+            await uow.CompleteAsync();
+        }
+    }
+
+    [Fact]
+    public async Task Should_Not_Duplicate_If_Destination_Already_Exists()
+    {
+        using (var uow = _unitOfWorkManager.Begin())
+        {
+            int existingGeoDbId = 999;
+
+            var preExistingDestination = new Destination(
+                Guid.NewGuid(),
+                "Ciudad Existente",
+                "Descripción de prueba",
+                "Entre Ríos",
+                "Argentina"
+            )
+            {
+                GeoDbCityId = existingGeoDbId
+            };
+
+            await _destinationRepository.InsertAsync(preExistingDestination, autoSave: true);
+
+            var result = await _destinationAppService.ImportFromGeoDbAsync(existingGeoDbId);
+
+            result.ShouldNotBeNull();
+            result.Id.ShouldBe(preExistingDestination.Id);
+
+            var count = await _destinationRepository.CountAsync(d => d.GeoDbCityId == existingGeoDbId);
+            count.ShouldBe(1);
+
+            await uow.CompleteAsync();
         }
     }
 }

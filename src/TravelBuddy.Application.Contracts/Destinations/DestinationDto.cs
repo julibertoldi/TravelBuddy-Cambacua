@@ -19,5 +19,6 @@ namespace TravelBuddy.Destinations
         public DateTime FechaActualizacion { get; set; }
         public Guid CategoriaId { get; set; }
         public string CategoriaName { get; set; }
+        public int? GeoDbCityId { get; set; }
     }       
 }
