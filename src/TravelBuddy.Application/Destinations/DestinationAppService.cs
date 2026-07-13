@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using TravelBuddy.Cities;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
+using Volo.Abp.Users;
 
 namespace TravelBuddy.Destinations
 {
@@ -18,13 +19,17 @@ namespace TravelBuddy.Destinations
             CreateUpdateDestinationDto>, IDestinationAppService 
     {
         private readonly ICitySearchService _citySearchService;
+        private readonly ICurrentUser _currentUser;
   
+
         public DestinationAppService(
             IRepository<Destination, Guid> repository,
-            ICitySearchService citySearchService)
+            ICitySearchService citySearchService,
+            ICurrentUser currentUser)
             : base(repository)
         {
             _citySearchService = citySearchService;
+            _currentUser = currentUser;
         }
 
         public async Task<CitySearchResultDto> SearchCitiesAsync(CitySearchRequestDto request)
@@ -43,7 +48,22 @@ namespace TravelBuddy.Destinations
         }
         public async Task<DestinationDto> ImportFromGeoDbAsync(int geoDbCityId)
         {
-            throw new NotImplementedException("Se implementará en el Módulo 3");
+            var city = await _citySearchService.GetCityDetailsAsync(geoDbCityId);
+
+            // Verifica si ya existe para no duplicar
+            var existing = await Repository.FirstOrDefaultAsync(d => d.GeoDbCityId == geoDbCityId);
+            if (existing != null)
+                return ObjectMapper.Map<Destination, DestinationDto>(existing);
+
+            // Si no existe, crea uno nuevo
+            var destination = new Destination(GuidGenerator.Create(), city.Name,
+                $"Ciudad importada desde GeoDB ({city.Country})", city.Region, city.Country)
+            {
+                GeoDbCityId = geoDbCityId
+            };
+
+            await Repository.InsertAsync(destination, autoSave: true);
+            return ObjectMapper.Map<Destination, DestinationDto>(destination);
         }
     }
 }

@@ -72,24 +72,24 @@ public class TravelBuddyDbContext :
         builder.ConfigureIdentity();
         builder.ConfigureOpenIddict();
         builder.ConfigureBlobStoring();
-        
+
         /* Configure your own tables/entities inside here */
         builder.Entity<Destinations.Destination>(b =>
         {
             b.ToTable(TravelBuddyConsts.DbTablePrefix + "Destinations", TravelBuddyConsts.DbSchema);
             b.ConfigureByConvention(); //auto configure for the base class props
-            b.Property(x => x.Nombre).IsRequired().HasMaxLength(200);
-            b.Property(x => x.Descripcion).HasMaxLength(1000);
-            b.Property(x => x.Ubicacion).HasMaxLength(500);
-            b.Property(x => x.Precio).HasColumnType("decimal(18,2)");
-            b.Property(x => x.ImagenUrl).HasMaxLength(1000);
-            b.Property(x => x.Disponible).IsRequired();
-            b.Property(x => x.FechaCreacion).IsRequired();
-            b.Property(x => x.FechaActualizacion).IsRequired();
-            /*b.HasMany(x => x.Reservas).WithOne().HasForeignKey("DestinationId").OnDelete(DeleteBehavior.Cascade);*/
-            /*b.HasMany(x => x.Comentarios).WithOne().HasForeignKey("DestinationId").OnDelete(DeleteBehavior.Cascade);*/
-            /*b.HasMany(x => x.Calificaciones).WithOne().HasForeignKey("DestinationId").OnDelete(DeleteBehavior.Cascade);*/
-            // Configure other properties and relationships as needed
+
+            b.Property(x => x.Name).IsRequired().HasMaxLength(200);
+            b.Property(x => x.Description).HasMaxLength(1000);
+            b.Property(x => x.Region).HasMaxLength(500);
+            b.Property(x => x.Country).IsRequired().HasMaxLength(100);
+            b.Property(x => x.Price).HasColumnType("decimal(18,2)");
+            b.Property(x => x.ImageUrl).HasMaxLength(1000);
+            b.Property(x => x.IsAvailable).IsRequired();
+
+            b.Property(x => x.GeoDbCityId);
+            b.HasIndex(x => x.GeoDbCityId);
+
         });
 
         builder.Entity<Experiencias.Experiencia>(b =>
@@ -99,12 +99,5 @@ public class TravelBuddyDbContext :
             b.Property(x => x.Titulo).IsRequired().HasMaxLength(128);
             b.Property(x => x.Descripcion).IsRequired().HasMaxLength(1024);
         });
-
-        //builder.Entity<YourEntity>(b =>
-        //{
-        //    b.ToTable(TravelBuddyConsts.DbTablePrefix + "YourEntities", TravelBuddyConsts.DbSchema);
-        //    b.ConfigureByConvention(); //auto configure for the base class props
-        //    //...
-        //});
     }
 }
