@@ -9,9 +9,6 @@ namespace TravelBuddy.Experiencias
         public Guid DestinoId { get; set; }
         
         [Required]
-        public Guid UsuarioId { get; set; }
-
-        [Required]
         [StringLength(128)]
         public string Titulo { get; set; }
 

@@ -10,7 +10,7 @@ namespace TravelBuddy.Experiencias
             Experiencia,
             ExperienciaDto,
             Guid,
-            PagedAndSortedResultRequestDto,
+            ExperienciaGetListInput,
             CreateUpdateExperienciaDto>,
         IExperienciaAppService
     {
