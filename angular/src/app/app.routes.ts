@@ -19,4 +19,11 @@ export const APP_ROUTES: Routes = [
     path: 'setting-management',
     loadChildren: () => import('@abp/ng.setting-management').then(c => c.createRoutes()),
   },
+{
+  path: 'experiences',
+  loadComponent: () =>
+    import('./pages/experiences/experiences.component')
+      .then(c => c.ExperiencesComponent),
+  canActivate: [authGuard],
+},
 ];

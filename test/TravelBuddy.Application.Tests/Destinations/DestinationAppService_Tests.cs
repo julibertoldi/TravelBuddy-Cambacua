@@ -74,6 +74,6 @@ namespace TravelBuddy.Application.Tests.Destinations
             await Assert.ThrowsAsync<HttpRequestException>(() =>
                 _appService.SearchCitiesAsync(request)
             );
-        }
+        }  
     }
 }
