@@ -12,6 +12,7 @@ using Volo.Abp.Identity.EntityFrameworkCore;
 using Volo.Abp.PermissionManagement.EntityFrameworkCore;
 using Volo.Abp.SettingManagement.EntityFrameworkCore;
 using Volo.Abp.OpenIddict.EntityFrameworkCore;
+using TravelBuddy.Favorites; 
 
 namespace TravelBuddy.EntityFrameworkCore;
 
@@ -21,25 +22,13 @@ public class TravelBuddyDbContext :
     AbpDbContext<TravelBuddyDbContext>,
     IIdentityDbContext
 {
-    /* Add DbSet properties for your Aggregate Roots / Entities here. */
 
     public DbSet<Destinations.Destination> Destinations { get; set; }
     public DbSet<Experiencias.Experiencia> Experiencias { get; set; }
+    public DbSet<Favorite> Favoritos { get; set; }
 
 
     #region Entities from the modules
-
-    /* Notice: We only implemented IIdentityProDbContext 
-     * and replaced them for this DbContext. This allows you to perform JOIN
-     * queries for the entities of these modules over the repositories easily. You
-     * typically don't need that for other modules. But, if you need, you can
-     * implement the DbContext interface of the needed module and use ReplaceDbContext
-     * attribute just like IIdentityProDbContext .
-     *
-     * More info: Replacing a DbContext of a module ensures that the related module
-     * uses this DbContext on runtime. Otherwise, it will use its own DbContext class.
-     */
-
     // Identity
     public DbSet<IdentityUser> Users { get; set; }
     public DbSet<IdentityRole> Roles { get; set; }
@@ -62,8 +51,7 @@ public class TravelBuddyDbContext :
     {
         base.OnModelCreating(builder);
 
-        /* Include modules to your migration db context */
-
+        /* Incluye módulos en el contexto de base de datos de la migración */
         builder.ConfigurePermissionManagement();
         builder.ConfigureSettingManagement();
         builder.ConfigureBackgroundJobs();
@@ -72,12 +60,12 @@ public class TravelBuddyDbContext :
         builder.ConfigureIdentity();
         builder.ConfigureOpenIddict();
         builder.ConfigureBlobStoring();
-        
-        /* Configure your own tables/entities inside here */
+
+        /* Configuracion tablas/entidades aquí */
         builder.Entity<Destinations.Destination>(b =>
         {
             b.ToTable(TravelBuddyConsts.DbTablePrefix + "Destinations", TravelBuddyConsts.DbSchema);
-            b.ConfigureByConvention(); //auto configure for the base class props
+            b.ConfigureByConvention();//configuración automática para las propiedades de la clase base
             b.Property(x => x.Nombre).IsRequired().HasMaxLength(200);
             b.Property(x => x.Descripcion).HasMaxLength(1000);
             b.Property(x => x.Ubicacion).HasMaxLength(500);
@@ -86,25 +74,27 @@ public class TravelBuddyDbContext :
             b.Property(x => x.Disponible).IsRequired();
             b.Property(x => x.FechaCreacion).IsRequired();
             b.Property(x => x.FechaActualizacion).IsRequired();
-            /*b.HasMany(x => x.Reservas).WithOne().HasForeignKey("DestinationId").OnDelete(DeleteBehavior.Cascade);*/
-            /*b.HasMany(x => x.Comentarios).WithOne().HasForeignKey("DestinationId").OnDelete(DeleteBehavior.Cascade);*/
-            /*b.HasMany(x => x.Calificaciones).WithOne().HasForeignKey("DestinationId").OnDelete(DeleteBehavior.Cascade);*/
-            // Configure other properties and relationships as needed
         });
 
         builder.Entity<Experiencias.Experiencia>(b =>
         {
             b.ToTable(TravelBuddyConsts.DbTablePrefix + "Experiencias", TravelBuddyConsts.DbSchema);
-            b.ConfigureByConvention(); //auto configure for the base class props
+            b.ConfigureByConvention(); //configuración automática para las propiedades de la clase base
             b.Property(x => x.Titulo).IsRequired().HasMaxLength(128);
             b.Property(x => x.Descripcion).IsRequired().HasMaxLength(1024);
         });
 
-        //builder.Entity<YourEntity>(b =>
-        //{
-        //    b.ToTable(TravelBuddyConsts.DbTablePrefix + "YourEntities", TravelBuddyConsts.DbSchema);
-        //    b.ConfigureByConvention(); //auto configure for the base class props
-        //    //...
-        //});
+        // Configuración de la estructura de la tabla Favoritos[cite: 2, 4]
+        builder.Entity<Favorite>(b =>
+        {
+            b.ToTable(TravelBuddyConsts.DbTablePrefix + "Favoritos", TravelBuddyConsts.DbSchema);
+            b.ConfigureByConvention();
+
+            // Definición explícita de clave primaria compuesta[cite: 2, 4]
+            b.HasKey(x => new { x.UsuarioId, x.DestinoId });
+
+            // Índices lógicos y restricciones relacionales explícitas[cite: 2, 4]
+            b.HasIndex(x => new { x.UsuarioId, x.DestinoId }).IsUnique();
+        });
     }
 }
