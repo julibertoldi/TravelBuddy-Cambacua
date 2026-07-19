@@ -50,16 +50,18 @@ namespace TravelBuddy.Destinations
         {
             var city = await _citySearchService.GetCityDetailsAsync(geoDbCityId);
 
-            // Verifica si ya existe para no duplicar
             var existing = await Repository.FirstOrDefaultAsync(d => d.GeoDbCityId == geoDbCityId);
             if (existing != null)
                 return ObjectMapper.Map<Destination, DestinationDto>(existing);
 
-            // Si no existe, crea uno nuevo
             var destination = new Destination(GuidGenerator.Create(), city.Name,
                 $"Ciudad importada desde GeoDB ({city.Country})", city.Region, city.Country)
             {
-                GeoDbCityId = geoDbCityId
+                GeoDbCityId = geoDbCityId,
+                Population = city.Population, 
+                Latitude = city.Latitude,
+                Longitude = city.Longitude,
+                LastUpdated = DateTime.Now
             };
 
             await Repository.InsertAsync(destination, autoSave: true);

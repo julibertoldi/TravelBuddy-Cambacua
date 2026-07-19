@@ -64,10 +64,12 @@ namespace TravelBuddy.Cities
                 {
                     Id = city.GetProperty("id").GetInt32(),
                     Name = city.GetProperty("city").GetString(),
-                    Country = city.GetProperty("country").GetString()
+                    Country = city.GetProperty("country").GetString(),
+                    Population = city.TryGetProperty("population", out var pop) ? pop.GetInt32() : 0,
+                    Latitude = city.TryGetProperty("latitude", out var lat) ? lat.GetDouble() : 0,
+                    Longitude = city.TryGetProperty("longitude", out var lon) ? lon.GetDouble() : 0
                 });
             }
-
             return result;
         }
 
