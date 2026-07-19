@@ -1,9 +1,8 @@
+using Microsoft.AspNetCore.Authorization;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using TravelBuddy.Cities;
+using TravelBuddy.Permissions; 
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Users;
@@ -46,6 +45,27 @@ namespace TravelBuddy.Destinations
         {
             return await _citySearchService.GetPopularCitiesAsync();
         }
+        // --- MÉTODOS ADMINISTRATIVOS PROTEGIDOS ---
+
+        [Authorize(TravelBuddyPermissions.Admin.Default)]
+        public override async Task<DestinationDto> CreateAsync(CreateUpdateDestinationDto input)
+        {
+            return await base.CreateAsync(input);
+        }
+
+        [Authorize(TravelBuddyPermissions.Admin.Default)]
+        public override async Task<DestinationDto> UpdateAsync(Guid id, CreateUpdateDestinationDto input)
+        {
+            return await base.UpdateAsync(id, input);
+        }
+
+        [Authorize(TravelBuddyPermissions.Admin.Default)]
+        public override async Task DeleteAsync(Guid id)
+        {
+            await base.DeleteAsync(id);
+        }
+
+        [Authorize(TravelBuddyPermissions.Admin.Default)]
         public async Task<DestinationDto> ImportFromGeoDbAsync(int geoDbCityId)
         {
             var city = await _citySearchService.GetCityDetailsAsync(geoDbCityId);
@@ -58,7 +78,7 @@ namespace TravelBuddy.Destinations
                 $"Ciudad importada desde GeoDB ({city.Country})", city.Region, city.Country)
             {
                 GeoDbCityId = geoDbCityId,
-                Population = city.Population, 
+                Population = city.Population,
                 Latitude = city.Latitude,
                 Longitude = city.Longitude,
                 LastUpdated = DateTime.Now
