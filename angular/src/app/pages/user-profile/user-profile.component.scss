@@ -1,0 +1,25 @@
+.card {
+  transition: all 0.3s ease;
+  background-color: var(--lpx-card-bg, #ffffff);
+  
+  .card-header {
+    background: linear-gradient(135deg, var(--lpx-primary, #007bff) 0%, #0056b3 100%) !important;
+  }
+}
+
+.form-control:focus {
+  box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.15);
+  border-color: var(--lpx-primary, #007bff);
+}
+
+.btn-primary {
+  background: var(--lpx-primary, #007bff);
+  border: none;
+  &:hover {
+    background: #0056b3;
+  }
+}
+
+.invalid-feedback {
+  font-size: 0.85em;
+}

@@ -6,20 +6,19 @@ using System.Threading.Tasks;
 using TravelBuddy.Cities;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
-using Volo.Abp.Users;
 
 namespace TravelBuddy.Destinations
 {
     public class DestinationAppService :
-       CrudAppService<
-           Destination,
-           DestinationDto,
-           Guid,
-           Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto,IDestinationAppService>
+        CrudAppService<
+            Destination,
+            DestinationDto,
+            Guid,
+            Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto,
+            CreateUpdateDestinationDto>, IDestinationAppService 
     {
         private readonly ICitySearchService _citySearchService;
-        private readonly ICurrentUser _currentUser;
-
+  
         public DestinationAppService(
             IRepository<Destination, Guid> repository,
             ICitySearchService citySearchService)
@@ -30,7 +29,6 @@ namespace TravelBuddy.Destinations
 
         public async Task<CitySearchResultDto> SearchCitiesAsync(CitySearchRequestDto request)
         {
-            var user = _currentUser;
             return await _citySearchService.SearchCitiesAsync(request);
         }
 
@@ -42,6 +40,10 @@ namespace TravelBuddy.Destinations
         public async Task<CitySearchResultDto> GetPopularCitiesAsync()
         {
             return await _citySearchService.GetPopularCitiesAsync();
+        }
+        public async Task<DestinationDto> ImportFromGeoDbAsync(int geoDbCityId)
+        {
+            throw new NotImplementedException("Se implementará en el Módulo 3");
         }
     }
 }
