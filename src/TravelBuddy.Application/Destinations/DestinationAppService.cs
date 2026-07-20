@@ -45,7 +45,7 @@ namespace TravelBuddy.Destinations
         {
             return await _citySearchService.GetPopularCitiesAsync();
         }
-        // --- MÉTODOS ADMINISTRATIVOS PROTEGIDOS ---
+        // --- MÃ‰TODOS ADMINISTRATIVOS PROTEGIDOS ---
 
         [Authorize(TravelBuddyPermissions.Admin.Default)]
         public override async Task<DestinationDto> CreateAsync(CreateUpdateDestinationDto input)

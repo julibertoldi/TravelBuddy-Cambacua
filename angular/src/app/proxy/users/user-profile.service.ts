@@ -11,6 +11,15 @@ export class UserProfileService {
 
   constructor(private restService: RestService) {}
 
+  deleteMyAccount = (userId: string, config?: Partial<Rest.Config>) =>
+    this.restService.request<any, void>({
+      method: 'DELETE',
+      url: `/api/app/user-profile/my-account/${userId}`,
+    },
+    { apiName: this.apiName,...config });
+  
+
+  getPublicProfile = (userId: string, config?: Partial<Rest.Config>) =>
   getMyProfile = (config?: Partial<Rest.Config>) =>
   deleteMyAccount = (userId: string, config?: Partial<Rest.Config>) =>
     this.restService.request<any, void>({
@@ -23,6 +32,9 @@ export class UserProfileService {
   getPublicProfile = (userId: string, config?: Partial<Rest.Config>) =>
     this.restService.request<any, PublicUserProfileDto>({
       method: 'GET',
+      url: `/api/app/user-profile/public-profile/${userId}`,
+    },
+    { apiName: this.apiName,...config });
       url: '/api/user-profile/me',
     }, {
       apiName: this.apiName,
@@ -32,6 +44,8 @@ export class UserProfileService {
     },
     { apiName: this.apiName,...config });
 
+
+  updateMyProfile = (userId: string, input: UpdateUserProfileDto, config?: Partial<Rest.Config>) =>
   updateMyProfile = (
     input: UpdateUserProfileDto,
     config?: Partial<Rest.Config>
@@ -40,9 +54,12 @@ export class UserProfileService {
   updateMyProfile = (userId: string, input: UpdateUserProfileDto, config?: Partial<Rest.Config>) =>
     this.restService.request<any, void>({
       method: 'PUT',
+      url: `/api/app/user-profile/my-profile/${userId}`,
       url: '/api/user-profile/me',
       url: `/api/app/user-profile/my-profile/${userId}`,
       body: input,
+    },
+    { apiName: this.apiName,...config });
     }, {
       apiName: this.apiName,
       ...config,

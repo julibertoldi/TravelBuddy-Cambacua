@@ -890,6 +890,10 @@
               "uniqueName": "DeleteMyAccountAsync",
               "name": "DeleteMyAccountAsync",
               "httpMethod": "DELETE",
+            "UpdateMyProfileAsyncByInput": {
+              "uniqueName": "UpdateMyProfileAsyncByInput",
+              "name": "UpdateMyProfileAsync",
+              "httpMethod": "PUT",
               "url": "api/user-profile/me",
               "supportedVersions": [],
               "parametersOnMethod": [
@@ -954,6 +958,66 @@
               ],
               "parametersOnMethod": [],
               "parameters": [],
+              "parametersOnMethod": [
+                {
+                  "name": "input",
+                  "typeAsString": "TravelBuddy.Users.UpdateUserProfileDto, TravelBuddy.Application.Contracts",
+                  "type": "TravelBuddy.Users.UpdateUserProfileDto",
+                  "typeSimple": "TravelBuddy.Users.UpdateUserProfileDto",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "input",
+                  "name": "Nombre",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "Apellido",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "FotoPerfilUrl",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "Preferencias",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                }
+              ],
               "returnValue": {
                 "type": "System.Void",
                 "typeSimple": "System.Void"
@@ -1205,6 +1269,7 @@
               "allowAnonymous": null,
               "implementFrom": "TravelBuddy.Destinations.IDestinationAppService"
               "implementFrom": "TravelBuddy.Destinations.DestinationAppService"
+              "implementFrom": "TravelBuddy.Destinations.IDestinationAppService"
             },
             "GetCityDetailsAsyncByCityId": {
               "uniqueName": "GetCityDetailsAsyncByCityId",
@@ -1243,6 +1308,7 @@
               "allowAnonymous": null,
               "implementFrom": "TravelBuddy.Destinations.IDestinationAppService"
               "implementFrom": "TravelBuddy.Destinations.DestinationAppService"
+              "implementFrom": "TravelBuddy.Destinations.IDestinationAppService"
             },
             "GetPopularCitiesAsync": {
               "uniqueName": "GetPopularCitiesAsync",
@@ -1259,6 +1325,7 @@
               "allowAnonymous": null,
               "implementFrom": "TravelBuddy.Destinations.IDestinationAppService"
               "implementFrom": "TravelBuddy.Destinations.DestinationAppService"
+              "implementFrom": "TravelBuddy.Destinations.IDestinationAppService"
             },
             "ImportFromGeoDbAsyncByGeoDbCityId": {
               "uniqueName": "ImportFromGeoDbAsyncByGeoDbCityId",
@@ -1297,6 +1364,7 @@
               "allowAnonymous": null,
               "implementFrom": "TravelBuddy.Destinations.IDestinationAppService"
               "implementFrom": "TravelBuddy.Destinations.DestinationAppService"
+              "implementFrom": "TravelBuddy.Destinations.IDestinationAppService"
             },
             "CreateAsyncByInput": {
               "uniqueName": "CreateAsyncByInput",
