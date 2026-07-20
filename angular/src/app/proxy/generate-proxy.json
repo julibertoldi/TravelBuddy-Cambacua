@@ -882,12 +882,18 @@
           "type": "TravelBuddy.Controllers.UserProfileController",
           "interfaces": [],
           "actions": {
+            "DeleteMyAccountAsync": {
+              "uniqueName": "DeleteMyAccountAsync",
+              "name": "DeleteMyAccountAsync",
+              "httpMethod": "DELETE",
             "UpdateMyProfileAsyncByInput": {
               "uniqueName": "UpdateMyProfileAsyncByInput",
               "name": "UpdateMyProfileAsync",
               "httpMethod": "PUT",
               "url": "api/user-profile/me",
               "supportedVersions": [],
+              "parametersOnMethod": [],
+              "parameters": [],
               "parametersOnMethod": [
                 {
                   "name": "input",
@@ -1197,6 +1203,7 @@
                 "typeSimple": "TravelBuddy.Cities.CitySearchResultDto"
               },
               "allowAnonymous": null,
+              "implementFrom": "TravelBuddy.Destinations.DestinationAppService"
               "implementFrom": "TravelBuddy.Destinations.IDestinationAppService"
             },
             "GetCityDetailsAsyncByCityId": {
@@ -1234,6 +1241,7 @@
                 "typeSimple": "TravelBuddy.Cities.CityDetailDto"
               },
               "allowAnonymous": null,
+              "implementFrom": "TravelBuddy.Destinations.DestinationAppService"
               "implementFrom": "TravelBuddy.Destinations.IDestinationAppService"
             },
             "GetPopularCitiesAsync": {
@@ -1249,6 +1257,7 @@
                 "typeSimple": "TravelBuddy.Cities.CitySearchResultDto"
               },
               "allowAnonymous": null,
+              "implementFrom": "TravelBuddy.Destinations.DestinationAppService"
               "implementFrom": "TravelBuddy.Destinations.IDestinationAppService"
             },
             "ImportFromGeoDbAsyncByGeoDbCityId": {
@@ -1286,6 +1295,7 @@
                 "typeSimple": "TravelBuddy.Destinations.DestinationDto"
               },
               "allowAnonymous": null,
+              "implementFrom": "TravelBuddy.Destinations.DestinationAppService"
               "implementFrom": "TravelBuddy.Destinations.IDestinationAppService"
             },
             "CreateAsyncByInput": {
@@ -4980,6 +4990,18 @@
         },
         {
           "name": "Preferencias",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Email",
           "jsonName": null,
           "type": "System.String",
           "typeSimple": "string",

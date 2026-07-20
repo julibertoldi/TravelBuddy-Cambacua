@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TravelBuddy.Users;
-using Volo.Abp.AspNetCore.Mvc;
 
 namespace TravelBuddy.Controllers;
 
@@ -21,19 +20,27 @@ public class UserProfileController : TravelBuddyController
     [HttpPut("me")]
     public async Task UpdateMyProfileAsync(UpdateUserProfileDto input)
     {
-        var userId = CurrentUser.Id;
-
-        if (!userId.HasValue)
-        {
+        if (!CurrentUser.Id.HasValue)
             throw new UnauthorizedAccessException();
-        }
 
-        await _userProfileAppService.UpdateMyProfileAsync(userId.Value, input);
+        await _userProfileAppService.UpdateMyProfileAsync(CurrentUser.Id.Value, input);
     }
 
-    [HttpGet("{userId}")]
-    public async Task<PublicUserProfileDto> GetPublicProfileAsync(Guid userId)
+    [HttpGet("me")]
+    public async Task<PublicUserProfileDto> GetMyProfileAsync()
     {
-        return await _userProfileAppService.GetPublicProfileAsync(userId);
+        if (!CurrentUser.Id.HasValue)
+            throw new UnauthorizedAccessException();
+
+        return await _userProfileAppService.GetPublicProfileAsync(CurrentUser.Id.Value);
+    }
+
+    [HttpDelete("me")]
+    public async Task DeleteMyAccountAsync()
+    {
+        if (!CurrentUser.Id.HasValue)
+            throw new UnauthorizedAccessException();
+
+        await _userProfileAppService.DeleteMyAccountAsync(CurrentUser.Id.Value);
     }
 }
