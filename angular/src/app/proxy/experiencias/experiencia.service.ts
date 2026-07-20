@@ -1,6 +1,8 @@
 import type { CreateUpdateExperienciaDto, ExperienciaDto } from './models';
+import type { CreateUpdateExperienciaDto, ExperienciaDto, ExperienciaGetListInput } from './models';
 import { RestService, Rest } from '@abp/ng.core';
 import type { PagedAndSortedResultRequestDto, PagedResultDto } from '@abp/ng.core';
+import type { PagedResultDto } from '@abp/ng.core';
 import { Injectable } from '@angular/core';
 
 @Injectable({
@@ -36,10 +38,12 @@ export class ExperienciaService {
   
 
   getList = (input: PagedAndSortedResultRequestDto, config?: Partial<Rest.Config>) =>
+  getList = (input: ExperienciaGetListInput, config?: Partial<Rest.Config>) =>
     this.restService.request<any, PagedResultDto<ExperienciaDto>>({
       method: 'GET',
       url: '/api/app/experiencia',
       params: { sorting: input.sorting, skipCount: input.skipCount, maxResultCount: input.maxResultCount },
+      params: { destinoId: input.destinoId, valoracion: input.valoracion, keyword: input.keyword, sorting: input.sorting, skipCount: input.skipCount, maxResultCount: input.maxResultCount },
     },
     { apiName: this.apiName,...config });
   

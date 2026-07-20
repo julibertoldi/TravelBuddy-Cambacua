@@ -2,8 +2,10 @@ namespace TravelBuddy.Experiencias
 {
     public enum ExperienciaValoracion
     {
-        Positiva = 1,
-        Neutral = 2,
-        Negativa = 3
+        Mala = 1,
+        Regular = 2,
+        Buena = 3,
+        MuyBuena = 4,
+        Excelente = 5
     }
 }
