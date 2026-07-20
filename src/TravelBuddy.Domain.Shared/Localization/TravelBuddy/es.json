@@ -5,7 +5,7 @@
     "Menu:Home": "Hogar",
     "Menu:ContactUs": "Contáctenos",
     "Menu:ArticleSample": "Muestra de artículo",
-    "Home": "Hogar",
+    "Home": "Inicio",
     "Welcome": "Bienvenido",
     "LongWelcomeMessage": "Bienvenido a la aplicacion. Este es un proyecto de inicio basado en el marco ABP. Para obtener mas informacion, visite",
     "Date": "Fecha",
@@ -37,6 +37,7 @@
     "Unspecified": "Sistema",
     "SeeAllUsers": "Ver todos los usuarios",
     "TakePhoto": "Tomar foto",
-    "ChoosePhoto": "Escoge una foto"
+    "ChoosePhoto": "Escoge una foto",
+    "TravelBuddy":"calificacion":YaExiste": "Ya calificaste este destino"
   }
 }

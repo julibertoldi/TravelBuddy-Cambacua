@@ -14,6 +14,10 @@ export const APP_ROUTES: Routes = [
   loadComponent: () => import('./pages/cities/cities.component').then(c => c.CitiesComponent),
 },
   {
+    path: 'reviews',
+    loadComponent: () => import('./pages/reviews/reviews.component').then(c => c.ReviewsComponent),
+  },
+  {
     path: 'account',
     loadChildren: () => import('@abp/ng.account').then(c => c.createRoutes()),
   },

@@ -12,5 +12,8 @@ public class TravelBuddyApplicationAutoMapperProfile : Profile
 
         CreateMap<Experiencias.Experiencia, Experiencias.ExperienciaDto>();
         CreateMap<Experiencias.CreateUpdateExperienciaDto, Experiencias.Experiencia>();
+
+        CreateMap<Calificaciones.Calificacion, Calificaciones.CalificacionDto>();
+        CreateMap<Calificaciones.CreateUpdateCalificacionDto, Calificaciones.Calificacion>();
     }
 }
