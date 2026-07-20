@@ -18,6 +18,13 @@ function configureRoutes() {
         layout: eLayoutType.application,
       },
       {
+        path: '/user-profile',
+        name: 'Mi Perfil',
+        iconClass: 'fas fa-user',
+        order: 2,
+        layout: eLayoutType.application,
+      },
+      {
         path: '/reviews',
         name: 'Calificaciones y Reseñas',
         iconClass: 'fas fa-star',
