@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Volo.Abp.Application.Dtos;
 
 namespace TravelBuddy.Destinations
 {
-    public class DestinationDto : Volo.Abp.Application.Dtos.AuditedEntityDto<Guid>
+    public class DestinationDto : AuditedEntityDto<Guid>
     {
         public Guid Id { get; set; }
         public string Nombre { get; set; }
@@ -19,5 +16,10 @@ namespace TravelBuddy.Destinations
         public DateTime FechaActualizacion { get; set; }
         public Guid CategoriaId { get; set; }
         public string CategoriaName { get; set; }
-    }       
+        public int? GeoDbCityId { get; set; }
+        public int Population { get; set; }
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
+        public DateTime LastUpdated { get; set; }
+    }
 }

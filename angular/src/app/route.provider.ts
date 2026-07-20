@@ -10,6 +10,27 @@ export const APP_ROUTE_PROVIDER = [
 function configureRoutes() {
   const routes = inject(RoutesService);
   routes.add([
+      {
+        path: '/',
+        name: '::Menu:Home',
+        iconClass: 'fas fa-home',
+        order: 1,
+        layout: eLayoutType.application,
+      },
+      {
+        path: '/user-profile',
+        name: 'Mi Perfil',
+        iconClass: 'fas fa-user',
+        order: 2,
+        layout: eLayoutType.application,
+      },
+      {
+        path: '/reviews',
+        name: 'Calificaciones y Reseñas',
+        iconClass: 'fas fa-star',
+        order: 2,
+        layout: eLayoutType.application,
+      },
     {
       path: '/',
       name: '::Menu:Home',

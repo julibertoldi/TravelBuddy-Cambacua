@@ -1,0 +1,243 @@
+.reviews-page {
+  font-family: 'Inter', 'Outfit', sans-serif;
+  background-color: #f8fafc;
+  min-height: 100vh;
+}
+
+// Glassmorphism effect
+.bg-glass {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.text-dark-blue {
+  color: #0f172a;
+}
+
+.font-weight-black {
+  font-weight: 800;
+}
+
+.font-weight-bold {
+  font-weight: 700;
+}
+
+.font-weight-medium {
+  font-weight: 500;
+}
+
+.max-height-70vh {
+  max-height: 70vh;
+}
+
+.min-height-250 {
+  min-height: 250px;
+}
+
+.min-height-400 {
+  min-height: 400px;
+}
+
+.tracking-wider {
+  letter-spacing: 0.05em;
+}
+
+// Destination Selector styling
+.destination-item {
+  transition: all 0.25s ease;
+  border-radius: 8px !important;
+  margin: 6px 12px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: rgba(79, 70, 229, 0.05);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+
+  &.active {
+    background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%) !important;
+    color: white !important;
+    box-shadow: 0 8px 20px rgba(79, 70, 229, 0.25);
+
+    .text-dark-blue, .text-muted {
+      color: white !important;
+    }
+
+    .price-badge {
+      background-color: rgba(255, 255, 255, 0.2);
+      color: white;
+    }
+  }
+}
+
+.destination-img-mini {
+  width: 50px;
+  height: 50px;
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+}
+
+.price-badge {
+  background-color: #eff6ff;
+  color: #2563eb;
+  font-weight: 700;
+  font-size: 0.8rem;
+  transition: all 0.2s ease;
+}
+
+// Destination Header Card
+.header-card {
+  background-size: cover;
+  background-position: center;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+  transition: all 0.3s ease;
+}
+
+.text-shadow {
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.text-shadow-sm {
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+// Stars Interactive Selector
+.star-rating-input {
+  gap: 6px;
+
+  .btn-star {
+    outline: none;
+    
+    i {
+      font-size: 2.25rem;
+      transition: transform 0.15s ease;
+
+      &:hover {
+        transform: scale(1.2);
+      }
+    }
+  }
+}
+
+// Avatars
+.user-avatar {
+  display: inline-flex;
+  width: 32px;
+  height: 32px;
+  background-color: #e2e8f0;
+  color: #475569;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+
+  &.user-me {
+    background-color: #eff6ff;
+    color: #2563eb;
+    border: 1.5px solid #3b82f6;
+  }
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// Comment styling
+.italic-comentario {
+  font-style: italic;
+  font-size: 0.95rem;
+  color: #475569;
+  line-height: 1.5;
+  background: rgba(248, 250, 252, 0.6);
+  padding: 10px 14px;
+  border-radius: 8px;
+  border-left: 3px solid #cbd5e1;
+}
+
+// Action Buttons in list
+.btn-action {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  background-color: white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  &.btn-edit-icon:hover {
+    border-color: rgba(59, 130, 246, 0.3);
+    background-color: #eff6ff;
+  }
+
+  &.btn-delete-icon:hover {
+    border-color: rgba(239, 68, 68, 0.3);
+    background-color: #fef2f2;
+  }
+}
+
+// Review Item
+.review-item {
+  transition: background-color 0.2s ease;
+  &:last-child {
+    border-bottom: none !important;
+  }
+}
+
+// Animations
+.animate-spin {
+  animation: spin 8s linear infinite;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.logo-spinning {
+  transition: all 0.3s ease;
+  &:hover i {
+    color: #4f46e5 !important;
+  }
+}
+
+.select-prompt {
+  border-radius: 16px;
+  border: 2px dashed #cbd5e1;
+  background: rgba(255, 255, 255, 0.5) !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+.max-width-500 {
+  max-width: 500px;
+}
+
+// Form elements styling
+textarea.form-control {
+  &:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  }
+}

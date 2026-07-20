@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Threading.Tasks;
@@ -16,7 +17,8 @@ public class UserProfileAppService : ApplicationService, IUserProfileAppService
     {
         _userManager = userManager;
     }
-
+   
+    [Authorize]
     public async Task UpdateMyProfileAsync(Guid userId, UpdateUserProfileDto input)
     {
         var user = await _userManager.GetByIdAsync(userId)
@@ -25,12 +27,19 @@ public class UserProfileAppService : ApplicationService, IUserProfileAppService
         user.Name = input.Nombre;
         user.Surname = input.Apellido;
 
-        user.SetProperty("FotoPerfilUrl", input.FotoPerfilUrl);
-        user.SetProperty("Preferencias", input.Preferencias);
+        if (!string.IsNullOrWhiteSpace(input.Email))
+        {
+            (await _userManager.SetEmailAsync(user, input.Email)).CheckErrors();
+        }
+
+        user.SetProfilePicture(input.FotoPerfilUrl);
+        user.SetPreferences(input.Preferencias);
 
         var result = await _userManager.UpdateAsync(user);
         result.CheckErrors();
     }
+
+    
 
     public async Task<PublicUserProfileDto> GetPublicProfileAsync(Guid userId)
     {
@@ -42,10 +51,11 @@ public class UserProfileAppService : ApplicationService, IUserProfileAppService
             UserId = user.Id,
             Nombre = user.Name,
             Apellido = user.Surname,
-            FotoPerfilUrl = user.GetProperty<string>("FotoPerfilUrl")
+            FotoPerfilUrl = user.GetProfilePicture()
         };
     }
 
+    [Authorize]
     public async Task DeleteMyAccountAsync(Guid userId)
     {
         var user = await _userManager.GetByIdAsync(userId)
