@@ -886,6 +886,10 @@
               "uniqueName": "UpdateMyProfileAsyncByInput",
               "name": "UpdateMyProfileAsync",
               "httpMethod": "PUT",
+            "DeleteMyAccountAsync": {
+              "uniqueName": "DeleteMyAccountAsync",
+              "name": "DeleteMyAccountAsync",
+              "httpMethod": "DELETE",
               "url": "api/user-profile/me",
               "supportedVersions": [],
               "parametersOnMethod": [
@@ -948,6 +952,8 @@
                   "descriptorName": "input"
                 }
               ],
+              "parametersOnMethod": [],
+              "parameters": [],
               "returnValue": {
                 "type": "System.Void",
                 "typeSimple": "System.Void"
@@ -1497,6 +1503,9 @@
                       "typeAsString": "TravelBuddy.Experiencias.ExperienciaGetListInput, TravelBuddy.Application.Contracts",
                       "type": "TravelBuddy.Experiencias.ExperienciaGetListInput",
                       "typeSimple": "TravelBuddy.Experiencias.ExperienciaGetListInput",
+                      "typeAsString": "Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto, Volo.Abp.Ddd.Application.Contracts",
+                      "type": "Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto",
+                      "typeSimple": "Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto",
                       "isOptional": false,
                       "defaultValue": null
                     }
@@ -1736,6 +1745,7 @@
               },
               "allowAnonymous": null,
               "implementFrom": "Volo.Abp.Application.Services.IReadOnlyAppService<TravelBuddy.Experiencias.ExperienciaDto,TravelBuddy.Experiencias.ExperienciaDto,System.Guid,TravelBuddy.Experiencias.ExperienciaGetListInput>"
+              "implementFrom": "Volo.Abp.Application.Services.IReadOnlyAppService<TravelBuddy.Experiencias.ExperienciaDto,TravelBuddy.Experiencias.ExperienciaDto,System.Guid,Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto>"
             },
             "GetListAsyncByInput": {
               "uniqueName": "GetListAsyncByInput",
@@ -1749,6 +1759,9 @@
                   "typeAsString": "TravelBuddy.Experiencias.ExperienciaGetListInput, TravelBuddy.Application.Contracts",
                   "type": "TravelBuddy.Experiencias.ExperienciaGetListInput",
                   "typeSimple": "TravelBuddy.Experiencias.ExperienciaGetListInput",
+                  "typeAsString": "Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto, Volo.Abp.Ddd.Application.Contracts",
+                  "type": "Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto",
+                  "typeSimple": "Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto",
                   "isOptional": false,
                   "defaultValue": null
                 }
@@ -1833,6 +1846,7 @@
               },
               "allowAnonymous": null,
               "implementFrom": "Volo.Abp.Application.Services.IReadOnlyAppService<TravelBuddy.Experiencias.ExperienciaDto,TravelBuddy.Experiencias.ExperienciaDto,System.Guid,TravelBuddy.Experiencias.ExperienciaGetListInput>"
+              "implementFrom": "Volo.Abp.Application.Services.IReadOnlyAppService<TravelBuddy.Experiencias.ExperienciaDto,TravelBuddy.Experiencias.ExperienciaDto,System.Guid,Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto>"
             }
           }
         },
@@ -4720,6 +4734,18 @@
           "regex": null
         },
         {
+          "name": "UsuarioId",
+          "jsonName": null,
+          "type": "System.Guid",
+          "typeSimple": "string",
+          "isRequired": true,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
           "name": "Titulo",
           "jsonName": null,
           "type": "System.String",
@@ -4904,6 +4930,9 @@
         "Buena",
         "MuyBuena",
         "Excelente"
+        "Positiva",
+        "Neutral",
+        "Negativa"
       ],
       "enumValues": [
         1,
@@ -4911,6 +4940,7 @@
         3,
         4,
         5
+        3
       ],
       "genericArguments": null,
       "properties": null
@@ -5017,6 +5047,18 @@
         },
         {
           "name": "Preferencias",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Email",
           "jsonName": null,
           "type": "System.String",
           "typeSimple": "string",

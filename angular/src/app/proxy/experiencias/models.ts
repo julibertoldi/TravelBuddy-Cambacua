@@ -3,6 +3,7 @@ import type { AuditedEntityDto, PagedAndSortedResultRequestDto } from '@abp/ng.c
 
 export interface CreateUpdateExperienciaDto {
   destinoId: string;
+  usuarioId: string;
   titulo: string;
   descripcion: string;
   valoracion: ExperienciaValoracion;

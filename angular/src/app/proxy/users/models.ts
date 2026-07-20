@@ -11,4 +11,5 @@ export interface UpdateUserProfileDto {
   apellido?: string;
   fotoPerfilUrl?: string;
   preferencias?: string;
+  email?: string;
 }

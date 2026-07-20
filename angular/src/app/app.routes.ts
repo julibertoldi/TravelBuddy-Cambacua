@@ -19,6 +19,11 @@ export const APP_ROUTES: Routes = [
     path: 'setting-management',
     loadChildren: () => import('@abp/ng.setting-management').then(c => c.createRoutes()),
   },
+  {
+    path: 'user-profile',
+    loadComponent: () => import('./pages/user-profile/user-profile.component').then(c => c.UserProfileComponent),
+    canActivate: [authGuard]
+  },
 {
   path: 'experiences',
   loadComponent: () =>
