@@ -25,6 +25,7 @@ public class TravelBuddyDbContext :
 
     public DbSet<Destinations.Destination> Destinations { get; set; }
     public DbSet<Experiencias.Experiencia> Experiencias { get; set; }
+    public DbSet<Calificaciones.Calificacion> Calificaciones { get; set; }
 
 
     #region Entities from the modules
@@ -98,6 +99,15 @@ public class TravelBuddyDbContext :
             b.ConfigureByConvention(); //auto configure for the base class props
             b.Property(x => x.Titulo).IsRequired().HasMaxLength(128);
             b.Property(x => x.Descripcion).IsRequired().HasMaxLength(1024);
+        });
+
+        builder.Entity<Calificaciones.Calificacion>(b =>
+        {
+            b.ToTable(TravelBuddyConsts.DbTablePrefix + "Calificaciones", TravelBuddyConsts.DbSchema);
+            b.ConfigureByConvention();
+            b.Property(x => x.Comentario).IsRequired().HasMaxLength(2000);
+            b.Property(x => x.Estrellas).IsRequired();
+            b.HasIndex(x => new { x.DestinoId, x.UsuarioId }).IsUnique();
         });
 
         //builder.Entity<YourEntity>(b =>
