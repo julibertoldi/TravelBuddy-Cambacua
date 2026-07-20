@@ -1,4 +1,4 @@
-import { authGuard, permissionGuard } from '@abp/ng.core';
+import { authGuard } from '@abp/ng.core';
 import { Routes } from '@angular/router';
 import { CitiesComponent } from './pages/cities/cities.component'; 
 
@@ -16,6 +16,12 @@ export const APP_ROUTES: Routes = [
   {
     path: 'reviews',
     loadComponent: () => import('./pages/reviews/reviews.component').then(c => c.ReviewsComponent),
+  },
+  {
+  {
+    path: 'favorites',
+    canActivate: [authGuard], // Protege la ruta para que solo entren usuarios logueados
+    loadComponent: () => import('./favorites/favorites').then(c => c.FavoritesComponent),
   },
   {
     path: 'account',
@@ -41,4 +47,5 @@ export const APP_ROUTES: Routes = [
       .then(c => c.ExperiencesComponent),
   canActivate: [authGuard],
 },
+];
 ];

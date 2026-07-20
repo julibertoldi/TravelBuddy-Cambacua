@@ -1,0 +1,180 @@
+// Paleta de colores 
+$color-beige-arena: #c7b9ae;
+$color-crema-pastel: #f5eed3;
+$color-verde-menta: #a8beb9;
+$color-text-dark: #4a4a4a;
+
+.favorites-container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  color: $color-text-dark;
+
+  .favorites-header {
+    margin-bottom: 2.5rem;
+    border-left: 5px solid $color-beige-arena;
+    padding-left: 1rem;
+
+    h1 {
+      color: darken($color-text-dark, 15%);
+      margin-bottom: 0.5rem;
+      font-size: 2.2rem;
+    }
+
+    p {
+      color: lighten($color-text-dark, 20%);
+      margin: 0;
+    }
+  }
+}
+
+// Grid y tarjetas
+.favorites-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem;
+}
+
+.favorite-card {
+  background-color: $color-crema-pastel;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid rgba($color-beige-arena, 0.3);
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  }
+
+  // Contenedor para imágenes reales
+  .card-image-container {
+    height: 160px;
+    width: 100%;
+    overflow: hidden;
+
+    .card-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  .card-image-placeholder {
+    background-color: $color-beige-arena;
+    height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+  }
+
+  .card-content {
+    padding: 1.5rem;
+
+    h3 {
+      margin: 0 0 0.5rem 0;
+      font-size: 1.3rem;
+      color: darken($color-text-dark, 10%);
+    }
+
+    .id-tag {
+      font-size: 0.8rem;
+      color: lighten($color-text-dark, 25%);
+      background-color: rgba($color-beige-arena, 0.2);
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      display: inline-block;
+      margin-bottom: 1.5rem;
+    }
+
+    // Contenedor inferior: Mueve el corazón al extremo derecho
+    .card-footer-actions {
+      display: flex;
+      justify-content: flex-end; // Alinea todo a la derecha
+      align-items: center;
+      margin-top: 1rem;
+
+      // Botón de corazón limpio sin recuadros ni sombras
+      .btn-heart-toggle {
+        background: none !important;
+        border: none !important;
+        padding: 0;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: none !important; 
+
+        .heart-icon {
+          font-size: 1.8rem;
+          color: $color-beige-arena; // Beige cuando no está seleccionado
+          transition: color 0.2s ease, transform 0.2s ease;
+
+          // Pasa a verde menta cuando está activo
+          &.active {
+            color: $color-verde-menta; 
+          }
+        }
+
+        &:hover .heart-icon {
+          transform: scale(1.15);
+        }
+      }
+    }
+  }
+}
+
+// Estados de carga y vacío
+.loading-state, .empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  background-color: rgba($color-crema-pastel, 0.5);
+  border-radius: 12px;
+  border: 2px dashed $color-beige-arena;
+}
+
+.empty-state {
+  .empty-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+  }
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba($color-beige-arena, 0.3);
+  border-top-color: $color-verde-menta;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1rem auto;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// Barra de acciones de prueba
+.test-actions-bar {
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.btn-add-test {
+  background-color: $color-verde-menta; 
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: darken($color-verde-menta, 10%);
+  }
+}

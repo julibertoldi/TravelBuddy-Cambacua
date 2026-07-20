@@ -1,0 +1,47 @@
+<div class="favorites-container">
+  <h2>Mis Experiencias Favoritas</h2>
+
+  <!-- BOTÓN DE PRUEBA -->
+  <div class="test-actions-bar">
+    <button class="btn-add-test" (click)="agregarDestinoPrueba()">
+      ➕ Añadir Destino de Prueba
+    </button>
+  </div>
+
+  <!-- Grid de Favoritos -->
+  <div *ngIf="favoritos.length > 0" class="favorites-grid">
+    <div *ngFor="let fav of favoritos" class="favorite-card">
+      
+      <!-- Renderizado de Imagen Dinámica -->
+      <div class="card-image-container">
+        <img *ngIf="fav.imagenUrl" [src]="fav.imagenUrl" alt="{{ fav.nombreDestino }}" class="card-img" />
+        <div *ngIf="!fav.imagenUrl" class="card-image-placeholder">
+          <span>🏞️</span>
+        </div>
+      </div>
+
+      <!-- Contenido de la Tarjeta (Aquí movemos el corazón) -->
+      <div class="card-content">
+        <h3>{{ fav.nombreDestino || 'Destino Guardado' }}</h3>
+        <p class="id-tag">ID: {{ fav.destinoId }}</p>
+        
+        <!-- Contenedor inferior para alinear los botones -->
+        <div class="card-footer-actions">
+          
+          <!-- Botón de Corazón sin fondo, abajo a la derecha -->
+          <button class="btn-heart-toggle" (click)="toggleFavorito(fav.destinoId)">
+            <span class="heart-icon" [class.active]="esFavorito(fav.destinoId)">♥</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+<!-- Estado Vacío -->
+<div *ngIf="favoritos.length === 0 && !loading" class="empty-state">
+  <span>✈️</span>
+  <h3>Aún no tenés favoritos guardados</h3>
+  <p>Presioná el botón de arriba para simular la carga de un destino.</p>
+</div>
+</div>

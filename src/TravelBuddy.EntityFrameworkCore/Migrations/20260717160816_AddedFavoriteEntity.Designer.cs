@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TravelBuddy.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore;
@@ -12,9 +13,11 @@ using Volo.Abp.EntityFrameworkCore;
 namespace TravelBuddy.Migrations
 {
     [DbContext(typeof(TravelBuddyDbContext))]
-    partial class TravelBuddyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260717160816_AddedFavoriteEntity")]
+    partial class AddedFavoriteEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,77 +27,20 @@ namespace TravelBuddy.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("TravelBuddy.Calificaciones.Calificacion", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Comentario")
-                        .IsRequired()
-                        .HasMaxLength(2000)
-                        .HasColumnType("nvarchar(2000)");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .HasMaxLength(40)
-                        .HasColumnType("nvarchar(40)")
-                        .HasColumnName("ConcurrencyStamp");
-
-                    b.Property<DateTime>("CreationTime")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("CreationTime");
-
-                    b.Property<Guid?>("CreatorId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("CreatorId");
-
-                    b.Property<Guid>("DestinoId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Estrellas")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ExtraProperties")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("ExtraProperties");
-
-                    b.Property<DateTime?>("LastModificationTime")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("LastModificationTime");
-
-                    b.Property<Guid?>("LastModifierId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("LastModifierId");
-
-                    b.Property<Guid>("UsuarioId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DestinoId", "UsuarioId")
-                        .IsUnique();
-
-                    b.ToTable("AppCalificaciones", (string)null);
-                });
-
             modelBuilder.Entity("TravelBuddy.Destinations.Destination", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid>("CategoriaId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .IsRequired()
                         .HasMaxLength(40)
                         .HasColumnType("nvarchar(40)")
                         .HasColumnName("ConcurrencyStamp");
-
-                    b.Property<string>("Country")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("datetime2")
@@ -104,26 +50,29 @@ namespace TravelBuddy.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("CreatorId");
 
-                    b.Property<string>("Description")
+                    b.Property<string>("Descripcion")
                         .IsRequired()
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
+
+                    b.Property<bool>("Disponible")
+                        .HasColumnType("bit");
 
                     b.Property<string>("ExtraProperties")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("ExtraProperties");
 
-                    b.Property<int?>("GeoDbCityId")
-                        .HasColumnType("int");
+                    b.Property<DateTime>("FechaActualizacion")
+                        .HasColumnType("datetime2");
 
-                    b.Property<string>("ImageUrl")
+                    b.Property<DateTime>("FechaCreacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ImagenUrl")
                         .IsRequired()
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
-
-                    b.Property<bool>("IsAvailable")
-                        .HasColumnType("bit");
 
                     b.Property<DateTime?>("LastModificationTime")
                         .HasColumnType("datetime2")
@@ -133,158 +82,22 @@ namespace TravelBuddy.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("LastModifierId");
 
-                    b.Property<DateTime>("LastUpdated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<double>("Latitude")
-                        .HasColumnType("float");
-
-                    b.Property<double>("Longitude")
-                        .HasColumnType("float");
-
-                    b.Property<string>("Name")
+                    b.Property<string>("Nombre")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<int>("Population")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Price")
+                    b.Property<decimal>("Precio")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("Region")
+                    b.Property<string>("Ubicacion")
                         .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("GeoDbCityId");
-
                     b.ToTable("AppDestinations", (string)null);
-                });
-
-            modelBuilder.Entity("TravelBuddy.Experiencias.Experiencia", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .HasMaxLength(40)
-                        .HasColumnType("nvarchar(40)")
-                        .HasColumnName("ConcurrencyStamp");
-
-                    b.Property<DateTime>("CreationTime")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("CreationTime");
-
-                    b.Property<Guid?>("CreatorId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("CreatorId");
-
-                    b.Property<string>("Descripcion")
-                        .IsRequired()
-                        .HasMaxLength(1024)
-                        .HasColumnType("nvarchar(1024)");
-
-                    b.Property<Guid>("DestinoId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ExtraProperties")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("ExtraProperties");
-
-                    b.Property<DateTime?>("LastModificationTime")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("LastModificationTime");
-
-                    b.Property<Guid?>("LastModifierId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("LastModifierId");
-
-                    b.Property<string>("PalabrasClave")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Titulo")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
-
-                    b.Property<Guid>("UsuarioId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Valoracion")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("AppExperiencias", (string)null);
-                });
-
-            modelBuilder.Entity("TravelBuddy.Experiencias.Experiencia", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .HasMaxLength(40)
-                        .HasColumnType("nvarchar(40)")
-                        .HasColumnName("ConcurrencyStamp");
-
-                    b.Property<DateTime>("CreationTime")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("CreationTime");
-
-                    b.Property<Guid?>("CreatorId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("CreatorId");
-
-                    b.Property<string>("Descripcion")
-                        .IsRequired()
-                        .HasMaxLength(1024)
-                        .HasColumnType("nvarchar(1024)");
-
-                    b.Property<Guid>("DestinoId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ExtraProperties")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("ExtraProperties");
-
-                    b.Property<DateTime?>("LastModificationTime")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("LastModificationTime");
-
-                    b.Property<Guid?>("LastModifierId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("LastModifierId");
-
-                    b.Property<string>("PalabrasClave")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Titulo")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
-
-                    b.Property<Guid>("UsuarioId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Valoracion")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("AppExperiencias", (string)null);
                 });
 
             modelBuilder.Entity("TravelBuddy.Experiencias.Experiencia", b =>
@@ -1332,14 +1145,6 @@ namespace TravelBuddy.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false)
                         .HasColumnName("PhoneNumberConfirmed");
-
-                    b.Property<string>("Preferences")
-                        .HasMaxLength(2000)
-                        .HasColumnType("nvarchar(2000)");
-
-                    b.Property<string>("ProfilePictureUrl")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<string>("SecurityStamp")
                         .IsRequired()

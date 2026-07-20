@@ -31,5 +31,19 @@ function configureRoutes() {
         order: 2,
         layout: eLayoutType.application,
       },
+    {
+      path: '/',
+      name: '::Menu:Home',
+      iconClass: 'fas fa-home',
+      order: 1,
+      layout: eLayoutType.application,
+    },
+    {
+      path: '/favorites',
+      name: 'Mis Favoritos',
+      iconClass: 'fas fa-heart',
+      order: 2,
+      layout: eLayoutType.application,
+    },
   ]);
 }
