@@ -882,6 +882,10 @@
           "type": "TravelBuddy.Controllers.UserProfileController",
           "interfaces": [],
           "actions": {
+            "UpdateMyProfileAsyncByInput": {
+              "uniqueName": "UpdateMyProfileAsyncByInput",
+              "name": "UpdateMyProfileAsync",
+              "httpMethod": "PUT",
             "DeleteMyAccountAsync": {
               "uniqueName": "DeleteMyAccountAsync",
               "name": "DeleteMyAccountAsync",
@@ -892,6 +896,66 @@
               "httpMethod": "PUT",
               "url": "api/user-profile/me",
               "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "input",
+                  "typeAsString": "TravelBuddy.Users.UpdateUserProfileDto, TravelBuddy.Application.Contracts",
+                  "type": "TravelBuddy.Users.UpdateUserProfileDto",
+                  "typeSimple": "TravelBuddy.Users.UpdateUserProfileDto",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "input",
+                  "name": "Nombre",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "Apellido",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "FotoPerfilUrl",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "Preferencias",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                }
+              ],
               "parametersOnMethod": [],
               "parameters": [],
               "parametersOnMethod": [
@@ -1203,6 +1267,7 @@
                 "typeSimple": "TravelBuddy.Cities.CitySearchResultDto"
               },
               "allowAnonymous": null,
+              "implementFrom": "TravelBuddy.Destinations.IDestinationAppService"
               "implementFrom": "TravelBuddy.Destinations.DestinationAppService"
               "implementFrom": "TravelBuddy.Destinations.IDestinationAppService"
             },
@@ -1241,6 +1306,7 @@
                 "typeSimple": "TravelBuddy.Cities.CityDetailDto"
               },
               "allowAnonymous": null,
+              "implementFrom": "TravelBuddy.Destinations.IDestinationAppService"
               "implementFrom": "TravelBuddy.Destinations.DestinationAppService"
               "implementFrom": "TravelBuddy.Destinations.IDestinationAppService"
             },
@@ -1257,6 +1323,7 @@
                 "typeSimple": "TravelBuddy.Cities.CitySearchResultDto"
               },
               "allowAnonymous": null,
+              "implementFrom": "TravelBuddy.Destinations.IDestinationAppService"
               "implementFrom": "TravelBuddy.Destinations.DestinationAppService"
               "implementFrom": "TravelBuddy.Destinations.IDestinationAppService"
             },
@@ -1295,6 +1362,7 @@
                 "typeSimple": "TravelBuddy.Destinations.DestinationDto"
               },
               "allowAnonymous": null,
+              "implementFrom": "TravelBuddy.Destinations.IDestinationAppService"
               "implementFrom": "TravelBuddy.Destinations.DestinationAppService"
               "implementFrom": "TravelBuddy.Destinations.IDestinationAppService"
             },

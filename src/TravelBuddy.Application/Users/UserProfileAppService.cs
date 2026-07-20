@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Threading.Tasks;
@@ -16,7 +17,9 @@ public class UserProfileAppService : ApplicationService, IUserProfileAppService
     {
         _userManager = userManager;
     }
-       public async Task UpdateMyProfileAsync(Guid userId, UpdateUserProfileDto input)
+   
+    [Authorize]
+    public async Task UpdateMyProfileAsync(Guid userId, UpdateUserProfileDto input)
     {
         var user = await _userManager.GetByIdAsync(userId)
                    ?? throw new EntityNotFoundException(typeof(IdentityUser), userId);
@@ -52,6 +55,7 @@ public class UserProfileAppService : ApplicationService, IUserProfileAppService
         };
     }
 
+    [Authorize]
     public async Task DeleteMyAccountAsync(Guid userId)
     {
         var user = await _userManager.GetByIdAsync(userId)
