@@ -1631,6 +1631,9 @@
                   "parametersOnMethod": [
                     {
                       "name": "input",
+                      "typeAsString": "TravelBuddy.Experiencias.ExperienciaGetListInput, TravelBuddy.Application.Contracts",
+                      "type": "TravelBuddy.Experiencias.ExperienciaGetListInput",
+                      "typeSimple": "TravelBuddy.Experiencias.ExperienciaGetListInput",
                       "typeAsString": "Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto, Volo.Abp.Ddd.Application.Contracts",
                       "type": "Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto",
                       "typeSimple": "Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto",
@@ -1872,6 +1875,7 @@
                 "typeSimple": "TravelBuddy.Experiencias.ExperienciaDto"
               },
               "allowAnonymous": null,
+              "implementFrom": "Volo.Abp.Application.Services.IReadOnlyAppService<TravelBuddy.Experiencias.ExperienciaDto,TravelBuddy.Experiencias.ExperienciaDto,System.Guid,TravelBuddy.Experiencias.ExperienciaGetListInput>"
               "implementFrom": "Volo.Abp.Application.Services.IReadOnlyAppService<TravelBuddy.Experiencias.ExperienciaDto,TravelBuddy.Experiencias.ExperienciaDto,System.Guid,Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto>"
             },
             "GetListAsyncByInput": {
@@ -1883,6 +1887,9 @@
               "parametersOnMethod": [
                 {
                   "name": "input",
+                  "typeAsString": "TravelBuddy.Experiencias.ExperienciaGetListInput, TravelBuddy.Application.Contracts",
+                  "type": "TravelBuddy.Experiencias.ExperienciaGetListInput",
+                  "typeSimple": "TravelBuddy.Experiencias.ExperienciaGetListInput",
                   "typeAsString": "Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto, Volo.Abp.Ddd.Application.Contracts",
                   "type": "Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto",
                   "typeSimple": "Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto",
@@ -1891,6 +1898,42 @@
                 }
               ],
               "parameters": [
+                {
+                  "nameOnMethod": "input",
+                  "name": "DestinoId",
+                  "jsonName": null,
+                  "type": "System.Guid?",
+                  "typeSimple": "string?",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "Valoracion",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "Keyword",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                },
                 {
                   "nameOnMethod": "input",
                   "name": "Sorting",
@@ -1933,6 +1976,7 @@
                 "typeSimple": "Volo.Abp.Application.Dtos.PagedResultDto<TravelBuddy.Experiencias.ExperienciaDto>"
               },
               "allowAnonymous": null,
+              "implementFrom": "Volo.Abp.Application.Services.IReadOnlyAppService<TravelBuddy.Experiencias.ExperienciaDto,TravelBuddy.Experiencias.ExperienciaDto,System.Guid,TravelBuddy.Experiencias.ExperienciaGetListInput>"
               "implementFrom": "Volo.Abp.Application.Services.IReadOnlyAppService<TravelBuddy.Experiencias.ExperienciaDto,TravelBuddy.Experiencias.ExperienciaDto,System.Guid,Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto>"
             }
           }
@@ -4352,6 +4396,41 @@
     }
   },
   "types": {
+    "System.Nullable<T0>": {
+      "baseType": "System.ValueType",
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": [
+        "T"
+      ],
+      "properties": [
+        {
+          "name": "HasValue",
+          "jsonName": null,
+          "type": "System.Boolean",
+          "typeSimple": "boolean",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Value",
+          "jsonName": null,
+          "type": "T",
+          "typeSimple": "T",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
     "TravelBuddy.Cities.CityDetailDto": {
       "baseType": "TravelBuddy.Cities.CityDto",
       "isEnum": false,
@@ -4940,10 +5019,60 @@
         }
       ]
     },
+    "TravelBuddy.Experiencias.ExperienciaGetListInput": {
+      "baseType": "Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto",
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "DestinoId",
+          "jsonName": null,
+          "type": "System.Guid?",
+          "typeSimple": "string?",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Valoracion",
+          "jsonName": null,
+          "type": "TravelBuddy.Experiencias.ExperienciaValoracion?",
+          "typeSimple": "enum?",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Keyword",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
     "TravelBuddy.Experiencias.ExperienciaValoracion": {
       "baseType": "System.Enum",
       "isEnum": true,
       "enumNames": [
+        "Mala",
+        "Regular",
+        "Buena",
+        "MuyBuena",
+        "Excelente"
         "Positiva",
         "Neutral",
         "Negativa"
@@ -4951,6 +5080,9 @@
       "enumValues": [
         1,
         2,
+        3,
+        4,
+        5
         3
       ],
       "genericArguments": null,

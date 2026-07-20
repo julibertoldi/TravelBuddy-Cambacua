@@ -30,4 +30,11 @@ export const APP_ROUTES: Routes = [
     loadComponent: () => import('./pages/user-profile/user-profile.component').then(c => c.UserProfileComponent),
     canActivate: [authGuard]
   },
+{
+  path: 'experiences',
+  loadComponent: () =>
+    import('./pages/experiences/experiences.component')
+      .then(c => c.ExperiencesComponent),
+  canActivate: [authGuard],
+},
 ];
