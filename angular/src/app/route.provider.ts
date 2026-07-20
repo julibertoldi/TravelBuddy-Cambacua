@@ -17,5 +17,12 @@ function configureRoutes() {
         order: 1,
         layout: eLayoutType.application,
       },
+      {
+        path: '/reviews',
+        name: 'Calificaciones y Reseñas',
+        iconClass: 'fas fa-star',
+        order: 2,
+        layout: eLayoutType.application,
+      },
   ]);
 }
