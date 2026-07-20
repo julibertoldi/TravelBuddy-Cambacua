@@ -1,0 +1,64 @@
+<div class="container-fluid mt-3">
+  <!-- Filtros -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-white border-bottom p-3">
+      <h5 class="mb-0 text-muted">Buscador de Destinos</h5>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="searchForm" (ngSubmit)="search()" class="row g-3">
+        <div class="col-md-3">
+          <label class="form-label small text-muted">Nombre del Destino</label>
+          <input type="text" class="form-control" formControlName="name" placeholder="Ej: París">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small text-muted">País</label>
+          <input type="text" class="form-control" formControlName="country" placeholder="Ej: Argentina">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small text-muted">Región / Provincia</label>
+          <input type="text" class="form-control" formControlName="region" placeholder="Ej: Entre Ríos">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small text-muted">Población Mínima</label>
+          <input type="number" class="form-control" formControlName="minPopulation" placeholder="10000">
+        </div>
+        <div class="col-12 text-end mt-4">
+          <button type="submit" class="btn btn-primary" [disabled]="loading">
+            <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+            Buscar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Resultados -->
+  <div class="row" *ngIf="cities && cities.length > 0; else noResults">
+    <div class="col-md-4 mb-4" *ngFor="let city of cities">
+      <div class="card h-100 border-0 shadow-sm">
+        <!-- Imagen -->
+        <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400" class="card-img-top" alt="Imagen de destino">
+        
+        <div class="card-body">
+          <h6 class="card-title text-dark mb-1">{{ city.name }}</h6>
+          <p class="card-subtitle text-muted small mb-3">{{ city.region }}, {{ city.country }}</p>
+          
+          <div class="small text-secondary mb-3">
+            <div><strong>Habitantes:</strong> {{ city.population | number }}</div>
+            <div><strong>Lat:</strong> {{ city.latitude }} | <strong>Lon:</strong> {{ city.longitude }}</div>
+          </div>
+
+          <button class="btn btn-outline-primary w-100" (click)="saveToDestinations(city)">
+            Guardar en mis destinos
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #noResults>
+    <div class="text-center py-5 text-muted" *ngIf="!loading">
+      <p>Utilice los filtros superiores para comenzar la búsqueda.</p>
+    </div>
+  </ng-template>
+</div>

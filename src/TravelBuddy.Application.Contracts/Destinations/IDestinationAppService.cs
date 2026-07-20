@@ -3,18 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TravelBuddy.Cities;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 
-namespace TravelBuddy.Destinations
+namespace TravelBuddy.Destinations;
+
+public interface IDestinationAppService :
+    ICrudAppService<
+        DestinationDto,
+        Guid,
+        PagedAndSortedResultRequestDto,
+        CreateUpdateDestinationDto>
 {
-    public interface IDestinationAppService : 
-        ICrudAppService< //Defines CRUD methods
-            DestinationDto, //Used to show entities
-            Guid, //Primary key of the entity
-            PagedAndSortedResultRequestDto, //Used for paging/sorting
-            CreateUpdateDestinationDto> //Used to create/update an entity
-    {
-    
-    }
+    Task<CitySearchResultDto> SearchCitiesAsync(CitySearchRequestDto request);
+    Task<CityDetailDto> GetCityDetailsAsync(int cityId);
+    Task<CitySearchResultDto> GetPopularCitiesAsync();
+    Task<DestinationDto> ImportFromGeoDbAsync(int geoDbCityId);
 }

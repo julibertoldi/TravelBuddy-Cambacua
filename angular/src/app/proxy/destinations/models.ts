@@ -22,4 +22,5 @@ export interface DestinationDto extends AuditedEntityDto<string> {
   fechaActualizacion?: string;
   categoriaId?: string;
   categoriaName?: string;
+  geoDbCityId?: number;
 }

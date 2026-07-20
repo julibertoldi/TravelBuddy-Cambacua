@@ -10,9 +10,8 @@ public class TravelBuddyPermissionDefinitionProvider : PermissionDefinitionProvi
     public override void Define(IPermissionDefinitionContext context)
     {
         var myGroup = context.AddGroup(TravelBuddyPermissions.GroupName);
-
-        //Define your own permissions here. Example:
-        //myGroup.AddPermission(TravelBuddyPermissions.MyPermission1, L("Permission:MyPermission1"));
+        myGroup.AddPermission(TravelBuddyPermissions.Admin.Default, L("Permission:Admin"));
+        myGroup.AddPermission(TravelBuddyPermissions.Admin.Metrics, L("Permission:Admin.Metrics"));
     }
 
     private static LocalizableString L(string name)
