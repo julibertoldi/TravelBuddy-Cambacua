@@ -22,10 +22,10 @@ namespace TravelBuddy.Application.Tests.Calificaciones
             _currentUserMock.Setup(u => u.Id).Returns(Guid.NewGuid());
             _currentUserMock.Setup(u => u.IsAuthenticated).Returns(true);
 
-            _appService = new CalificacionAppService(
-                _calificacionRepositoryMock.Object,
-                _currentUserMock.Object
-            );
+          //  _appService = new CalificacionAppService(
+          //     _calificacionRepositoryMock.Object,
+          //      _currentUserMock.Object
+          //  );
         }
 
         [Fact]
