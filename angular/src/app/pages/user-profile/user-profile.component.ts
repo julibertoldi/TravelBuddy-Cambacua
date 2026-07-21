@@ -9,7 +9,8 @@ import {
 import { Router } from '@angular/router';
 import {
   RestService,
-  AuthService
+  AuthService,
+  ConfigStateService
 } from '@abp/ng.core';
 import {
   ToasterService,
@@ -33,16 +34,24 @@ export class UserProfileComponent implements OnInit {
   private toaster = inject(ToasterService);
   private confirmation = inject(ConfirmationService);
   private router = inject(Router);
+  private configState = inject(ConfigStateService);
 
   profileForm!: FormGroup;
 
   loading = true;
   saving = false;
   deleting = false;
+  currentUserId: string | null = null;
 
   ngOnInit(): void {
+    this.currentUserId = this.getCurrentUserId();
     this.initForm();
     this.loadProfile();
+  }
+
+  getCurrentUserId(): string | null {
+    const currentUser = this.configState.getOne('currentUser');
+    return currentUser ? currentUser.id : null;
   }
 
   private initForm(): void {
@@ -100,9 +109,15 @@ export class UserProfileComponent implements OnInit {
       return;
     }
 
+    if (!this.currentUserId) {
+      this.toaster.error('Usuario no autenticado.');
+      return;
+    }
+
     this.saving = true;
 
     this.userProfileService.updateMyProfile(
+      this.currentUserId,
       this.profileForm.value
     ).subscribe({
 
@@ -151,9 +166,16 @@ export class UserProfileComponent implements OnInit {
 
   private deleteAccount(): void {
 
+    if (!this.currentUserId) {
+      this.toaster.error('Usuario no autenticado.');
+      return;
+    }
+
     this.deleting = true;
 
-    this.userProfileService.deleteMyAccount()
+    this.userProfileService.deleteMyAccount(
+      this.currentUserId
+    )
     .subscribe({
 
       next: () => {

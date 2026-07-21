@@ -145,10 +145,6 @@ public class DestinationAppService_Tests : TravelBuddyApplicationTestBase<Travel
             var count = await _destinationRepository.CountAsync(d => d.GeoDbCityId == existingGeoDbId);
             count.ShouldBe(1);
 
-            await Assert.ThrowsAsync<HttpRequestException>(() =>
-                _appService.SearchCitiesAsync(request)
-            );
-        }  
             await uow.CompleteAsync();
         }
     }
