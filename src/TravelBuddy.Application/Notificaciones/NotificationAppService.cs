@@ -49,7 +49,7 @@ namespace TravelBuddy.Notifications
             var localNotifications = await _notificationRepository.GetListAsync(n => n.UserId == userId.Value);
             var result = ObjectMapper.Map<List<Notification>, List<NotificationDto>>(localNotifications);
 
-            // EXTRA: Incorporar eventos próximos como notificaciones
+            // Incorporar eventos próximos como notificaciones
             try
             {
                 var upcomingEvents = await GetUpcomingFavoriteEventsAsync();
