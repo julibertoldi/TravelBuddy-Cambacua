@@ -15,5 +15,7 @@ public class TravelBuddyApplicationAutoMapperProfile : Profile
 
         CreateMap<Calificaciones.Calificacion, Calificaciones.CalificacionDto>();
         CreateMap<Calificaciones.CreateUpdateCalificacionDto, Calificaciones.Calificacion>();
+
+        CreateMap<Notificaciones.Notification, Notifications.NotificationDto>();
     }
 }

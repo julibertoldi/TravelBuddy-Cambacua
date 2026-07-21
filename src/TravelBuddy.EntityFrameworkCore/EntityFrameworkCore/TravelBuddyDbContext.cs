@@ -29,6 +29,7 @@ public class TravelBuddyDbContext :
     public DbSet<Experiencias.Experiencia> Experiencias { get; set; }
     public DbSet<Calificaciones.Calificacion> Calificaciones { get; set; }
     public DbSet<Favorite> Favoritos { get; set; }
+    public DbSet<Notificaciones.Notification> Notificaciones { get; set; }
 
 
     #region Entities from the modules
@@ -157,6 +158,14 @@ public class TravelBuddyDbContext :
 
             // Índices lógicos y restricciones relacionales explícitas[cite: 2, 4]
             b.HasIndex(x => new { x.UsuarioId, x.DestinoId }).IsUnique();
+        });
+        builder.Entity<Notificaciones.Notification>(b =>
+        {
+            b.ToTable(TravelBuddyConsts.DbTablePrefix + "Notificaciones", TravelBuddyConsts.DbSchema);
+            b.ConfigureByConvention();
+            b.Property(x => x.Title).IsRequired().HasMaxLength(255);
+            b.Property(x => x.Message).IsRequired().HasMaxLength(1000);
+            b.HasIndex(x => x.UserId);
         });
     }
 }
