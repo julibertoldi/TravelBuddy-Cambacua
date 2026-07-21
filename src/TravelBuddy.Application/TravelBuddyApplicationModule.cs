@@ -32,6 +32,7 @@ namespace TravelBuddy
 
             // Esto configura la inyección de dependencia para HttpClient
             context.Services.AddHttpClient<ICitySearchService, GeoDbCitySearchService>();
+            context.Services.AddHttpClient();
         }
     }
 }

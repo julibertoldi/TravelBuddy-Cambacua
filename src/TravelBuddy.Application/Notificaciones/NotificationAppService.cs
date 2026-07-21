@@ -128,6 +128,7 @@ namespace TravelBuddy.Notifications
                 return new List<UpcomingEventNotificationDto>();
             }
 
+            // Obtener los IDs de los destinos favoritos del usuario
             var favoriteDestinationIds = (await _favoriteRepository.GetQueryableAsync())
                 .Where(f => f.UsuarioId == userId.Value)
                 .Select(f => f.DestinoId)
@@ -138,12 +139,22 @@ namespace TravelBuddy.Notifications
                 return new List<UpcomingEventNotificationDto>();
             }
 
-            var favoriteDestinations = (await _destinationRepository.GetQueryableAsync())
+            // Traemos los destinos a memoria mediante GetListAsync() 
+            var allDestinations = await _destinationRepository.GetListAsync();
+
+            // Filtra los destinos del usuario y nos quedamos con su Id y Name
+            var favoriteDestinations = allDestinations
                 .Where(d => favoriteDestinationIds.Contains(d.Id))
+                .Select(d => new
+                {
+                    Id = d.Id,
+                    Name = d.Name
+                })
                 .ToList();
 
             var upcomingEvents = new List<UpcomingEventNotificationDto>();
 
+            // las ciudades y llama Ticketmaster
             foreach (var destination in favoriteDestinations)
             {
                 var eventsInCity = await _ticketmasterService.GetEventsByCityAsync(destination.Id, destination.Name);
