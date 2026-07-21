@@ -18,7 +18,6 @@ export const APP_ROUTES: Routes = [
     loadComponent: () => import('./pages/reviews/reviews.component').then(c => c.ReviewsComponent),
   },
   {
-  {
     path: 'favorites',
     canActivate: [authGuard], // Protege la ruta para que solo entren usuarios logueados
     loadComponent: () => import('./favorites/favorites').then(c => c.FavoritesComponent),
@@ -47,5 +46,4 @@ export const APP_ROUTES: Routes = [
       .then(c => c.ExperiencesComponent),
   canActivate: [authGuard],
 },
-];
 ];

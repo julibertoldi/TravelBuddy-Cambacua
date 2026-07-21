@@ -1,7 +1,5 @@
-// Importa herramientas de Angular, formularios reactivos
-// y servicios de ABP necesarios para listar y administrar experiencias.
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -9,7 +7,7 @@ import {
   Validators,
 } from '@angular/forms';
 
-import { ListService, PagedResultDto } from '@abp/ng.core';
+import { ListService, PagedResultDto, ConfigStateService } from '@abp/ng.core';
 import {
   Confirmation,
   ConfirmationService,
@@ -22,10 +20,9 @@ import {
   ExperienciaDto,
   ExperienciaGetListInput,
   ExperienciaService,
-    ExperienciaValoracion,
+  ExperienciaValoracion,
 } from '../../proxy/experiencias';
-// Define el componente de la pantalla de experiencias.
-// Usa su archivo HTML, sus estilos y los módulos necesarios.
+
 @Component({
   selector: 'app-experiences',
   templateUrl: './experiences.component.html',
@@ -36,39 +33,35 @@ import {
     ThemeSharedModule,
     NgbModule,
   ],
-  providers: [ListService],
+  providers: [ListService, ExperienciaService],
 })
 export class ExperiencesComponent implements OnInit {
-    // Guarda la lista paginada de experiencias que devuelve el backend.
   experiences: PagedResultDto<ExperienciaDto> = {
     items: [],
     totalCount: 0,
   };
-// Formulario para filtrar experiencias y formulario para crear o editar.
+
   filterForm!: FormGroup;
   form!: FormGroup;
-// Controla la apertura del formulario y guarda el ID
-// de la experiencia seleccionada cuando se está editando.
   isModalOpen = false;
   selectedExperienceId?: string;
-// Opciones de valoración que se mostrarán en los selectores.
-readonly valoraciones = [
-  { value: ExperienciaValoracion.Mala, label: 'Mala' },
-  { value: ExperienciaValoracion.Regular, label: 'Regular' },
-  { value: ExperienciaValoracion.Buena, label: 'Buena' },
-  { value: ExperienciaValoracion.MuyBuena, label: 'Muy buena' },
-  { value: ExperienciaValoracion.Excelente, label: 'Excelente' },
-];
-// Inyecta los servicios necesarios para listar,
-// comunicarse con el backend, crear formularios y confirmar eliminaciones.
+
+  readonly valoraciones = [
+    { value: ExperienciaValoracion.Mala, label: 'Mala' },
+    { value: ExperienciaValoracion.Regular, label: 'Regular' },
+    { value: ExperienciaValoracion.Buena, label: 'Buena' },
+    { value: ExperienciaValoracion.MuyBuena, label: 'Muy buena' },
+    { value: ExperienciaValoracion.Excelente, label: 'Excelente' },
+  ];
+
   constructor(
     public readonly list: ListService,
     private readonly experienciaService: ExperienciaService,
     private readonly formBuilder: FormBuilder,
     private readonly confirmationService: ConfirmationService,
+    private readonly configState: ConfigStateService,
   ) {}
-// Inicializa los formularios y conecta el listado
-// con el servicio del backend aplicando los filtros seleccionados.
+
   ngOnInit(): void {
     this.buildFilterForm();
     this.buildForm();
@@ -92,8 +85,7 @@ readonly valoraciones = [
         this.experiences = response;
       });
   }
-// Crea el formulario usado para filtrar por destino,
-// valoración y palabra clave.
+
   private buildFilterForm(): void {
     this.filterForm = this.formBuilder.group({
       destinoId: [''],
@@ -101,8 +93,7 @@ readonly valoraciones = [
       keyword: [''],
     });
   }
-// Crea el formulario para agregar o modificar una experiencia
-// y aplica las mismas validaciones definidas en el backend.
+
   private buildForm(): void {
     this.form = this.formBuilder.group({
       destinoId: ['', Validators.required],
@@ -118,11 +109,11 @@ readonly valoraciones = [
       palabrasClave: [''],
     });
   }
-// Ejecuta nuevamente la consulta usando los filtros actuales.
+
   search(): void {
     this.list.get();
   }
-// Limpia todos los filtros y vuelve a cargar el listado completo.
+
   clearFilters(): void {
     this.filterForm.reset({
       destinoId: '',
@@ -132,7 +123,7 @@ readonly valoraciones = [
 
     this.list.get();
   }
-// Abre el formulario vacío para crear una nueva experiencia.
+
   createExperience(): void {
     this.selectedExperienceId = undefined;
 
@@ -146,10 +137,9 @@ readonly valoraciones = [
 
     this.isModalOpen = true;
   }
-// Busca una experiencia por su ID,
-// carga sus datos en el formulario y la prepara para editar.
+
   editExperience(id: string): void {
-    this.experienciaService.get(id).subscribe(experience => {
+    this.experienciaService.get(id).subscribe((experience: ExperienciaDto) => {
       this.selectedExperienceId = id;
 
       this.form.patchValue({
@@ -163,8 +153,7 @@ readonly valoraciones = [
       this.isModalOpen = true;
     });
   }
-// Valida el formulario y crea o actualiza la experiencia
-// según exista o no un ID seleccionado.
+
   save(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -173,6 +162,7 @@ readonly valoraciones = [
 
     const input: CreateUpdateExperienciaDto = {
       destinoId: this.form.value.destinoId,
+      usuarioId: this.configState.getOne('currentUser')?.id || '',
       titulo: this.form.value.titulo,
       descripcion: this.form.value.descripcion,
       valoracion: this.form.value.valoracion,
@@ -191,7 +181,7 @@ readonly valoraciones = [
       this.list.get();
     });
   }
-// Pide confirmación y elimina la experiencia mediante el backend.
+
   deleteExperience(id: string): void {
     this.confirmationService
       .warn(
@@ -208,14 +198,13 @@ readonly valoraciones = [
           .subscribe(() => this.list.get());
       });
   }
-// Cierra el formulario y limpia los datos seleccionados.
+
   closeModal(): void {
     this.isModalOpen = false;
     this.selectedExperienceId = undefined;
     this.form.reset();
   }
-// Convierte el valor numérico de la valoración
-// en un texto entendible para mostrar en pantalla.
+
   getValoracionLabel(value?: number): string {
     const option = this.valoraciones.find(
       item => item.value === value,
