@@ -1,0 +1,98 @@
+<div class="notifications-dashboard">
+  
+  <!-- Columna 1: Configuración de Notificaciones -->
+  <section class="dashboard-col col-settings">
+    <div class="card-box">
+      <h2>⚙️ Configuración</h2>
+      <p class="subtitle">Personalizá cómo y cuándo querés recibir novedades de tus viajes y eventos.</p>
+
+      <div class="setting-row">
+        <div class="setting-text">
+          <strong>Alertas de Eventos Próximos</strong>
+          <span>Notificarme sobre conciertos y eventos favoritos.</span>
+        </div>
+        <label class="switch">
+          <input type="checkbox" [(ngModel)]="settings.receiveEventAlerts">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="setting-row">
+        <div class="setting-text">
+          <strong>Notificaciones por Correo</strong>
+          <span>Recibir resumen por email.</span>
+        </div>
+        <label class="switch">
+          <input type="checkbox" [(ngModel)]="settings.receiveEmailNotifications">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="setting-row">
+        <div class="setting-text">
+          <strong>Novedades y Promociones</strong>
+          <span>Ofertas especiales e itinerarios.</span>
+        </div>
+        <label class="switch">
+          <input type="checkbox" [(ngModel)]="settings.receivePromotions">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <button class="btn-save" (click)="saveSettings()" [disabled]="loadingSettings">
+        {{ loadingSettings ? 'Guardando...' : 'Guardar Cambios' }}
+      </button>
+
+      <p *ngIf="savedSuccess" class="success-msg">¡Guardado con éxito!</p>
+    </div>
+  </section>
+
+  <!-- Columna 2: Eventos Próximos -->
+  <section class="dashboard-col col-events">
+    <div class="card-box">
+      <h2>📆 Eventos Próximos</h2>
+      <p class="subtitle">Tus eventos guardados en favoritos</p>
+
+      <div *ngIf="loadingEvents" class="loading-state">Cargando eventos...</div>
+
+      <div *ngIf="!loadingEvents && upcomingEvents.length === 0" class="empty-state">
+        <p>No tienes eventos favoritos próximos.</p>
+      </div>
+
+      <div *ngIf="!loadingEvents && upcomingEvents.length > 0" class="items-list">
+        <div *ngFor="let event of upcomingEvents" class="item-card event-card">
+          <h4>{{ event.title || event.nombre }}</h4>
+          <span class="event-date">📅 {{ event.date | date:'mediumDate' }}</span>
+          <p class="event-location">📍 {{ event.location || event.lugar || 'Ubicación no especificada' }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Columna 3: Casilla de Notificaciones -->
+  <section class="dashboard-col col-notifications">
+    <div class="card-box">
+      <h2>🔔 Notificaciones</h2>
+      <p class="subtitle">Casilla de mensajes recientes</p>
+
+      <div *ngIf="loadingNotifications" class="loading-state">Cargando notificaciones...</div>
+
+      <div *ngIf="!loadingNotifications && notifications.length === 0" class="empty-state">
+        <p>No tienes notificaciones recibidas.</p>
+      </div>
+
+      <div *ngIf="!loadingNotifications && notifications.length > 0" class="items-list">
+        <div *ngFor="let item of notifications" class="item-card notif-card" [class.read]="item.isRead">
+          <div class="notif-content">
+            <h4>{{ item.title || item.mensaje || 'Aviso' }}</h4>
+            <p>{{ item.message || item.descripcion }}</p>
+          </div>
+          <button *ngIf="!item.isRead" class="btn-read" (click)="markAsRead(item.id)">
+            Marcar leída
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>

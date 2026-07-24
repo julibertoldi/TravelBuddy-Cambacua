@@ -1,0 +1,228 @@
+// Variables de Color Requeridas
+$color-beige-arena: #c7b9ae;
+$color-crema-pastel: #f5eed3;
+$color-verde-menta: #a8beb9;
+$color-text-dark: #4a4a4a;
+
+.notifications-dashboard {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); // 3 Columnas de igual tamaño
+  gap: 1.5rem;
+  padding: 1.5rem;
+  color: $color-text-dark;
+  font-family: system-ui, -apple-system, sans-serif;
+  align-items: start;
+
+  // Responsive para pantallas chicas
+  @media (max-width: 1200px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.dashboard-col {
+  width: 100%;
+}
+
+/* Tarjeta Base de cada Columna */
+.card-box {
+  background-color: $color-crema-pastel;
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid $color-beige-arena;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+  min-height: 480px;
+  display: flex;
+  flex-direction: column;
+
+  h2 {
+    margin-top: 0;
+    margin-bottom: 0.25rem;
+    font-size: 1.3rem;
+  }
+
+  .subtitle {
+    font-size: 0.85rem;
+    opacity: 0.8;
+    margin-bottom: 1.5rem;
+  }
+}
+
+/* 1. Estilos de Configuración */
+.setting-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.85rem 0;
+  border-bottom: 1px solid lighten($color-beige-arena, 10%);
+
+  .setting-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding-right: 0.5rem;
+
+    strong {
+      font-size: 0.95rem;
+    }
+
+    span {
+      font-size: 0.8rem;
+      opacity: 0.8;
+    }
+  }
+}
+
+/* Switch Toggle */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 22px;
+  flex-shrink: 0;
+
+  input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+
+    &:checked + .slider {
+      background-color: $color-verde-menta;
+    }
+
+    &:checked + .slider:before {
+      transform: translateX(20px);
+    }
+  }
+
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: $color-beige-arena;
+    transition: .3s;
+    border-radius: 22px;
+
+    &:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .3s;
+      border-radius: 50%;
+    }
+  }
+}
+
+.btn-save {
+  margin-top: auto;
+  padding: 0.75rem;
+  background-color: $color-verde-menta;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:hover {
+    background-color: darken($color-verde-menta, 10%);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+/* 2. Listados y Tarjetas */
+.items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+}
+
+.item-card {
+  background-color: white;
+  border: 1px solid lighten($color-beige-arena, 5%);
+  padding: 0.85rem;
+  border-radius: 8px;
+
+  h4 {
+    margin: 0 0 0.3rem 0;
+    font-size: 0.95rem;
+  }
+
+  &.read {
+    opacity: 0.65;
+    background-color: rgba(255, 255, 255, 0.5);
+  }
+}
+
+/* Tarjetas de Eventos */
+.event-card {
+  border-left: 4px solid $color-verde-menta;
+
+  .event-date {
+    font-size: 0.8rem;
+    color: darken($color-beige-arena, 20%);
+    font-weight: 600;
+  }
+
+  .event-location {
+    margin: 0.3rem 0 0 0;
+    font-size: 0.8rem;
+    opacity: 0.8;
+  }
+}
+
+/* Tarjetas de Notificaciones */
+.notif-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  .notif-content p {
+    margin: 0;
+    font-size: 0.8rem;
+    opacity: 0.85;
+  }
+
+  .btn-read {
+    align-self: flex-end;
+    background-color: transparent;
+    border: 1px solid $color-verde-menta;
+    color: darken($color-verde-menta, 20%);
+    padding: 0.25rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    cursor: pointer;
+
+    &:hover {
+      background-color: $color-verde-menta;
+      color: white;
+    }
+  }
+}
+
+.empty-state, .loading-state {
+  text-align: center;
+  padding: 2rem 1rem;
+  background-color: rgba(255, 255, 255, 0.5);
+  border: 1px dashed $color-beige-arena;
+  border-radius: 8px;
+  font-size: 0.85rem;
+}
+
+.success-msg {
+  color: green;
+  text-align: center;
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+}
