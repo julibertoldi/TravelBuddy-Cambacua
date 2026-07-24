@@ -1,22 +1,33 @@
+// Variables de Color
+$color-beige-arena: #c7b9ae;
+$color-crema-pastel: #f5eed3;
+$color-verde-menta: #a8beb9;
+$color-text-dark: #4a4a4a;
+
 .card {
   transition: all 0.3s ease;
-  background-color: var(--lpx-card-bg, #ffffff);
+  background-color: $color-crema-pastel;
+  border: 1px solid $color-beige-arena;
+  color: $color-text-dark;
   
   .card-header {
-    background: linear-gradient(135deg, var(--lpx-primary, #007bff) 0%, #0056b3 100%) !important;
+    background: linear-gradient(135deg, $color-verde-menta 0%, darken($color-verde-menta, 12%) 100%) !important;
+    color: white;
   }
 }
 
 .form-control:focus {
-  box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.15);
-  border-color: var(--lpx-primary, #007bff);
+  box-shadow: 0 0 0 0.25rem rgba(168, 190, 185, 0.35); // Halo usando $color-verde-menta
+  border-color: $color-verde-menta;
 }
 
 .btn-primary {
-  background: var(--lpx-primary, #007bff);
+  background-color: $color-verde-menta;
   border: none;
+  color: white;
+  
   &:hover {
-    background: #0056b3;
+    background-color: darken($color-verde-menta, 10%);
   }
 }
 
