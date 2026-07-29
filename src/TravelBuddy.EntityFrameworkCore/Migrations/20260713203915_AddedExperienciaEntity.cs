@@ -11,6 +11,7 @@ namespace TravelBuddy.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+        /* 
             migrationBuilder.CreateTable(
                 name: "AppExperiencias",
                 columns: table => new
@@ -33,13 +34,15 @@ namespace TravelBuddy.Migrations
                 {
                     table.PrimaryKey("PK_AppExperiencias", x => x.Id);
                 });
+        */
         }
+        
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "AppExperiencias");
+            //migrationBuilder.DropTable(
+                //name: "AppExperiencias");
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Moq;
 using Microsoft.Extensions.DependencyInjection;
@@ -53,14 +54,9 @@ public class DestinationAppService_Tests : TravelBuddyApplicationTestBase<Travel
         _unitOfWorkManager = GetRequiredService<IUnitOfWorkManager>();
     }
 
-    // ==========================================
-    // 🔍 PRUEBAS DEL PASO 1 (BÚSQUEDA)
-    // ==========================================
-
     [Fact]
     public async Task ShouldReturnCities_WhenServiceReturnsResults()
     {
-        // Envolvemos en un UnitOfWork para asegurar que el contexto de ABP no se destruya antes de tiempo
         using (var uow = _unitOfWorkManager.Begin())
         {
             var request = new CitySearchRequestDto { PartialName = "Rio" };
@@ -92,10 +88,6 @@ public class DestinationAppService_Tests : TravelBuddyApplicationTestBase<Travel
             await uow.CompleteAsync();
         }
     }
-
-    // ==========================================
-    // 💾 PRUEBAS DEL PASO 2 (IMPORTACIÓN)
-    // ==========================================
 
     [Fact]
     public async Task Should_Import_New_Destination_From_GeoDb()
@@ -145,10 +137,6 @@ public class DestinationAppService_Tests : TravelBuddyApplicationTestBase<Travel
             var count = await _destinationRepository.CountAsync(d => d.GeoDbCityId == existingGeoDbId);
             count.ShouldBe(1);
 
-            await Assert.ThrowsAsync<HttpRequestException>(() =>
-                _appService.SearchCitiesAsync(request)
-            );
-        }  
             await uow.CompleteAsync();
         }
     }

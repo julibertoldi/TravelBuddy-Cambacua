@@ -66,7 +66,7 @@ namespace TravelBuddy.Migrations
                 table: "AppDestinations",
                 type: "int",
                 nullable: true);
-
+/*
             migrationBuilder.CreateTable(
                 name: "AppExperiencias",
                 columns: table => new
@@ -89,6 +89,7 @@ namespace TravelBuddy.Migrations
                 {
                     table.PrimaryKey("PK_AppExperiencias", x => x.Id);
                 });
+            */
 
             migrationBuilder.CreateIndex(
                 name: "IX_AppDestinations_GeoDbCityId",
@@ -99,8 +100,8 @@ namespace TravelBuddy.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "AppExperiencias");
+           // migrationBuilder.DropTable(
+           //     name: "AppExperiencias");
 
             migrationBuilder.DropIndex(
                 name: "IX_AppDestinations_GeoDbCityId",

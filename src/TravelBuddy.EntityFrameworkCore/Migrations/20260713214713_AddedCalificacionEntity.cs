@@ -32,6 +32,7 @@ namespace TravelBuddy.Migrations
                     table.PrimaryKey("PK_AppCalificaciones", x => x.Id);
                 });
 
+            /*
             migrationBuilder.CreateTable(
                 name: "AppExperiencias",
                 columns: table => new
@@ -54,6 +55,7 @@ namespace TravelBuddy.Migrations
                 {
                     table.PrimaryKey("PK_AppExperiencias", x => x.Id);
                 });
+            */
 
             migrationBuilder.CreateIndex(
                 name: "IX_AppCalificaciones_DestinoId_UsuarioId",
