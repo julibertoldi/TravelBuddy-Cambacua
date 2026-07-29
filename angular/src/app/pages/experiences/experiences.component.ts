@@ -66,9 +66,7 @@ export class ExperiencesComponent implements OnInit {
     this.buildFilterForm();
     this.buildForm();
 
-    const experienceStreamCreator = (
-      query: ExperienciaGetListInput,
-    ) => {
+    const experienceStreamCreator = (query: ExperienciaGetListInput) => {
       const filters = this.filterForm.value;
 
       return this.experienciaService.getList({

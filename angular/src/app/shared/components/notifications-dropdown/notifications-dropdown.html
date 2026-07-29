@@ -1,0 +1,40 @@
+<div class="notifications-container">
+  <!-- Botón de Campanita -->
+  <button class="bell-btn" (click)="toggleDropdown()" title="Notificaciones">
+    <i class="fa fa-bell"></i> 🔔
+    <span class="badge" *ngIf="events.length > 0">{{ events.length }}</span>
+  </button>
+
+  <!-- Menú Desplegable -->
+  <div class="dropdown-menu" *ngIf="isOpen">
+    <div class="dropdown-header">
+      <h3>Eventos Próximos</h3>
+      <span class="sub-header">Tus Destinos Favoritos</span>
+    </div>
+
+    <div class="dropdown-body">
+      <!-- Estado Cargando -->
+      <div *ngIf="loading" class="state-msg">
+        <p>Cargando eventos de Ticketmaster...</p>
+      </div>
+
+      <!-- Estado Sin Eventos -->
+      <div *ngIf="!loading && events.length === 0" class="state-msg">
+        <p>No hay eventos próximos para tus destinos favoritos.</p>
+      </div>
+
+      <!-- Lista de Eventos -->
+      <div class="event-item" *ngFor="let event of events">
+        <img [src]="event.imagenUrl" [alt]="event.nombreEvento" class="event-img" *ngIf="event.imagenUrl" />
+        <div class="event-info">
+          <span class="city-tag">{{ event.nombreCiudad }}</span>
+          <h4 class="event-title">{{ event.nombreEvento }}</h4>
+          <p class="event-date">📅 {{ event.fechaEvento | date:'dd/MM/yyyy HH:mm' }}</p>
+          <a [href]="event.urlEvento" target="_blank" rel="noopener noreferrer" class="event-link">
+            Ver Entradas →
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
