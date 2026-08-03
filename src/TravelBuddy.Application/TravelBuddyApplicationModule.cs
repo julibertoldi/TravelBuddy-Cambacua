@@ -1,12 +1,13 @@
-﻿using Volo.Abp.PermissionManagement;
-using Volo.Abp.SettingManagement;
+﻿using Microsoft.Extensions.DependencyInjection;
+using TravelBuddy.Cities;
+using TravelBuddy.Infraestructure;
 using Volo.Abp.Account;
-using Volo.Abp.Identity;
 using Volo.Abp.AutoMapper;
 using Volo.Abp.FeatureManagement;
+using Volo.Abp.Identity;
 using Volo.Abp.Modularity;
-using TravelBuddy.Cities;
-using Microsoft.Extensions.DependencyInjection;
+using Volo.Abp.PermissionManagement;
+using Volo.Abp.SettingManagement;
 
 
 namespace TravelBuddy
@@ -21,17 +22,22 @@ namespace TravelBuddy
         typeof(AbpAccountApplicationModule),
         typeof(AbpSettingManagementApplicationModule)
     )]
-    public class TravelBuddyApplicationModule : AbpModule // <-- Clase de Módulo
+    public class TravelBuddyApplicationModule : AbpModule
     {
-        public override void ConfigureServices(ServiceConfigurationContext context) // <-- Método dentro de la clase
+        public override void ConfigureServices(ServiceConfigurationContext context)
         {
             Configure<AbpAutoMapperOptions>(options =>
             {
                 options.AddMaps<TravelBuddyApplicationModule>();
             });
 
-            // Esto configura la inyección de dependencia para HttpClient
-            context.Services.AddHttpClient<ICitySearchService, GeoDbCitySearchService>();
+            // 1. Registramos el handler en el contenedor de dependencias
+            context.Services.AddTransient<GeoDbMetricsHandler>();
+
+            // 2. Asociamos el handler al cliente HTTP de GeoDB
+            context.Services.AddHttpClient<ICitySearchService, GeoDbCitySearchService>()
+                .AddHttpMessageHandler<GeoDbMetricsHandler>();
+
             context.Services.AddHttpClient();
         }
     }
