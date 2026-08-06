@@ -160,7 +160,6 @@ export class ExperiencesComponent implements OnInit {
 
     const input: CreateUpdateExperienciaDto = {
       destinoId: this.form.value.destinoId,
-      usuarioId: this.configState.getOne('currentUser')?.id || '',
       titulo: this.form.value.titulo,
       descripcion: this.form.value.descripcion,
       valoracion: this.form.value.valoracion,

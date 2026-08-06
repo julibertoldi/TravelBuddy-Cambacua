@@ -1,6 +1,10 @@
+import * as Admin from './admin';
+import * as Calificaciones from './calificaciones';
 import * as Cities from './cities';
 import * as Controllers from './controllers';
 import * as Destinations from './destinations';
 import * as Experiencias from './experiencias';
+import * as Favorites from './favorites';
+import * as Notifications from './notifications';
 import * as Users from './users';
-export { Cities, Controllers, Destinations, Experiencias, Users };
+export { Admin, Calificaciones, Cities, Controllers, Destinations, Experiencias, Favorites, Notifications, Users };

@@ -873,6 +873,579 @@
       "rootPath": "app",
       "remoteServiceName": "Default",
       "controllers": {
+        "TravelBuddy.Admin.AdminAppService": {
+          "controllerName": "Admin",
+          "controllerGroupName": "Admin",
+          "isRemoteService": true,
+          "isIntegrationService": false,
+          "apiVersion": null,
+          "type": "TravelBuddy.Admin.AdminAppService",
+          "interfaces": [
+            {
+              "type": "TravelBuddy.Admin.IAdminAppService",
+              "name": "IAdminAppService",
+              "methods": [
+                {
+                  "name": "GetDashboardStatsAsync",
+                  "parametersOnMethod": [],
+                  "returnValue": {
+                    "type": "TravelBuddy.Admin.AdminDashboardStatsDto",
+                    "typeSimple": "TravelBuddy.Admin.AdminDashboardStatsDto"
+                  }
+                }
+              ]
+            }
+          ],
+          "actions": {
+            "GetDashboardStatsAsync": {
+              "uniqueName": "GetDashboardStatsAsync",
+              "name": "GetDashboardStatsAsync",
+              "httpMethod": "GET",
+              "url": "api/app/admin/dashboard-stats",
+              "supportedVersions": [],
+              "parametersOnMethod": [],
+              "parameters": [],
+              "returnValue": {
+                "type": "TravelBuddy.Admin.AdminDashboardStatsDto",
+                "typeSimple": "TravelBuddy.Admin.AdminDashboardStatsDto"
+              },
+              "allowAnonymous": null,
+              "implementFrom": "TravelBuddy.Admin.IAdminAppService"
+            }
+          }
+        },
+        "TravelBuddy.Calificaciones.CalificacionAppService": {
+          "controllerName": "Calificacion",
+          "controllerGroupName": "Calificacion",
+          "isRemoteService": true,
+          "isIntegrationService": false,
+          "apiVersion": null,
+          "type": "TravelBuddy.Calificaciones.CalificacionAppService",
+          "interfaces": [
+            {
+              "type": "TravelBuddy.Calificaciones.ICalificacionAppService",
+              "name": "ICalificacionAppService",
+              "methods": [
+                {
+                  "name": "GetPromedioByDestinoAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "destinoId",
+                      "typeAsString": "System.Guid, System.Private.CoreLib",
+                      "type": "System.Guid",
+                      "typeSimple": "string",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "TravelBuddy.Calificaciones.CalificacionPromedioDto",
+                    "typeSimple": "TravelBuddy.Calificaciones.CalificacionPromedioDto"
+                  }
+                },
+                {
+                  "name": "GetAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "id",
+                      "typeAsString": "System.Guid, System.Private.CoreLib",
+                      "type": "System.Guid",
+                      "typeSimple": "string",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "TravelBuddy.Calificaciones.CalificacionDto",
+                    "typeSimple": "TravelBuddy.Calificaciones.CalificacionDto"
+                  }
+                },
+                {
+                  "name": "GetListAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "input",
+                      "typeAsString": "TravelBuddy.Calificaciones.CalificacionGetListInput, TravelBuddy.Application.Contracts",
+                      "type": "TravelBuddy.Calificaciones.CalificacionGetListInput",
+                      "typeSimple": "TravelBuddy.Calificaciones.CalificacionGetListInput",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "Volo.Abp.Application.Dtos.PagedResultDto<TravelBuddy.Calificaciones.CalificacionDto>",
+                    "typeSimple": "Volo.Abp.Application.Dtos.PagedResultDto<TravelBuddy.Calificaciones.CalificacionDto>"
+                  }
+                },
+                {
+                  "name": "CreateAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "input",
+                      "typeAsString": "TravelBuddy.Calificaciones.CreateUpdateCalificacionDto, TravelBuddy.Application.Contracts",
+                      "type": "TravelBuddy.Calificaciones.CreateUpdateCalificacionDto",
+                      "typeSimple": "TravelBuddy.Calificaciones.CreateUpdateCalificacionDto",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "TravelBuddy.Calificaciones.CalificacionDto",
+                    "typeSimple": "TravelBuddy.Calificaciones.CalificacionDto"
+                  }
+                },
+                {
+                  "name": "UpdateAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "id",
+                      "typeAsString": "System.Guid, System.Private.CoreLib",
+                      "type": "System.Guid",
+                      "typeSimple": "string",
+                      "isOptional": false,
+                      "defaultValue": null
+                    },
+                    {
+                      "name": "input",
+                      "typeAsString": "TravelBuddy.Calificaciones.CreateUpdateCalificacionDto, TravelBuddy.Application.Contracts",
+                      "type": "TravelBuddy.Calificaciones.CreateUpdateCalificacionDto",
+                      "typeSimple": "TravelBuddy.Calificaciones.CreateUpdateCalificacionDto",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "TravelBuddy.Calificaciones.CalificacionDto",
+                    "typeSimple": "TravelBuddy.Calificaciones.CalificacionDto"
+                  }
+                },
+                {
+                  "name": "DeleteAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "id",
+                      "typeAsString": "System.Guid, System.Private.CoreLib",
+                      "type": "System.Guid",
+                      "typeSimple": "string",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "System.Void",
+                    "typeSimple": "System.Void"
+                  }
+                }
+              ]
+            }
+          ],
+          "actions": {
+            "GetAsyncById": {
+              "uniqueName": "GetAsyncById",
+              "name": "GetAsync",
+              "httpMethod": "GET",
+              "url": "api/app/calificacion/{id}",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "id",
+                  "typeAsString": "System.Guid, System.Private.CoreLib",
+                  "type": "System.Guid",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "id",
+                  "name": "id",
+                  "jsonName": null,
+                  "type": "System.Guid",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": [],
+                  "bindingSourceId": "Path",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "TravelBuddy.Calificaciones.CalificacionDto",
+                "typeSimple": "TravelBuddy.Calificaciones.CalificacionDto"
+              },
+              "allowAnonymous": true,
+              "implementFrom": "Volo.Abp.Application.Services.IReadOnlyAppService<TravelBuddy.Calificaciones.CalificacionDto,TravelBuddy.Calificaciones.CalificacionDto,System.Guid,TravelBuddy.Calificaciones.CalificacionGetListInput>"
+            },
+            "GetListAsyncByInput": {
+              "uniqueName": "GetListAsyncByInput",
+              "name": "GetListAsync",
+              "httpMethod": "GET",
+              "url": "api/app/calificacion",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "input",
+                  "typeAsString": "TravelBuddy.Calificaciones.CalificacionGetListInput, TravelBuddy.Application.Contracts",
+                  "type": "TravelBuddy.Calificaciones.CalificacionGetListInput",
+                  "typeSimple": "TravelBuddy.Calificaciones.CalificacionGetListInput",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "input",
+                  "name": "DestinoId",
+                  "jsonName": null,
+                  "type": "System.Guid?",
+                  "typeSimple": "string?",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "Sorting",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "SkipCount",
+                  "jsonName": null,
+                  "type": "System.Int32",
+                  "typeSimple": "number",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "MaxResultCount",
+                  "jsonName": null,
+                  "type": "System.Int32",
+                  "typeSimple": "number",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                }
+              ],
+              "returnValue": {
+                "type": "Volo.Abp.Application.Dtos.PagedResultDto<TravelBuddy.Calificaciones.CalificacionDto>",
+                "typeSimple": "Volo.Abp.Application.Dtos.PagedResultDto<TravelBuddy.Calificaciones.CalificacionDto>"
+              },
+              "allowAnonymous": true,
+              "implementFrom": "Volo.Abp.Application.Services.IReadOnlyAppService<TravelBuddy.Calificaciones.CalificacionDto,TravelBuddy.Calificaciones.CalificacionDto,System.Guid,TravelBuddy.Calificaciones.CalificacionGetListInput>"
+            },
+            "CreateAsyncByInput": {
+              "uniqueName": "CreateAsyncByInput",
+              "name": "CreateAsync",
+              "httpMethod": "POST",
+              "url": "api/app/calificacion",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "input",
+                  "typeAsString": "TravelBuddy.Calificaciones.CreateUpdateCalificacionDto, TravelBuddy.Application.Contracts",
+                  "type": "TravelBuddy.Calificaciones.CreateUpdateCalificacionDto",
+                  "typeSimple": "TravelBuddy.Calificaciones.CreateUpdateCalificacionDto",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "input",
+                  "name": "input",
+                  "jsonName": null,
+                  "type": "TravelBuddy.Calificaciones.CreateUpdateCalificacionDto",
+                  "typeSimple": "TravelBuddy.Calificaciones.CreateUpdateCalificacionDto",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Body",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "TravelBuddy.Calificaciones.CalificacionDto",
+                "typeSimple": "TravelBuddy.Calificaciones.CalificacionDto"
+              },
+              "allowAnonymous": true,
+              "implementFrom": "Volo.Abp.Application.Services.ICreateAppService<TravelBuddy.Calificaciones.CalificacionDto,TravelBuddy.Calificaciones.CreateUpdateCalificacionDto>"
+            },
+            "UpdateAsyncByIdAndInput": {
+              "uniqueName": "UpdateAsyncByIdAndInput",
+              "name": "UpdateAsync",
+              "httpMethod": "PUT",
+              "url": "api/app/calificacion/{id}",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "id",
+                  "typeAsString": "System.Guid, System.Private.CoreLib",
+                  "type": "System.Guid",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null
+                },
+                {
+                  "name": "input",
+                  "typeAsString": "TravelBuddy.Calificaciones.CreateUpdateCalificacionDto, TravelBuddy.Application.Contracts",
+                  "type": "TravelBuddy.Calificaciones.CreateUpdateCalificacionDto",
+                  "typeSimple": "TravelBuddy.Calificaciones.CreateUpdateCalificacionDto",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "id",
+                  "name": "id",
+                  "jsonName": null,
+                  "type": "System.Guid",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": [],
+                  "bindingSourceId": "Path",
+                  "descriptorName": ""
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "input",
+                  "jsonName": null,
+                  "type": "TravelBuddy.Calificaciones.CreateUpdateCalificacionDto",
+                  "typeSimple": "TravelBuddy.Calificaciones.CreateUpdateCalificacionDto",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Body",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "TravelBuddy.Calificaciones.CalificacionDto",
+                "typeSimple": "TravelBuddy.Calificaciones.CalificacionDto"
+              },
+              "allowAnonymous": true,
+              "implementFrom": "Volo.Abp.Application.Services.IUpdateAppService<TravelBuddy.Calificaciones.CalificacionDto,System.Guid,TravelBuddy.Calificaciones.CreateUpdateCalificacionDto>"
+            },
+            "DeleteAsyncById": {
+              "uniqueName": "DeleteAsyncById",
+              "name": "DeleteAsync",
+              "httpMethod": "DELETE",
+              "url": "api/app/calificacion/{id}",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "id",
+                  "typeAsString": "System.Guid, System.Private.CoreLib",
+                  "type": "System.Guid",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "id",
+                  "name": "id",
+                  "jsonName": null,
+                  "type": "System.Guid",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": [],
+                  "bindingSourceId": "Path",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "System.Void",
+                "typeSimple": "System.Void"
+              },
+              "allowAnonymous": true,
+              "implementFrom": "Volo.Abp.Application.Services.IDeleteAppService<System.Guid>"
+            },
+            "GetPromedioByDestinoAsyncByDestinoId": {
+              "uniqueName": "GetPromedioByDestinoAsyncByDestinoId",
+              "name": "GetPromedioByDestinoAsync",
+              "httpMethod": "GET",
+              "url": "api/app/calificacion/promedio-by-destino/{destinoId}",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "destinoId",
+                  "typeAsString": "System.Guid, System.Private.CoreLib",
+                  "type": "System.Guid",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "destinoId",
+                  "name": "destinoId",
+                  "jsonName": null,
+                  "type": "System.Guid",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": [],
+                  "bindingSourceId": "Path",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "TravelBuddy.Calificaciones.CalificacionPromedioDto",
+                "typeSimple": "TravelBuddy.Calificaciones.CalificacionPromedioDto"
+              },
+              "allowAnonymous": true,
+              "implementFrom": "TravelBuddy.Calificaciones.ICalificacionAppService"
+            }
+          }
+        },
+        "TravelBuddy.Controllers.AdminController": {
+          "controllerName": "Admin",
+          "controllerGroupName": "Admin",
+          "isRemoteService": true,
+          "isIntegrationService": false,
+          "apiVersion": null,
+          "type": "TravelBuddy.Controllers.AdminController",
+          "interfaces": [],
+          "actions": {
+            "GetDashboardStatsAsync": {
+              "uniqueName": "GetDashboardStatsAsync",
+              "name": "GetDashboardStatsAsync",
+              "httpMethod": "GET",
+              "url": "api/app/admin/dashboard-stats",
+              "supportedVersions": [],
+              "parametersOnMethod": [],
+              "parameters": [],
+              "returnValue": {
+                "type": "TravelBuddy.Admin.AdminDashboardStatsDto",
+                "typeSimple": "TravelBuddy.Admin.AdminDashboardStatsDto"
+              },
+              "allowAnonymous": false,
+              "implementFrom": "TravelBuddy.Controllers.AdminController"
+            }
+          }
+        },
+        "TravelBuddy.Controllers.FavoriteController": {
+          "controllerName": "Favorite",
+          "controllerGroupName": null,
+          "isRemoteService": false,
+          "isIntegrationService": false,
+          "apiVersion": null,
+          "type": "TravelBuddy.Controllers.FavoriteController",
+          "interfaces": [],
+          "actions": {
+            "AgregarFavoritoAsyncByDestinoId": {
+              "uniqueName": "AgregarFavoritoAsyncByDestinoId",
+              "name": "AgregarFavoritoAsync",
+              "httpMethod": "POST",
+              "url": "api/app/favorites/agregar/{destinoId}",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "destinoId",
+                  "typeAsString": "System.Guid, System.Private.CoreLib",
+                  "type": "System.Guid",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "destinoId",
+                  "name": "destinoId",
+                  "jsonName": null,
+                  "type": "System.Guid",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": [],
+                  "bindingSourceId": "Path",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "System.Void",
+                "typeSimple": "System.Void"
+              },
+              "allowAnonymous": false,
+              "implementFrom": "TravelBuddy.Controllers.FavoriteController"
+            },
+            "QuitarFavoritoAsyncByDestinoId": {
+              "uniqueName": "QuitarFavoritoAsyncByDestinoId",
+              "name": "QuitarFavoritoAsync",
+              "httpMethod": "DELETE",
+              "url": "api/app/favorites/quitar/{destinoId}",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "destinoId",
+                  "typeAsString": "System.Guid, System.Private.CoreLib",
+                  "type": "System.Guid",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "destinoId",
+                  "name": "destinoId",
+                  "jsonName": null,
+                  "type": "System.Guid",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": [],
+                  "bindingSourceId": "Path",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "System.Void",
+                "typeSimple": "System.Void"
+              },
+              "allowAnonymous": false,
+              "implementFrom": "TravelBuddy.Controllers.FavoriteController"
+            },
+            "ObtenerMisFavoritosAsync": {
+              "uniqueName": "ObtenerMisFavoritosAsync",
+              "name": "ObtenerMisFavoritosAsync",
+              "httpMethod": "GET",
+              "url": "api/app/favorites",
+              "supportedVersions": [],
+              "parametersOnMethod": [],
+              "parameters": [],
+              "returnValue": {
+                "type": "System.Collections.Generic.List<TravelBuddy.Favorites.FavoriteDto>",
+                "typeSimple": "[TravelBuddy.Favorites.FavoriteDto]"
+              },
+              "allowAnonymous": false,
+              "implementFrom": "TravelBuddy.Controllers.FavoriteController"
+            }
+          }
+        },
         "TravelBuddy.Controllers.UserProfileController": {
           "controllerName": "UserProfile",
           "controllerGroupName": null,
@@ -882,14 +1455,6 @@
           "type": "TravelBuddy.Controllers.UserProfileController",
           "interfaces": [],
           "actions": {
-            "UpdateMyProfileAsyncByInput": {
-              "uniqueName": "UpdateMyProfileAsyncByInput",
-              "name": "UpdateMyProfileAsync",
-              "httpMethod": "PUT",
-            "DeleteMyAccountAsync": {
-              "uniqueName": "DeleteMyAccountAsync",
-              "name": "DeleteMyAccountAsync",
-              "httpMethod": "DELETE",
             "UpdateMyProfileAsyncByInput": {
               "uniqueName": "UpdateMyProfileAsyncByInput",
               "name": "UpdateMyProfileAsync",
@@ -954,60 +1519,10 @@
                   "constraintTypes": null,
                   "bindingSourceId": "ModelBinding",
                   "descriptorName": "input"
-                }
-              ],
-              "parametersOnMethod": [],
-              "parameters": [],
-              "parametersOnMethod": [
-                {
-                  "name": "input",
-                  "typeAsString": "TravelBuddy.Users.UpdateUserProfileDto, TravelBuddy.Application.Contracts",
-                  "type": "TravelBuddy.Users.UpdateUserProfileDto",
-                  "typeSimple": "TravelBuddy.Users.UpdateUserProfileDto",
-                  "isOptional": false,
-                  "defaultValue": null
-                }
-              ],
-              "parameters": [
-                {
-                  "nameOnMethod": "input",
-                  "name": "Nombre",
-                  "jsonName": null,
-                  "type": "System.String",
-                  "typeSimple": "string",
-                  "isOptional": false,
-                  "defaultValue": null,
-                  "constraintTypes": null,
-                  "bindingSourceId": "ModelBinding",
-                  "descriptorName": "input"
                 },
                 {
                   "nameOnMethod": "input",
-                  "name": "Apellido",
-                  "jsonName": null,
-                  "type": "System.String",
-                  "typeSimple": "string",
-                  "isOptional": false,
-                  "defaultValue": null,
-                  "constraintTypes": null,
-                  "bindingSourceId": "ModelBinding",
-                  "descriptorName": "input"
-                },
-                {
-                  "nameOnMethod": "input",
-                  "name": "FotoPerfilUrl",
-                  "jsonName": null,
-                  "type": "System.String",
-                  "typeSimple": "string",
-                  "isOptional": false,
-                  "defaultValue": null,
-                  "constraintTypes": null,
-                  "bindingSourceId": "ModelBinding",
-                  "descriptorName": "input"
-                },
-                {
-                  "nameOnMethod": "input",
-                  "name": "Preferencias",
+                  "name": "Email",
                   "jsonName": null,
                   "type": "System.String",
                   "typeSimple": "string",
@@ -1025,39 +1540,32 @@
               "allowAnonymous": false,
               "implementFrom": "TravelBuddy.Controllers.UserProfileController"
             },
-            "GetPublicProfileAsyncByUserId": {
-              "uniqueName": "GetPublicProfileAsyncByUserId",
-              "name": "GetPublicProfileAsync",
+            "GetMyProfileAsync": {
+              "uniqueName": "GetMyProfileAsync",
+              "name": "GetMyProfileAsync",
               "httpMethod": "GET",
-              "url": "api/user-profile/{userId}",
+              "url": "api/user-profile/me",
               "supportedVersions": [],
-              "parametersOnMethod": [
-                {
-                  "name": "userId",
-                  "typeAsString": "System.Guid, System.Private.CoreLib",
-                  "type": "System.Guid",
-                  "typeSimple": "string",
-                  "isOptional": false,
-                  "defaultValue": null
-                }
-              ],
-              "parameters": [
-                {
-                  "nameOnMethod": "userId",
-                  "name": "userId",
-                  "jsonName": null,
-                  "type": "System.Guid",
-                  "typeSimple": "string",
-                  "isOptional": false,
-                  "defaultValue": null,
-                  "constraintTypes": [],
-                  "bindingSourceId": "Path",
-                  "descriptorName": ""
-                }
-              ],
+              "parametersOnMethod": [],
+              "parameters": [],
               "returnValue": {
                 "type": "TravelBuddy.Users.PublicUserProfileDto",
                 "typeSimple": "TravelBuddy.Users.PublicUserProfileDto"
+              },
+              "allowAnonymous": false,
+              "implementFrom": "TravelBuddy.Controllers.UserProfileController"
+            },
+            "DeleteMyAccountAsync": {
+              "uniqueName": "DeleteMyAccountAsync",
+              "name": "DeleteMyAccountAsync",
+              "httpMethod": "DELETE",
+              "url": "api/user-profile/me",
+              "supportedVersions": [],
+              "parametersOnMethod": [],
+              "parameters": [],
+              "returnValue": {
+                "type": "System.Void",
+                "typeSimple": "System.Void"
               },
               "allowAnonymous": false,
               "implementFrom": "TravelBuddy.Controllers.UserProfileController"
@@ -1268,8 +1776,6 @@
               },
               "allowAnonymous": null,
               "implementFrom": "TravelBuddy.Destinations.IDestinationAppService"
-              "implementFrom": "TravelBuddy.Destinations.DestinationAppService"
-              "implementFrom": "TravelBuddy.Destinations.IDestinationAppService"
             },
             "GetCityDetailsAsyncByCityId": {
               "uniqueName": "GetCityDetailsAsyncByCityId",
@@ -1307,8 +1813,6 @@
               },
               "allowAnonymous": null,
               "implementFrom": "TravelBuddy.Destinations.IDestinationAppService"
-              "implementFrom": "TravelBuddy.Destinations.DestinationAppService"
-              "implementFrom": "TravelBuddy.Destinations.IDestinationAppService"
             },
             "GetPopularCitiesAsync": {
               "uniqueName": "GetPopularCitiesAsync",
@@ -1323,47 +1827,6 @@
                 "typeSimple": "TravelBuddy.Cities.CitySearchResultDto"
               },
               "allowAnonymous": null,
-              "implementFrom": "TravelBuddy.Destinations.IDestinationAppService"
-              "implementFrom": "TravelBuddy.Destinations.DestinationAppService"
-              "implementFrom": "TravelBuddy.Destinations.IDestinationAppService"
-            },
-            "ImportFromGeoDbAsyncByGeoDbCityId": {
-              "uniqueName": "ImportFromGeoDbAsyncByGeoDbCityId",
-              "name": "ImportFromGeoDbAsync",
-              "httpMethod": "POST",
-              "url": "api/app/destination/import-from-geo-db/{geoDbCityId}",
-              "supportedVersions": [],
-              "parametersOnMethod": [
-                {
-                  "name": "geoDbCityId",
-                  "typeAsString": "System.Int32, System.Private.CoreLib",
-                  "type": "System.Int32",
-                  "typeSimple": "number",
-                  "isOptional": false,
-                  "defaultValue": null
-                }
-              ],
-              "parameters": [
-                {
-                  "nameOnMethod": "geoDbCityId",
-                  "name": "geoDbCityId",
-                  "jsonName": null,
-                  "type": "System.Int32",
-                  "typeSimple": "number",
-                  "isOptional": false,
-                  "defaultValue": null,
-                  "constraintTypes": [],
-                  "bindingSourceId": "Path",
-                  "descriptorName": ""
-                }
-              ],
-              "returnValue": {
-                "type": "TravelBuddy.Destinations.DestinationDto",
-                "typeSimple": "TravelBuddy.Destinations.DestinationDto"
-              },
-              "allowAnonymous": null,
-              "implementFrom": "TravelBuddy.Destinations.IDestinationAppService"
-              "implementFrom": "TravelBuddy.Destinations.DestinationAppService"
               "implementFrom": "TravelBuddy.Destinations.IDestinationAppService"
             },
             "CreateAsyncByInput": {
@@ -1400,7 +1863,7 @@
                 "type": "TravelBuddy.Destinations.DestinationDto",
                 "typeSimple": "TravelBuddy.Destinations.DestinationDto"
               },
-              "allowAnonymous": null,
+              "allowAnonymous": false,
               "implementFrom": "Volo.Abp.Application.Services.ICreateAppService<TravelBuddy.Destinations.DestinationDto,TravelBuddy.Destinations.CreateUpdateDestinationDto>"
             },
             "UpdateAsyncByIdAndInput": {
@@ -1457,7 +1920,7 @@
                 "type": "TravelBuddy.Destinations.DestinationDto",
                 "typeSimple": "TravelBuddy.Destinations.DestinationDto"
               },
-              "allowAnonymous": null,
+              "allowAnonymous": false,
               "implementFrom": "Volo.Abp.Application.Services.IUpdateAppService<TravelBuddy.Destinations.DestinationDto,System.Guid,TravelBuddy.Destinations.CreateUpdateDestinationDto>"
             },
             "DeleteAsyncById": {
@@ -1494,8 +1957,45 @@
                 "type": "System.Void",
                 "typeSimple": "System.Void"
               },
-              "allowAnonymous": null,
+              "allowAnonymous": false,
               "implementFrom": "Volo.Abp.Application.Services.IDeleteAppService<System.Guid>"
+            },
+            "ImportFromGeoDbAsyncByGeoDbCityId": {
+              "uniqueName": "ImportFromGeoDbAsyncByGeoDbCityId",
+              "name": "ImportFromGeoDbAsync",
+              "httpMethod": "POST",
+              "url": "api/app/destination/import-from-geo-db/{geoDbCityId}",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "geoDbCityId",
+                  "typeAsString": "System.Int32, System.Private.CoreLib",
+                  "type": "System.Int32",
+                  "typeSimple": "number",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "geoDbCityId",
+                  "name": "geoDbCityId",
+                  "jsonName": null,
+                  "type": "System.Int32",
+                  "typeSimple": "number",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": [],
+                  "bindingSourceId": "Path",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "TravelBuddy.Destinations.DestinationDto",
+                "typeSimple": "TravelBuddy.Destinations.DestinationDto"
+              },
+              "allowAnonymous": false,
+              "implementFrom": "TravelBuddy.Destinations.IDestinationAppService"
             },
             "GetAsyncById": {
               "uniqueName": "GetAsyncById",
@@ -1634,9 +2134,6 @@
                       "typeAsString": "TravelBuddy.Experiencias.ExperienciaGetListInput, TravelBuddy.Application.Contracts",
                       "type": "TravelBuddy.Experiencias.ExperienciaGetListInput",
                       "typeSimple": "TravelBuddy.Experiencias.ExperienciaGetListInput",
-                      "typeAsString": "Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto, Volo.Abp.Ddd.Application.Contracts",
-                      "type": "Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto",
-                      "typeSimple": "Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto",
                       "isOptional": false,
                       "defaultValue": null
                     }
@@ -1876,7 +2373,6 @@
               },
               "allowAnonymous": null,
               "implementFrom": "Volo.Abp.Application.Services.IReadOnlyAppService<TravelBuddy.Experiencias.ExperienciaDto,TravelBuddy.Experiencias.ExperienciaDto,System.Guid,TravelBuddy.Experiencias.ExperienciaGetListInput>"
-              "implementFrom": "Volo.Abp.Application.Services.IReadOnlyAppService<TravelBuddy.Experiencias.ExperienciaDto,TravelBuddy.Experiencias.ExperienciaDto,System.Guid,Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto>"
             },
             "GetListAsyncByInput": {
               "uniqueName": "GetListAsyncByInput",
@@ -1890,9 +2386,6 @@
                   "typeAsString": "TravelBuddy.Experiencias.ExperienciaGetListInput, TravelBuddy.Application.Contracts",
                   "type": "TravelBuddy.Experiencias.ExperienciaGetListInput",
                   "typeSimple": "TravelBuddy.Experiencias.ExperienciaGetListInput",
-                  "typeAsString": "Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto, Volo.Abp.Ddd.Application.Contracts",
-                  "type": "Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto",
-                  "typeSimple": "Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto",
                   "isOptional": false,
                   "defaultValue": null
                 }
@@ -1977,7 +2470,201 @@
               },
               "allowAnonymous": null,
               "implementFrom": "Volo.Abp.Application.Services.IReadOnlyAppService<TravelBuddy.Experiencias.ExperienciaDto,TravelBuddy.Experiencias.ExperienciaDto,System.Guid,TravelBuddy.Experiencias.ExperienciaGetListInput>"
-              "implementFrom": "Volo.Abp.Application.Services.IReadOnlyAppService<TravelBuddy.Experiencias.ExperienciaDto,TravelBuddy.Experiencias.ExperienciaDto,System.Guid,Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto>"
+            }
+          }
+        },
+        "TravelBuddy.Notifications.NotificationAppService": {
+          "controllerName": "Notification",
+          "controllerGroupName": "Notification",
+          "isRemoteService": true,
+          "isIntegrationService": false,
+          "apiVersion": null,
+          "type": "TravelBuddy.Notifications.NotificationAppService",
+          "interfaces": [
+            {
+              "type": "TravelBuddy.Notifications.INotificationAppService",
+              "name": "INotificationAppService",
+              "methods": [
+                {
+                  "name": "GetListAsync",
+                  "parametersOnMethod": [],
+                  "returnValue": {
+                    "type": "System.Collections.Generic.List<TravelBuddy.Notifications.NotificationDto>",
+                    "typeSimple": "[TravelBuddy.Notifications.NotificationDto]"
+                  }
+                },
+                {
+                  "name": "MarkAsReadAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "id",
+                      "typeAsString": "System.Guid, System.Private.CoreLib",
+                      "type": "System.Guid",
+                      "typeSimple": "string",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "System.Void",
+                    "typeSimple": "System.Void"
+                  }
+                },
+                {
+                  "name": "GetSettingsAsync",
+                  "parametersOnMethod": [],
+                  "returnValue": {
+                    "type": "TravelBuddy.Notifications.NotificationSettingsDto",
+                    "typeSimple": "TravelBuddy.Notifications.NotificationSettingsDto"
+                  }
+                },
+                {
+                  "name": "UpdateSettingsAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "input",
+                      "typeAsString": "TravelBuddy.Notifications.NotificationSettingsDto, TravelBuddy.Application.Contracts",
+                      "type": "TravelBuddy.Notifications.NotificationSettingsDto",
+                      "typeSimple": "TravelBuddy.Notifications.NotificationSettingsDto",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "System.Void",
+                    "typeSimple": "System.Void"
+                  }
+                },
+                {
+                  "name": "GetUpcomingFavoriteEventsAsync",
+                  "parametersOnMethod": [],
+                  "returnValue": {
+                    "type": "System.Collections.Generic.List<TravelBuddy.Notifications.UpcomingEventNotificationDto>",
+                    "typeSimple": "[TravelBuddy.Notifications.UpcomingEventNotificationDto]"
+                  }
+                }
+              ]
+            }
+          ],
+          "actions": {
+            "GetListAsync": {
+              "uniqueName": "GetListAsync",
+              "name": "GetListAsync",
+              "httpMethod": "GET",
+              "url": "api/app/notification",
+              "supportedVersions": [],
+              "parametersOnMethod": [],
+              "parameters": [],
+              "returnValue": {
+                "type": "System.Collections.Generic.List<TravelBuddy.Notifications.NotificationDto>",
+                "typeSimple": "[TravelBuddy.Notifications.NotificationDto]"
+              },
+              "allowAnonymous": true,
+              "implementFrom": "TravelBuddy.Notifications.INotificationAppService"
+            },
+            "MarkAsReadAsyncById": {
+              "uniqueName": "MarkAsReadAsyncById",
+              "name": "MarkAsReadAsync",
+              "httpMethod": "POST",
+              "url": "api/app/notification/{id}/mark-as-read",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "id",
+                  "typeAsString": "System.Guid, System.Private.CoreLib",
+                  "type": "System.Guid",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "id",
+                  "name": "id",
+                  "jsonName": null,
+                  "type": "System.Guid",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": [],
+                  "bindingSourceId": "Path",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "System.Void",
+                "typeSimple": "System.Void"
+              },
+              "allowAnonymous": true,
+              "implementFrom": "TravelBuddy.Notifications.INotificationAppService"
+            },
+            "GetSettingsAsync": {
+              "uniqueName": "GetSettingsAsync",
+              "name": "GetSettingsAsync",
+              "httpMethod": "GET",
+              "url": "api/app/notification/settings",
+              "supportedVersions": [],
+              "parametersOnMethod": [],
+              "parameters": [],
+              "returnValue": {
+                "type": "TravelBuddy.Notifications.NotificationSettingsDto",
+                "typeSimple": "TravelBuddy.Notifications.NotificationSettingsDto"
+              },
+              "allowAnonymous": true,
+              "implementFrom": "TravelBuddy.Notifications.INotificationAppService"
+            },
+            "UpdateSettingsAsyncByInput": {
+              "uniqueName": "UpdateSettingsAsyncByInput",
+              "name": "UpdateSettingsAsync",
+              "httpMethod": "PUT",
+              "url": "api/app/notification/settings",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "input",
+                  "typeAsString": "TravelBuddy.Notifications.NotificationSettingsDto, TravelBuddy.Application.Contracts",
+                  "type": "TravelBuddy.Notifications.NotificationSettingsDto",
+                  "typeSimple": "TravelBuddy.Notifications.NotificationSettingsDto",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "input",
+                  "name": "input",
+                  "jsonName": null,
+                  "type": "TravelBuddy.Notifications.NotificationSettingsDto",
+                  "typeSimple": "TravelBuddy.Notifications.NotificationSettingsDto",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Body",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "System.Void",
+                "typeSimple": "System.Void"
+              },
+              "allowAnonymous": true,
+              "implementFrom": "TravelBuddy.Notifications.INotificationAppService"
+            },
+            "GetUpcomingFavoriteEventsAsync": {
+              "uniqueName": "GetUpcomingFavoriteEventsAsync",
+              "name": "GetUpcomingFavoriteEventsAsync",
+              "httpMethod": "GET",
+              "url": "api/app/notification/upcoming-favorite-events",
+              "supportedVersions": [],
+              "parametersOnMethod": [],
+              "parameters": [],
+              "returnValue": {
+                "type": "System.Collections.Generic.List<TravelBuddy.Notifications.UpcomingEventNotificationDto>",
+                "typeSimple": "[TravelBuddy.Notifications.UpcomingEventNotificationDto]"
+              },
+              "allowAnonymous": true,
+              "implementFrom": "TravelBuddy.Notifications.INotificationAppService"
             }
           }
         },
@@ -2110,7 +2797,7 @@
                 "type": "System.Void",
                 "typeSimple": "System.Void"
               },
-              "allowAnonymous": null,
+              "allowAnonymous": false,
               "implementFrom": "TravelBuddy.Users.IUserProfileAppService"
             },
             "GetPublicProfileAsyncByUserId": {
@@ -2184,7 +2871,7 @@
                 "type": "System.Void",
                 "typeSimple": "System.Void"
               },
-              "allowAnonymous": null,
+              "allowAnonymous": false,
               "implementFrom": "TravelBuddy.Users.IUserProfileAppService"
             }
           }
@@ -4431,6 +5118,219 @@
         }
       ]
     },
+    "TravelBuddy.Admin.AdminDashboardStatsDto": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "TotalUsers",
+          "jsonName": null,
+          "type": "System.Int64",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "TotalDestinations",
+          "jsonName": null,
+          "type": "System.Int64",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "TotalFavorites",
+          "jsonName": null,
+          "type": "System.Int64",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "ExternalApiErrorsCount",
+          "jsonName": null,
+          "type": "System.Int64",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "TravelBuddy.Calificaciones.CalificacionDto": {
+      "baseType": "Volo.Abp.Application.Dtos.AuditedEntityDto<System.Guid>",
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "DestinoId",
+          "jsonName": null,
+          "type": "System.Guid",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "UsuarioId",
+          "jsonName": null,
+          "type": "System.Guid",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Estrellas",
+          "jsonName": null,
+          "type": "System.Int32",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Comentario",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "TravelBuddy.Calificaciones.CalificacionGetListInput": {
+      "baseType": "Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto",
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "DestinoId",
+          "jsonName": null,
+          "type": "System.Guid?",
+          "typeSimple": "string?",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "TravelBuddy.Calificaciones.CalificacionPromedioDto": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "Promedio",
+          "jsonName": null,
+          "type": "System.Double",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "TotalCalificaciones",
+          "jsonName": null,
+          "type": "System.Int32",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "TravelBuddy.Calificaciones.CreateUpdateCalificacionDto": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "DestinoId",
+          "jsonName": null,
+          "type": "System.Guid",
+          "typeSimple": "string",
+          "isRequired": true,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Estrellas",
+          "jsonName": null,
+          "type": "System.Int32",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": "1",
+          "maximum": "5",
+          "regex": null
+        },
+        {
+          "name": "Comentario",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": true,
+          "minLength": 0,
+          "maxLength": 2000,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
     "TravelBuddy.Cities.CityDetailDto": {
       "baseType": "TravelBuddy.Cities.CityDto",
       "isEnum": false,
@@ -4521,6 +5421,54 @@
         },
         {
           "name": "Country",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Population",
+          "jsonName": null,
+          "type": "System.Int32",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Latitude",
+          "jsonName": null,
+          "type": "System.Double",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Longitude",
+          "jsonName": null,
+          "type": "System.Double",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "ImageUrl",
           "jsonName": null,
           "type": "System.String",
           "typeSimple": "string",
@@ -4623,9 +5571,9 @@
           "jsonName": null,
           "type": "System.String",
           "typeSimple": "string",
-          "isRequired": false,
-          "minLength": null,
-          "maxLength": null,
+          "isRequired": true,
+          "minLength": 0,
+          "maxLength": 200,
           "minimum": null,
           "maximum": null,
           "regex": null
@@ -4695,6 +5643,42 @@
           "jsonName": null,
           "type": "System.Guid",
           "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Population",
+          "jsonName": null,
+          "type": "System.Int32",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Latitude",
+          "jsonName": null,
+          "type": "System.Double",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Longitude",
+          "jsonName": null,
+          "type": "System.Double",
+          "typeSimple": "number",
           "isRequired": false,
           "minLength": null,
           "maxLength": null,
@@ -4854,6 +5838,54 @@
           "minimum": null,
           "maximum": null,
           "regex": null
+        },
+        {
+          "name": "Population",
+          "jsonName": null,
+          "type": "System.Int32",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Latitude",
+          "jsonName": null,
+          "type": "System.Double",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Longitude",
+          "jsonName": null,
+          "type": "System.Double",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "LastUpdated",
+          "jsonName": null,
+          "type": "System.DateTime",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
         }
       ]
     },
@@ -4866,18 +5898,6 @@
       "properties": [
         {
           "name": "DestinoId",
-          "jsonName": null,
-          "type": "System.Guid",
-          "typeSimple": "string",
-          "isRequired": true,
-          "minLength": null,
-          "maxLength": null,
-          "minimum": null,
-          "maximum": null,
-          "regex": null
-        },
-        {
-          "name": "UsuarioId",
           "jsonName": null,
           "type": "System.Guid",
           "typeSimple": "string",
@@ -5073,9 +6093,6 @@
         "Buena",
         "MuyBuena",
         "Excelente"
-        "Positiva",
-        "Neutral",
-        "Negativa"
       ],
       "enumValues": [
         1,
@@ -5083,10 +6100,225 @@
         3,
         4,
         5
-        3
       ],
       "genericArguments": null,
       "properties": null
+    },
+    "TravelBuddy.Favorites.FavoriteDto": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "UsuarioId",
+          "jsonName": null,
+          "type": "System.Guid",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "DestinoId",
+          "jsonName": null,
+          "type": "System.Guid",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "TravelBuddy.Notifications.NotificationDto": {
+      "baseType": "Volo.Abp.Application.Dtos.EntityDto<System.Guid>",
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "Title",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Message",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "IsRead",
+          "jsonName": null,
+          "type": "System.Boolean",
+          "typeSimple": "boolean",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "CreationTime",
+          "jsonName": null,
+          "type": "System.DateTime",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "TravelBuddy.Notifications.NotificationSettingsDto": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "EmailNotificationsEnabled",
+          "jsonName": null,
+          "type": "System.Boolean",
+          "typeSimple": "boolean",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "NewReviewNotificationsEnabled",
+          "jsonName": null,
+          "type": "System.Boolean",
+          "typeSimple": "boolean",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "UpcomingEventsEnabled",
+          "jsonName": null,
+          "type": "System.Boolean",
+          "typeSimple": "boolean",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "TravelBuddy.Notifications.UpcomingEventNotificationDto": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "DestinoId",
+          "jsonName": null,
+          "type": "System.Guid",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "NombreDestino",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "TituloEvento",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Categoria",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "FechaEvento",
+          "jsonName": null,
+          "type": "System.DateTime",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "EventUrl",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
     },
     "TravelBuddy.Users.PublicUserProfileDto": {
       "baseType": null,

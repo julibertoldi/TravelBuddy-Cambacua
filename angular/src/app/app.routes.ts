@@ -71,12 +71,13 @@ export const APP_ROUTES: Routes = [
         m => m.NotificationsSettings
       ),
   },
-];
-{
-  path: 'experiences',
-  loadComponent: () =>
-    import('./pages/experiences/experiences.component')
-      .then(c => c.ExperiencesComponent),
-  canActivate: [authGuard],
-},
+
+  {
+    path: 'admin',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./pages/admin/admin.component').then(
+        c => c.AdminComponent
+      ),
+  },
 ];

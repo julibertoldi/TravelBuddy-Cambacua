@@ -44,7 +44,7 @@ namespace TravelBuddy;
 
 [DependsOn(
     typeof(TravelBuddyHttpApiModule),
-    typeof(AbpStudioClientAspNetCoreModule),
+    //typeof(AbpStudioClientAspNetCoreModule),
     typeof(AbpAspNetCoreMvcUiLeptonXLiteThemeModule),
     typeof(AbpAutofacModule),
     typeof(AbpAspNetCoreMultiTenancyModule),
@@ -250,7 +250,7 @@ public class TravelBuddyHttpApiHostModule : AbpModule
 
         app.UseRouting();
         app.MapAbpStaticAssets();
-        app.UseAbpStudioLink();
+      //app.UseAbpStudioLink();
         app.UseAbpSecurityHeaders();
         app.UseCors();
         app.UseAuthentication();

@@ -10,6 +10,10 @@ export interface CityDto {
   id: number;
   name?: string;
   country?: string;
+  population: number;
+  latitude: number;
+  longitude: number;
+  imageUrl?: string;
 }
 
 export interface CitySearchRequestDto {
