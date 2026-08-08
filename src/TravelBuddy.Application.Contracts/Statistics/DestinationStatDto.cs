@@ -11,6 +11,9 @@ namespace TravelBuddy.Statistics
         public long TotalSearches { get; set; }
         public long TotalSavedDestinations { get; set; }
         public List<DestinationStatDto> TopDestinations { get; set; }
+        public long TotalApiCalls { get; set; }
+        public double AverageResponseTimeMs { get; set; }
+        public long TotalApiErrors { get; set; }
     }
 
     public class DestinationStatDto

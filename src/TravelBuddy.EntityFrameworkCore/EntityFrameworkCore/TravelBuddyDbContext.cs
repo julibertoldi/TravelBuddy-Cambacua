@@ -31,8 +31,8 @@ public class TravelBuddyDbContext :
     public DbSet<Calificaciones.Calificacion> Calificaciones { get; set; }
     public DbSet<Favorite> Favoritos { get; set; }
     public DbSet<Notificaciones.Notification> Notificaciones { get; set; }
-
-    public DbSet<SearchLog> SearchLogs { get; set; }
+    public DbSet<SearchLogs> SearchLogs { get; set; }
+    public DbSet<ApiCallLog> ApiCallLogs { get; set; }
 
     #region Entities from the modules
     // Identity
