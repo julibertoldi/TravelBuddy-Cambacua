@@ -272,3 +272,5 @@ src/TravelBuddy.Blazor.Server.Tiered/Logs/*
 # IdentityServer temp files
 tempkey.rsa
 tempkey.jwk
+/Logs/logs.txt
+/.gitignore

@@ -18,7 +18,9 @@ namespace TravelBuddy.Destinations
     public double Longitude { get; set; }
     public DateTime LastUpdated { get; set; } = DateTime.Now;
 
-    public Destination(Guid id, string name, string description, string region, string country)
+    public int ViewCount { get; set; } = 0;
+
+        public Destination(Guid id, string name, string description, string region, string country)
         : base(id)
     {
         Name = name;
@@ -26,7 +28,8 @@ namespace TravelBuddy.Destinations
         Region = region;
         Country = country;
         IsAvailable = true;
-    }
+        ViewCount = 0;
+        }
 
     public Destination(Guid id, string name, string country, int population, double lat, double lon)
         : base(id)
@@ -38,6 +41,7 @@ namespace TravelBuddy.Destinations
         Longitude = lon;
         LastUpdated = DateTime.Now;
         IsAvailable = true;
-    }
+        ViewCount = 0;
+        }
 }
 }

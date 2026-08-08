@@ -1,4 +1,8 @@
 using Microsoft.EntityFrameworkCore;
+using TravelBuddy.Destinations;
+using TravelBuddy.Experiencias;
+using TravelBuddy.Favorites;
+using TravelBuddy.Statistics;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
 using Volo.Abp.BlobStoring.Database.EntityFrameworkCore;
@@ -12,9 +16,6 @@ using Volo.Abp.Identity.EntityFrameworkCore;
 using Volo.Abp.OpenIddict.EntityFrameworkCore;
 using Volo.Abp.PermissionManagement.EntityFrameworkCore;
 using Volo.Abp.SettingManagement.EntityFrameworkCore;
-using TravelBuddy.Favorites;
-using TravelBuddy.Destinations;
-using TravelBuddy.Experiencias;
 
 namespace TravelBuddy.EntityFrameworkCore;
 
@@ -30,6 +31,8 @@ public class TravelBuddyDbContext :
     public DbSet<Calificaciones.Calificacion> Calificaciones { get; set; }
     public DbSet<Favorite> Favoritos { get; set; }
     public DbSet<Notificaciones.Notification> Notificaciones { get; set; }
+
+    public DbSet<SearchLog> SearchLogs { get; set; }
 
     #region Entities from the modules
     // Identity
