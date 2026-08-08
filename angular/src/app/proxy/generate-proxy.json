@@ -1320,32 +1320,6 @@
             }
           }
         },
-        "TravelBuddy.Controllers.AdminController": {
-          "controllerName": "Admin",
-          "controllerGroupName": "Admin",
-          "isRemoteService": true,
-          "isIntegrationService": false,
-          "apiVersion": null,
-          "type": "TravelBuddy.Controllers.AdminController",
-          "interfaces": [],
-          "actions": {
-            "GetDashboardStatsAsync": {
-              "uniqueName": "GetDashboardStatsAsync",
-              "name": "GetDashboardStatsAsync",
-              "httpMethod": "GET",
-              "url": "api/app/admin/dashboard-stats",
-              "supportedVersions": [],
-              "parametersOnMethod": [],
-              "parameters": [],
-              "returnValue": {
-                "type": "TravelBuddy.Admin.AdminDashboardStatsDto",
-                "typeSimple": "TravelBuddy.Admin.AdminDashboardStatsDto"
-              },
-              "allowAnonymous": false,
-              "implementFrom": "TravelBuddy.Controllers.AdminController"
-            }
-          }
-        },
         "TravelBuddy.Controllers.FavoriteController": {
           "controllerName": "Favorite",
           "controllerGroupName": null,
@@ -2665,6 +2639,93 @@
               },
               "allowAnonymous": true,
               "implementFrom": "TravelBuddy.Notifications.INotificationAppService"
+            }
+          }
+        },
+        "TravelBuddy.Statistics.StatisticsAppService": {
+          "controllerName": "Statistics",
+          "controllerGroupName": "Statistics",
+          "isRemoteService": true,
+          "isIntegrationService": false,
+          "apiVersion": null,
+          "type": "TravelBuddy.Statistics.StatisticsAppService",
+          "interfaces": [
+            {
+              "type": "TravelBuddy.Statistics.IStatisticsAppService",
+              "name": "IStatisticsAppService",
+              "methods": [
+                {
+                  "name": "GetDashboardStatisticsAsync",
+                  "parametersOnMethod": [],
+                  "returnValue": {
+                    "type": "TravelBuddy.Statistics.AdminDashboardDto",
+                    "typeSimple": "TravelBuddy.Statistics.AdminDashboardDto"
+                  }
+                },
+                {
+                  "name": "GetApiCallLogsAsync",
+                  "parametersOnMethod": [],
+                  "returnValue": {
+                    "type": "System.Collections.Generic.List<TravelBuddy.Statistics.ApiCallLogDto>",
+                    "typeSimple": "[TravelBuddy.Statistics.ApiCallLogDto]"
+                  }
+                },
+                {
+                  "name": "ExportApiLogsCsvAsync",
+                  "parametersOnMethod": [],
+                  "returnValue": {
+                    "type": "Volo.Abp.Content.IRemoteStreamContent",
+                    "typeSimple": "Volo.Abp.Content.IRemoteStreamContent"
+                  }
+                }
+              ]
+            }
+          ],
+          "actions": {
+            "GetDashboardStatisticsAsync": {
+              "uniqueName": "GetDashboardStatisticsAsync",
+              "name": "GetDashboardStatisticsAsync",
+              "httpMethod": "GET",
+              "url": "api/app/statistics/dashboard-statistics",
+              "supportedVersions": [],
+              "parametersOnMethod": [],
+              "parameters": [],
+              "returnValue": {
+                "type": "TravelBuddy.Statistics.AdminDashboardDto",
+                "typeSimple": "TravelBuddy.Statistics.AdminDashboardDto"
+              },
+              "allowAnonymous": null,
+              "implementFrom": "TravelBuddy.Statistics.IStatisticsAppService"
+            },
+            "GetApiCallLogsAsync": {
+              "uniqueName": "GetApiCallLogsAsync",
+              "name": "GetApiCallLogsAsync",
+              "httpMethod": "GET",
+              "url": "api/app/statistics/api-call-logs",
+              "supportedVersions": [],
+              "parametersOnMethod": [],
+              "parameters": [],
+              "returnValue": {
+                "type": "System.Collections.Generic.List<TravelBuddy.Statistics.ApiCallLogDto>",
+                "typeSimple": "[TravelBuddy.Statistics.ApiCallLogDto]"
+              },
+              "allowAnonymous": null,
+              "implementFrom": "TravelBuddy.Statistics.IStatisticsAppService"
+            },
+            "ExportApiLogsCsvAsync": {
+              "uniqueName": "ExportApiLogsCsvAsync",
+              "name": "ExportApiLogsCsvAsync",
+              "httpMethod": "POST",
+              "url": "api/app/statistics/export-api-logs-csv",
+              "supportedVersions": [],
+              "parametersOnMethod": [],
+              "parameters": [],
+              "returnValue": {
+                "type": "Volo.Abp.Content.IRemoteStreamContent",
+                "typeSimple": "Volo.Abp.Content.IRemoteStreamContent"
+              },
+              "allowAnonymous": null,
+              "implementFrom": "TravelBuddy.Statistics.IStatisticsAppService"
             }
           }
         },
@@ -6320,6 +6381,213 @@
         }
       ]
     },
+    "TravelBuddy.Statistics.AdminDashboardDto": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "TotalSearches",
+          "jsonName": null,
+          "type": "System.Int64",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "TotalSavedDestinations",
+          "jsonName": null,
+          "type": "System.Int64",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "TopDestinations",
+          "jsonName": null,
+          "type": "[TravelBuddy.Statistics.DestinationStatDto]",
+          "typeSimple": "[TravelBuddy.Statistics.DestinationStatDto]",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "TotalApiCalls",
+          "jsonName": null,
+          "type": "System.Int64",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "AverageResponseTimeMs",
+          "jsonName": null,
+          "type": "System.Double",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "TotalApiErrors",
+          "jsonName": null,
+          "type": "System.Int64",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "TravelBuddy.Statistics.ApiCallLogDto": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "Id",
+          "jsonName": null,
+          "type": "System.Guid",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Endpoint",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "StatusCode",
+          "jsonName": null,
+          "type": "System.Int32",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "ResponseTimeMs",
+          "jsonName": null,
+          "type": "System.Int64",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "IsSuccess",
+          "jsonName": null,
+          "type": "System.Boolean",
+          "typeSimple": "boolean",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "ErrorMessage",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Timestamp",
+          "jsonName": null,
+          "type": "System.DateTime",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "TravelBuddy.Statistics.DestinationStatDto": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "DestinationName",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "ViewCount",
+          "jsonName": null,
+          "type": "System.Int32",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
     "TravelBuddy.Users.PublicUserProfileDto": {
       "baseType": null,
       "isEnum": false,
@@ -9248,6 +9516,51 @@
           "jsonName": null,
           "type": "System.Boolean",
           "typeSimple": "boolean",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "Volo.Abp.Content.IRemoteStreamContent": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "FileName",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "ContentType",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "ContentLength",
+          "jsonName": null,
+          "type": "System.Int64?",
+          "typeSimple": "number?",
           "isRequired": false,
           "minLength": null,
           "maxLength": null,

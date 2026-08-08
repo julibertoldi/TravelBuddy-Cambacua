@@ -53,7 +53,16 @@ function configureRoutes() {
       order: 6,
       layout: eLayoutType.application,
     },
-  
+
+    {
+      path: '/admin',
+      name: 'Panel Admin',
+      iconClass: 'fa fa-chart-line',
+      order: 10,
+      layout: eLayoutType.application, 
+      requiredPolicy: '', 
+    },
+
     {
       path: '/notifications-settings',
       name: 'Configuración Notificaciones',

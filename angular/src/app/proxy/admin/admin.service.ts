@@ -1,5 +1,4 @@
-import { AdminDashboardStatsDto } from './models';
-export { AdminDashboardStatsDto };
+import type { AdminDashboardStatsDto } from './models';
 import { RestService, Rest } from '@abp/ng.core';
 import { Injectable } from '@angular/core';
 
@@ -8,14 +7,13 @@ import { Injectable } from '@angular/core';
 })
 export class AdminService {
   apiName = 'Default';
-  
 
   getDashboardStats = (config?: Partial<Rest.Config>) =>
     this.restService.request<any, AdminDashboardStatsDto>({
       method: 'GET',
       url: '/api/app/admin/dashboard-stats',
     },
-    { apiName: this.apiName,...config });
+    { apiName: this.apiName, ...config });
 
   constructor(private restService: RestService) {}
 }

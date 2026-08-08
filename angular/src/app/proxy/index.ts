@@ -6,5 +6,6 @@ import * as Destinations from './destinations';
 import * as Experiencias from './experiencias';
 import * as Favorites from './favorites';
 import * as Notifications from './notifications';
+import * as Statistics from './statistics';
 import * as Users from './users';
-export { Admin, Calificaciones, Cities, Controllers, Destinations, Experiencias, Favorites, Notifications, Users };
+export { Admin, Calificaciones, Cities, Controllers, Destinations, Experiencias, Favorites, Notifications, Statistics, Users };
