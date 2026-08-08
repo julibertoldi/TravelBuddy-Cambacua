@@ -7,6 +7,9 @@ using TravelBuddy.Favorites;
 using TravelBuddy.Statistics;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
+using System.IO;
+using System.Text;
+using Volo.Abp.Content;
 
 namespace TravelBuddy.Statistics
 {
@@ -66,6 +69,53 @@ namespace TravelBuddy.Statistics
                 AverageResponseTimeMs = Math.Round(avgResponseTime, 2),
                 TotalApiErrors = totalApiErrors
             };
+        }
+
+        public async Task<List<ApiCallLogDto>> GetApiCallLogsAsync()
+        {
+            var queryableLogs = await _apiCallLogRepository.GetQueryableAsync();
+
+            var logs = await AsyncExecuter.ToListAsync(
+                queryableLogs
+                    .OrderByDescending(x => x.Timestamp)
+                    .Take(50)
+                    .Select(x => new ApiCallLogDto
+                    {
+                        Id = x.Id,
+                        Endpoint = x.Endpoint,
+                        StatusCode = x.StatusCode,
+                        ResponseTimeMs = x.ResponseTimeMs,
+                        IsSuccess = x.IsSuccess,
+                        ErrorMessage = x.ErrorMessage,
+                        Timestamp = x.Timestamp
+                    })
+            );
+
+            return logs;
+        }
+
+        public async Task<IRemoteStreamContent> ExportApiLogsCsvAsync()
+        {
+            var queryableLogs = await _apiCallLogRepository.GetQueryableAsync();
+            var logs = await AsyncExecuter.ToListAsync(
+                queryableLogs.OrderByDescending(x => x.Timestamp)
+            );
+
+            var sb = new StringBuilder();
+            // Cabecera del CSV
+            sb.AppendLine("ID,Endpoint,StatusCode,ResponseTimeMs,IsSuccess,ErrorMessage,Timestamp");
+
+            // Filas de datos
+            foreach (var log in logs)
+            {
+                var errorMsg = log.ErrorMessage?.Replace(",", " ") ?? ""; // Evitamos romper el CSV con comas
+                sb.AppendLine($"{log.Id},{log.Endpoint},{log.StatusCode},{log.ResponseTimeMs},{log.IsSuccess},{errorMsg},{log.Timestamp:yyyy-MM-dd HH:mm:ss}");
+            }
+
+            var byteArray = Encoding.UTF8.GetBytes(sb.ToString());
+            var stream = new MemoryStream(byteArray);
+
+            return new RemoteStreamContent(stream, "api-logs-report.csv", "text/csv");
         }
     }
 }
