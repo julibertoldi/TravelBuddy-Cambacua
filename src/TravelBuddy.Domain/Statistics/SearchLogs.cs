@@ -7,15 +7,15 @@ using Volo.Abp.Domain.Entities;
 
 namespace TravelBuddy.Statistics
 {
-    public class SearchLog : AggregateRoot<Guid>
+    public class SearchLogs : AggregateRoot<Guid>
     {
         public string SearchTerm { get; set; }
         public DateTime SearchTime { get; set; }
-        public Guid? UserId { get; set; } // Opcional, para saber qué usuario buscó
+        public Guid? UserId { get; set; }
 
-        protected SearchLog() { }
+        protected SearchLogs() { }
 
-        public SearchLog(Guid id, string searchTerm, DateTime searchTime, Guid? userId = null) : base(id)
+        public SearchLogs(Guid id, string searchTerm, DateTime searchTime, Guid? userId = null) : base(id)
         {
             SearchTerm = searchTerm;
             SearchTime = searchTime;
