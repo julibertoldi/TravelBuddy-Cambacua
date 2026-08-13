@@ -1,6 +1,5 @@
-import { authGuard, eLayoutType } from '@abp/ng.core';
+import { authGuard } from '@abp/ng.core';
 import { Routes } from '@angular/router';
-
 
 export const APP_ROUTES: Routes = [
   {
@@ -73,15 +72,10 @@ export const APP_ROUTES: Routes = [
       ),
   },
 
-{
+  {
     path: 'admin',
     canActivate: [authGuard],
-    loadComponent: () => import('./pages/admin/admin.component').then(c => c.AdminComponent),
-    data: {
-      name: 'Panel Admin',
-      order: 10,
-      iconClass: 'fa fa-chart-line',
-      layout: eLayoutType.application, // <--- Esto le fuerza a mantenerse dentro del layout con la barra lateral
-    },
-  }
+    loadComponent: () =>
+      import('./pages/admin/admin.component').then(c => c.AdminComponent),
+  },
 ];
