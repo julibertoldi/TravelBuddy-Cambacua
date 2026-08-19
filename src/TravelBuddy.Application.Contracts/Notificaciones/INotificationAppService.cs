@@ -19,5 +19,6 @@ namespace TravelBuddy.Notifications
         /// Consulta eventos cercanos en la API externa para las ciudades guardadas en favoritos.
         /// </summary>
         Task<List<UpcomingEventNotificationDto>> GetUpcomingFavoriteEventsAsync();
+        Task CheckDailyFavoritesAsync();
     }
 }

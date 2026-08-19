@@ -1,20 +1,21 @@
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
-using Volo.Abp.Application.Services;
-using Volo.Abp.Domain.Repositories;
 using TravelBuddy.Destinations;
 using TravelBuddy.Favorites;
-using TravelBuddy.Notifications.ExternalEvents;
 using TravelBuddy.Notificaciones;
-using Volo.Abp.Identity;
+using TravelBuddy.Notifications.ExternalEvents;
 using TravelBuddy.Users;
-using System.Text.Json;
 using Volo.Abp;
-using Microsoft.Extensions.Logging;
+using Volo.Abp.Application.Services;
 using Volo.Abp.Authorization;
-using Microsoft.AspNetCore.Authorization;
+using Volo.Abp.Domain.Repositories;
+using Volo.Abp.Emailing;
+using Volo.Abp.Identity;
 
 namespace TravelBuddy.Notifications
 {
@@ -26,19 +27,22 @@ namespace TravelBuddy.Notifications
         private readonly ITicketmasterService _ticketmasterService;
         private readonly IRepository<Notification, Guid> _notificationRepository;
         private readonly IdentityUserManager _userManager;
+        private readonly IEmailSender _emailSender;
 
         public NotificationAppService(
             IRepository<Favorite> favoriteRepository,
             IRepository<Destination, Guid> destinationRepository,
             ITicketmasterService ticketmasterService,
             IRepository<Notification, Guid> notificationRepository,
-            IdentityUserManager userManager)
+            IdentityUserManager userManager,
+            IEmailSender emailSender)
         {
             _favoriteRepository = favoriteRepository;
             _destinationRepository = destinationRepository;
             _ticketmasterService = ticketmasterService;
             _notificationRepository = notificationRepository;
             _userManager = userManager;
+            _emailSender = emailSender;
         }
 
         public async Task<List<NotificationDto>> GetListAsync()
@@ -162,6 +166,39 @@ namespace TravelBuddy.Notifications
             }
 
             return upcomingEvents.OrderBy(e => e.FechaEvento).ToList();
+
         }
+        public async Task CheckDailyFavoritesAsync()
+        {
+            // Obtener todos los favoritos registrados de la BD
+            var favorites = await _favoriteRepository.GetListAsync();
+
+            // Iteractua sobre los destinos marcados como favoritos
+            var destinationIds = favorites.Select(f => f.DestinoId).Distinct().ToList();
+
+            foreach (var destId in destinationIds)
+            {
+                var destination = await _destinationRepository.FirstOrDefaultAsync(d => d.Id == destId);
+                if (destination != null)
+                {
+                    // Consultasi existen nuevos eventos en Ticketmaster para esta ciudad
+                    var events = await _ticketmasterService.GetEventsByCityAsync(destination.Id, destination.Name);
+                    if (events.Any())
+                    {
+                        // Si hay eventos, muestra en consla 
+                        Logger.LogInformation($"[BackgroundWorker] Se verificaron {events.Count} eventos para {destination.Name}");
+
+                        // Para eviar un meil al usuario 
+                        await _emailSender.SendAsync("usuario@email.com", $"Novedades en {destination.Name}", $"Se encontraron {events.Count} eventos nuevos.");
+
+
+
+
+
+                    }
+                }
+            }
+        }
+
     }
 }

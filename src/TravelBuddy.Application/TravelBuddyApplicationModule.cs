@@ -1,18 +1,20 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using System.Threading.Tasks;
 using TravelBuddy.Cities;
 using TravelBuddy.Infraestructure;
+using TravelBuddy.Workers;
+using Volo.Abp; //  para usar ApplicationInitializationContext
 using Volo.Abp.Account;
 using Volo.Abp.AutoMapper;
+using Volo.Abp.BackgroundWorkers;
 using Volo.Abp.FeatureManagement;
 using Volo.Abp.Identity;
 using Volo.Abp.Modularity;
 using Volo.Abp.PermissionManagement;
 using Volo.Abp.SettingManagement;
 
-
 namespace TravelBuddy
 {
-    // La clase debe HEREDAR de AbpModule y tener sus llaves de inicio/fin
     [DependsOn(
         typeof(TravelBuddyDomainModule),
         typeof(TravelBuddyApplicationContractsModule),
@@ -20,7 +22,8 @@ namespace TravelBuddy
         typeof(AbpFeatureManagementApplicationModule),
         typeof(AbpIdentityApplicationModule),
         typeof(AbpAccountApplicationModule),
-        typeof(AbpSettingManagementApplicationModule)
+        typeof(AbpSettingManagementApplicationModule),
+        typeof(AbpBackgroundWorkersModule)
     )]
     public class TravelBuddyApplicationModule : AbpModule
     {
@@ -40,8 +43,14 @@ namespace TravelBuddy
 
             context.Services.AddHttpClient();
         }
+
+        // Para registrar y asrrancar EL WORKER
+        public override async Task OnApplicationInitializationAsync(ApplicationInitializationContext context)
+        {
+            // Registramos y ponemos en marcha el Worker en segundo plano
+            await context.AddBackgroundWorkerAsync<FavoriteCheckWorker>();
+        }
     }
 }
-
 
 
