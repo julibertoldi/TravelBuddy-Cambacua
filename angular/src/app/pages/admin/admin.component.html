@@ -1,33 +1,99 @@
 <div class="container-fluid py-4">
+
+  <!-- Encabezado con botones de exportación -->
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2>Panel de Administración - TravelBuddy</h2>
-    <button class="btn btn-success" (click)="downloadCsv()">Exportar Logs CSV</button>
+    <div class="d-flex gap-2">
+      <button id="btn-exportar-estadisticas" class="btn btn-primary" (click)="exportarEstadisticas()">
+        📊 Exportar a CSV
+      </button>
+      <button id="btn-exportar-logs" class="btn btn-success" (click)="downloadCsv()">
+        📋 Exportar Logs CSV
+      </button>
+    </div>
   </div>
   <hr>
 
-  <!-- Fila 1: Estadísticas Generales -->
+  <!-- Fila 1: Estadísticas Generales (AdminService) -->
   <div class="row mb-4" *ngIf="stats">
-    <div class="col-md-3"><div class="card bg-primary text-white p-3"><h5>Usuarios</h5><h3>{{ stats.totalUsers }}</h3></div></div>
-    <div class="col-md-3"><div class="card bg-success text-white p-3"><h5>Destinos</h5><h3>{{ stats.totalDestinations }}</h3></div></div>
-    <div class="col-md-3"><div class="card bg-info text-white p-3"><h5>Favoritos</h5><h3>{{ stats.totalFavorites }}</h3></div></div>
-    <div class="col-md-3"><div class="card bg-danger text-white p-3"><h5>Errores API</h5><h3>{{ stats.externalApiErrorsCount }}</h3></div></div>
+    <div class="col-md-3">
+      <div class="card bg-primary text-white p-3">
+        <h5>Usuarios</h5>
+        <h3>{{ stats.totalUsers }}</h3>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card bg-success text-white p-3">
+        <h5>Destinos</h5>
+        <h3>{{ stats.totalDestinations }}</h3>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card bg-info text-white p-3">
+        <h5>Favoritos</h5>
+        <h3>{{ stats.totalFavorites }}</h3>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card bg-danger text-white p-3">
+        <h5>Errores API</h5>
+        <h3>{{ stats.externalApiErrorsCount }}</h3>
+      </div>
+    </div>
   </div>
 
-  <!-- Fila 2: Tabla de Logs -->
+  <!-- Fila 2: Estadísticas del Dashboard (StatisticsService) -->
+  <div class="row mb-4" *ngIf="dashboardStats">
+    <div class="col-md-4">
+      <div class="card border-primary p-3">
+        <h6 class="text-muted">Total Búsquedas</h6>
+        <h4>{{ dashboardStats.totalSearches }}</h4>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card border-warning p-3">
+        <h6 class="text-muted">Llamadas a API Externas</h6>
+        <h4>{{ dashboardStats.totalExternalApiCalls }}</h4>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card border-danger p-3">
+        <h6 class="text-muted">Errores Externos</h6>
+        <h4>{{ dashboardStats.externalApiErrors }}</h4>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fila 3: Tabla de Logs de API -->
   <div class="card shadow-sm">
-    <div class="card-header bg-dark text-white">Bitácora de API</div>
-    <table class="table table-striped mb-0">
+    <div class="card-header bg-dark text-white">Bitácora de API (últimas 50 llamadas)</div>
+    <div *ngIf="apiLogs.length === 0" class="p-3 text-muted text-center">
+      No hay registros de logs disponibles.
+    </div>
+    <table class="table table-striped mb-0" *ngIf="apiLogs.length > 0">
       <thead>
-        <tr><th>Fecha</th><th>Endpoint</th><th>Status</th><th>Éxito</th></tr>
+        <tr>
+          <th>Fecha</th>
+          <th>Endpoint</th>
+          <th>Status</th>
+          <th>Tiempo (ms)</th>
+          <th>Éxito</th>
+        </tr>
       </thead>
       <tbody>
         <tr *ngFor="let log of apiLogs">
           <td>{{ log.timestamp | date:'short' }}</td>
           <td><code>{{ log.endpoint }}</code></td>
-          <td><span class="badge" [ngClass]="log.statusCode === 200 ? 'bg-success' : 'bg-danger'">{{ log.statusCode }}</span></td>
+          <td>
+            <span class="badge" [ngClass]="log.statusCode === 200 ? 'bg-success' : 'bg-danger'">
+              {{ log.statusCode }}
+            </span>
+          </td>
+          <td>{{ log.responseTimeMs }}</td>
           <td>{{ log.isSuccess ? 'Sí' : 'No' }}</td>
         </tr>
       </tbody>
     </table>
   </div>
+
 </div>

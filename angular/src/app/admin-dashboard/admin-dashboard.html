@@ -4,12 +4,17 @@
       <h2>Panel de Administración - TravelBuddy</h2>
       <p class="text-muted">Métricas generales del sistema y monitoreo de API externa</p>
     </div>
-    <button class="btn btn-success shadow-sm" (click)="downloadCsv()">
-      <i class="fa fa-download me-2"></i> Exportar Logs a CSV
-    </button>
+    <div class="d-flex gap-2">
+      <button class="btn btn-primary shadow-sm" (click)="downloadCsv()">
+        <i class="fa fa-download me-2"></i> Exportar a CSV
+      </button>
+      <button class="btn btn-outline-secondary shadow-sm" (click)="downloadApiLogsCsv()">
+        <i class="fa fa-download me-2"></i> Exportar Logs API
+      </button>
+    </div>
   </div>
   <hr>
-  
+
   <!-- 1. Tus Estadísticas Generales (Usuarios, Destinos, Favoritos) -->
   <h4 class="mb-3">Resumen General</h4>
   <div class="row mb-4" *ngIf="stats; else loadingStats">
@@ -43,7 +48,12 @@
   </div>
 
   <!-- 2. Estadísticas de Búsquedas y Rendimiento API -->
-  <h4 class="mb-3">Monitoreo de Búsquedas y API</h4>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">Estadísticas de Búsqueda y Monitoreo</h4>
+    <button class="btn btn-primary shadow-sm" (click)="downloadCsv()">
+      <i class="fa fa-download me-2"></i> Exportar a CSV
+    </button>
+  </div>
   <div class="row mb-4" *ngIf="statisticsData">
     <div class="col-md-4 mb-3">
       <div class="card bg-secondary text-white p-3 shadow-sm">
@@ -67,8 +77,11 @@
 
   <!-- 3. Tabla de Bitácora de Logs -->
   <div class="card shadow-sm mt-4">
-    <div class="card-header bg-dark text-white">
+    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
       <h5 class="mb-0">Bitácora de Llamadas a la API Externa</h5>
+      <button class="btn btn-sm btn-outline-light shadow-sm" (click)="downloadApiLogsCsv()">
+        <i class="fa fa-download me-1"></i> Exportar Logs API (CSV)
+      </button>
     </div>
     <div class="card-body p-0">
       <div class="table-responsive">

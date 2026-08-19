@@ -14,7 +14,7 @@ import { StatisticsService, ApiCallLogDto, AdminDashboardDto } from '../proxy/st
 export class AdminDashboardComponent implements OnInit {
   // Estadísticas generales (Usuarios, Destinos, Favoritos)
   stats?: AdminDashboardStatsDto;
-  
+
   // Estadísticas y logs de la API externa
   statisticsData?: AdminDashboardDto;
   apiLogs: ApiCallLogDto[] = [];
@@ -23,7 +23,7 @@ export class AdminDashboardComponent implements OnInit {
     private adminService: AdminService,
     private statisticsService: StatisticsService,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loadGeneralStats();
@@ -62,6 +62,21 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   downloadCsv() {
+    this.statisticsService.exportSearchLogsToCsv().subscribe({
+      next: (response: any) => {
+        const blob = new Blob([response], { type: 'text/csv;charset=utf-8;' });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'Estadisticas.csv';
+        link.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err) => console.error('Error al exportar el archivo CSV', err)
+    });
+  }
+
+  downloadApiLogsCsv() {
     this.statisticsService.exportApiLogsCsv().subscribe({
       next: (response: any) => {
         const blob = new Blob([response], { type: 'text/csv' });
@@ -72,7 +87,7 @@ export class AdminDashboardComponent implements OnInit {
         anchor.click();
         window.URL.revokeObjectURL(url);
       },
-      error: (err) => console.error('Error al exportar el archivo CSV', err)
+      error: (err) => console.error('Error al exportar el archivo CSV de logs API', err)
     });
   }
 }

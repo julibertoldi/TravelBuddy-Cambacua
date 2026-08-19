@@ -16,6 +16,14 @@ export class StatisticsService {
       url: '/api/app/statistics/export-api-logs-csv',
     },
     { apiName: this.apiName,...config });
+
+  exportSearchLogsToCsv = (config?: Partial<Rest.Config>) =>
+    this.restService.request<any, Blob | string>({
+      method: 'POST',
+      responseType: 'blob',
+      url: '/api/app/statistics/export-search-logs-to-csv',
+    },
+    { apiName: this.apiName,...config });
   
 
   getApiCallLogs = (config?: Partial<Rest.Config>) =>
