@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Shouldly;
 using Volo.Abp.Modularity;
 using Xunit;
@@ -28,6 +28,13 @@ namespace TravelBuddy.Statistics
         {
             var logs = await _statisticsAppService.GetApiCallLogsAsync();
             logs.ShouldNotBeNull();
+        }
+
+        [Fact]
+        public async Task Should_Export_Search_Logs_To_Csv()
+        {
+            var bytes = await _statisticsAppService.ExportSearchLogsToCsvAsync();
+            bytes.ShouldNotBeNull();
         }
     }
 }
