@@ -87,16 +87,30 @@ namespace TravelBuddy.Calificaciones
         public async Task<CalificacionPromedioDto> GetPromedioByDestinoAsync(Guid destinoId)
         {
             var query = await Repository.GetQueryableAsync();
-            var filteredQuery = query.Where(x => x.DestinoId == destinoId)
-                .GroupBy(x => 1)
-                .Select(g => new CalificacionPromedioDto
-                {
-                    Promedio = g.Average(x => (double)x.Estrellas),
-                    TotalCalificaciones = g.Count()
-                });
 
-            var result = await AsyncExecuter.FirstOrDefaultAsync(filteredQuery);
-            return result ?? new CalificacionPromedioDto();
+            var filteredQuery = query.Where(x => x.DestinoId == destinoId);
+
+            var total = await AsyncExecuter.CountAsync(filteredQuery);
+
+            if (total == 0)
+            {
+                return new CalificacionPromedioDto
+                {
+                    Promedio = 0,
+                    TotalCalificaciones = 0
+                };
+            }
+
+            var sum = await AsyncExecuter.SumAsync(
+                filteredQuery,
+                x => x.Estrellas
+            );
+
+            return new CalificacionPromedioDto
+            {
+                TotalCalificaciones = total,
+                Promedio = (double)sum / total
+            };
         }
 
         protected override async Task<IQueryable<Calificacion>> CreateFilteredQueryAsync(CalificacionGetListInput input)
