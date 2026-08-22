@@ -48,9 +48,10 @@
             <div><strong>Lat:</strong> {{ city.latitude }} | <strong>Lon:</strong> {{ city.longitude }}</div>
           </div>
 
-          <button class="btn btn-outline-primary w-100" (click)="saveToDestinations(city)">
-            Guardar en mis destinos
-          </button>
+          <button class="btn btn-outline-primary w-100" (click)="saveToFavorites(city)" [disabled]="loading">
+             Guardar en mis favoritos
+            </button>
+         
         </div>
       </div>
     </div>

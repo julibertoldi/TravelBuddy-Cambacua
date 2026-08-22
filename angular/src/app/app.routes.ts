@@ -78,4 +78,5 @@ export const APP_ROUTES: Routes = [
     loadComponent: () =>
       import('./pages/admin/admin.component').then(c => c.AdminComponent),
   },
+
 ];

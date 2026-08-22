@@ -1,12 +1,10 @@
 <div class="favorites-container">
   <h2>Mis Experiencias Favoritas</h2>
 
-  <!-- BOTÓN DE PRUEBA -->
-  <div class="test-actions-bar">
-    <button class="btn-add-test" (click)="agregarDestinoPrueba()">
-      ➕ Añadir Destino de Prueba
-    </button>
-  </div>
+  <!-- BOTÓN Busqeuda -->
+  <button class="btn btn-primary mb-3" routerLink="/cities">
+  <i class="fas fa-search me-1"></i> Buscar y agregar más favoritos
+  </button>
 
   <!-- Grid de Favoritos -->
   <div *ngIf="favoritos.length > 0" class="favorites-grid">
@@ -14,7 +12,7 @@
       
       <!-- Renderizado de Imagen Dinámica -->
       <div class="card-image-container">
-        <img *ngIf="fav.imagenUrl" [src]="fav.imagenUrl" alt="{{ fav.nombreDestino }}" class="card-img" />
+        <img *ngIf="fav.imagenUrl" [src]="fav.imagenUrl" alt="{{ fav.nombre }}" class="card-img" />
         <div *ngIf="!fav.imagenUrl" class="card-image-placeholder">
           <span>🏞️</span>
         </div>
@@ -22,7 +20,9 @@
 
       <!-- Contenido de la Tarjeta (Aquí movemos el corazón) -->
       <div class="card-content">
-        <h3>{{ fav.nombreDestino || 'Destino Guardado' }}</h3>
+        <h3>{{ fav.nombre || 'Destino Guardado' }}</h3>
+        <p class="location-tag" *ngIf="fav.ubicacion">📍 {{ fav.ubicacion }}</p>
+        <p class="price-tag" *ngIf="fav.precio">💰 ${{ fav.precio }}</p>
         <p class="id-tag">ID: {{ fav.destinoId }}</p>
         
         <!-- Contenedor inferior para alinear los botones -->

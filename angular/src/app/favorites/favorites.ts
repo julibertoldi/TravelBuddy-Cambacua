@@ -1,19 +1,22 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RestService } from '@abp/ng.core';
+import { RouterLink } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 
 export interface FavoriteDto {
   id: string;
   destinoId: string;
-  nombreDestino?: string; 
-  imagenUrl?: string; 
+  nombre?: string;
+  ubicacion?: string;
+  imagenUrl?: string;
+  precio?: number;
 }
 
 @Component({
   selector: 'app-favorites',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './favorites.html',
   styleUrls: ['./favorites.scss']
 })
@@ -75,7 +78,7 @@ toggleFavorito(destinoId: string): void {
   const yaEsFavorito = this.favoritos.some(f => f.destinoId === destinoId);
 
   if (yaEsFavorito) {
-    // Si ya está, lo quitamos
+    // Si ya está, se quita
     this.restService.request<any, void>({
       method: 'DELETE',
       url: `/api/app/favorites/quitar/${destinoId}`

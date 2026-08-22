@@ -11,7 +11,7 @@ using Volo.Abp.Users;
 namespace TravelBuddy.Favorites;
 
 [Authorize]
-[RemoteService(IsEnabled = false)] // El FavoriteController expone los endpoints HTTP explícitamente
+[RemoteService(IsEnabled = false)]
 public class FavoriteAppService : ApplicationService, IFavoriteAppService
 {
     private readonly IRepository<Favorite> _favoriteRepository;
@@ -49,13 +49,19 @@ public class FavoriteAppService : ApplicationService, IFavoriteAppService
     public async Task<List<FavoriteDto>> ObtenerMisFavoritosAsync()
     {
         var usuarioId = CurrentUser.GetId();
-        var queryable = await _favoriteRepository.GetQueryableAsync();
+
+        // Carga los favoritos junto a su relación 'Destino' usando el repositorio de ABP
+        var queryable = await _favoriteRepository.WithDetailsAsync(x => x.Destination);
         var lista = queryable.Where(x => x.UsuarioId == usuarioId).ToList();
 
         return lista.Select(x => new FavoriteDto
         {
+            DestinoId = x.DestinoId,
             UsuarioId = x.UsuarioId,
-            DestinoId = x.DestinoId
+            Nombre = x.Destination?.Name,         
+            Ubicacion = x.Destination?.Country,   
+            ImagenUrl = x.Destination?.ImageUrl, 
+            Precio = x.Destination?.Price ?? 0
         }).ToList();
     }
 }

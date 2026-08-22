@@ -65,7 +65,7 @@ namespace TravelBuddy.Destinations
             await base.DeleteAsync(id);
         }
 
-        [Authorize(TravelBuddyPermissions.Admin.Default)]
+        [Authorize]
         public async Task<DestinationDto> ImportFromGeoDbAsync(int geoDbCityId)
         {
             var city = await _citySearchService.GetCityDetailsAsync(geoDbCityId);
@@ -81,7 +81,10 @@ namespace TravelBuddy.Destinations
                 Population = city.Population,
                 Latitude = city.Latitude,
                 Longitude = city.Longitude,
-                LastUpdated = DateTime.Now
+                LastUpdated = DateTime.Now,
+                ImageUrl = string.IsNullOrWhiteSpace(city.ImageUrl)
+                    ? "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400"
+                    : city.ImageUrl
             };
 
             await Repository.InsertAsync(destination, autoSave: true);

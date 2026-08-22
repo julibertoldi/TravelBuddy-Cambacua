@@ -318,7 +318,7 @@ namespace TravelBuddy.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ApiCallLogs");
+                    b.ToTable("ApiCallLogs", (string)null);
                 });
 
             modelBuilder.Entity("TravelBuddy.Statistics.SearchLogs", b =>
@@ -350,7 +350,7 @@ namespace TravelBuddy.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("SearchLogs");
+                    b.ToTable("SearchLogs", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.AuditLogging.AuditLog", b =>
