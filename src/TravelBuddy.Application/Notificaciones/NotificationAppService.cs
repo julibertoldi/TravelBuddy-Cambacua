@@ -15,6 +15,7 @@ using Volo.Abp;
 using Microsoft.Extensions.Logging;
 using Volo.Abp.Authorization;
 using Microsoft.AspNetCore.Authorization;
+using Volo.Abp.Emailing;
 
 namespace TravelBuddy.Notifications
 {
@@ -26,19 +27,22 @@ namespace TravelBuddy.Notifications
         private readonly ITicketmasterService _ticketmasterService;
         private readonly IRepository<Notification, Guid> _notificationRepository;
         private readonly IdentityUserManager _userManager;
-
+        private readonly IEmailSender _emailSender;
         public NotificationAppService(
             IRepository<Favorite> favoriteRepository,
             IRepository<Destination, Guid> destinationRepository,
             ITicketmasterService ticketmasterService,
             IRepository<Notification, Guid> notificationRepository,
-            IdentityUserManager userManager)
+            IdentityUserManager userManager,
+            IEmailSender emailSender)
+
         {
             _favoriteRepository = favoriteRepository;
             _destinationRepository = destinationRepository;
             _ticketmasterService = ticketmasterService;
             _notificationRepository = notificationRepository;
             _userManager = userManager;
+            _emailSender = emailSender; 
         }
 
         public async Task<List<NotificationDto>> GetListAsync()
@@ -162,6 +166,14 @@ namespace TravelBuddy.Notifications
             }
 
             return upcomingEvents.OrderBy(e => e.FechaEvento).ToList();
+        }
+        public async Task EnviarAlertaPorEmail(string userEmail, string destino)
+        {
+            await _emailSender.SendAsync(
+                userEmail,
+                $"Novedades en tu destino: {destino}",
+                $"Se han detectado nuevos eventos en {destino}. Entra a la plataforma para ver más detalles!"
+            );
         }
     }
 }

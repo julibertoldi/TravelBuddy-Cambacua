@@ -43,8 +43,8 @@ public class TravelBuddyDomainModule : AbpModule
         });
 
 
-#if DEBUG
-        context.Services.Replace(ServiceDescriptor.Singleton<IEmailSender, NullEmailSender>());
-#endif
+//#if DEBUG
+//        context.Services.Replace(ServiceDescriptor.Singleton<IEmailSender, NullEmailSender>());
+//#endif
     }
 }
