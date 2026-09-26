@@ -6,7 +6,8 @@ namespace TravelBuddy.Experiencias
     public class CreateUpdateExperienciaDto
     {
         [Required]
-        public Guid DestinoId { get; set; }
+        [StringLength(128)]
+        public string DestinoId { get; set; }
         
         [Required]
         [StringLength(128)]

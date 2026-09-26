@@ -1,4 +1,4 @@
-<div class="container py-4">
+<<div class="container py-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2>Experiencias de viaje</h2>
 
@@ -24,7 +24,7 @@
               for="filterDestinoId"
               class="form-label"
             >
-              ID del destino
+              Destino
             </label>
 
             <input
@@ -32,7 +32,7 @@
               type="text"
               class="form-control"
               formControlName="destinoId"
-              placeholder="Ingresá el ID del destino"
+              placeholder="Nombre del destino"
             />
           </div>
 
@@ -49,8 +49,8 @@
               class="form-select"
               formControlName="valoracion"
             >
-              <option [ngValue]="null">
-                Todas
+              <option [ngValue]="null" disabled selected>
+                Seleccionar valoración
               </option>
 
               <option
@@ -105,7 +105,8 @@
     <div class="card-body">
       <div
         class="table-responsive"
-*ngIf="(experiences.items?.length ?? 0) > 0; else emptyState"      >
+        *ngIf="(experiences.items?.length ?? 0) > 0; else emptyState"
+      >
         <table class="table table-striped align-middle">
           <thead>
             <tr>
@@ -135,14 +136,16 @@
                 <button
                   type="button"
                   class="btn btn-sm btn-outline-primary me-2"
-                  (click)="experience.id && editExperience(experience.id)"                >
+                  (click)="experience.id && editExperience(experience.id)"
+                >
                   Editar
                 </button>
 
                 <button
                   type="button"
                   class="btn btn-sm btn-outline-danger"
-(click)="experience.id && deleteExperience(experience.id)"                >
+                  (click)="experience.id && deleteExperience(experience.id)"
+                >
                   Eliminar
                 </button>
               </td>
@@ -192,7 +195,7 @@
           for="destinoId"
           class="form-label"
         >
-          ID del destino
+          Destino
         </label>
 
         <input
@@ -235,7 +238,7 @@
             form.get('titulo')?.invalid
           "
         >
-          El título es obligatorio y admite hasta 128 caracteres.
+          El título es obligatorio.
         </div>
       </div>
 
@@ -261,7 +264,7 @@
             form.get('descripcion')?.invalid
           "
         >
-          La descripción es obligatoria y admite hasta 1024 caracteres.
+          La descripción es obligatoria.
         </div>
       </div>
 
@@ -278,7 +281,7 @@
           class="form-select"
           formControlName="valoracion"
         >
-          <option [ngValue]="null">
+          <option [ngValue]="null"disabled selected>
             Seleccioná una valoración
           </option>
 

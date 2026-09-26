@@ -89,15 +89,14 @@ namespace TravelBuddy.Experiencias
             }
         }
         //construir la consulta según lo que el usuario complete en la pantalla de búsqueda
-        protected override async Task<IQueryable<Experiencia>>
-            CreateFilteredQueryAsync(ExperienciaGetListInput input)
+        protected override async Task<IQueryable<Experiencia>> CreateFilteredQueryAsync(ExperienciaGetListInput input)
         {
             var query = await Repository.GetQueryableAsync();
 
             return query
                 .WhereIf(
-                    input.DestinoId.HasValue,
-                    x => x.DestinoId == input.DestinoId
+                    !string.IsNullOrWhiteSpace(input.DestinoId),
+                    x => x.DestinoId.Contains(input.DestinoId!)
                 )
                 .WhereIf(
                     input.Valoracion.HasValue,
@@ -111,5 +110,5 @@ namespace TravelBuddy.Experiencias
                         x.Descripcion.Contains(input.Keyword!)
                 );
         }
-    }
+    } 
 }

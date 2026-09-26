@@ -5,7 +5,7 @@ namespace TravelBuddy.Experiencias
 {
     public class ExperienciaGetListInput : PagedAndSortedResultRequestDto
     {
-        public Guid? DestinoId { get; set; }
+        public string? DestinoId { get; set; }
 
         public ExperienciaValoracion? Valoracion { get; set; }
 

@@ -5,11 +5,11 @@ namespace TravelBuddy.Experiencias
 {
     public class Experiencia : AuditedAggregateRoot<Guid>
     {
-        public Guid DestinoId { get; set; }
+        public string DestinoId { get; set; }
         public Guid UsuarioId { get; set; }
         
-        public string Titulo { get; set; }
-        public string Descripcion { get; set; }
+        public string? Titulo { get; set; }
+        public string? Descripcion { get; set; }
         public ExperienciaValoracion Valoracion { get; set; }
         
         // E.g., "Gastronomía, Seguridad, Transporte"
@@ -19,7 +19,7 @@ namespace TravelBuddy.Experiencias
         {
         }
 
-        public Experiencia(Guid id, Guid destinoId, Guid usuarioId, string titulo, string descripcion, ExperienciaValoracion valoracion, string palabrasClave)
+        public Experiencia(Guid id, string destinoId, Guid usuarioId, string titulo, string descripcion, ExperienciaValoracion valoracion, string palabrasClave)
             : base(id)
         {
             DestinoId = destinoId;

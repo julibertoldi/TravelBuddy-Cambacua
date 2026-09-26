@@ -63,7 +63,7 @@ namespace TravelBuddy.Application.Tests.Experiencias
             // Se preparan los datos necesarios para crear una experiencia.
             var input = new CreateUpdateExperienciaDto
             {
-                DestinoId = Guid.NewGuid(),
+                DestinoId = "Villa Belgrano",
                 Titulo = "Viaje a Córdoba",
                 Descripcion = "Una experiencia excelente.",
                 Valoracion = ExperienciaValoracion.Excelente,
@@ -94,7 +94,7 @@ namespace TravelBuddy.Application.Tests.Experiencias
             // Se crea una experiencia perteneciente al usuario autenticado.
             var entity = new Experiencia(
                 Guid.NewGuid(),
-                Guid.NewGuid(),
+                "Destino de Prueba",
                 CurrentUserId,
                 "Título original",
                 "Descripción original",
@@ -142,7 +142,7 @@ namespace TravelBuddy.Application.Tests.Experiencias
 
             var entity = new Experiencia(
                 Guid.NewGuid(),
-                Guid.NewGuid(),
+                "Destino ajeno",
                 anotherUserId,
                 "Experiencia ajena",
                 "No pertenece al usuario actual.",
