@@ -109,6 +109,7 @@ public class TravelBuddyHttpApiHostModule : AbpModule
                 options.ForwardedHeaders = ForwardedHeaders.XForwardedProto;
             });
         }
+    
 
         ConfigureAuthentication(context);
         ConfigureUrls(configuration);
