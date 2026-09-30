@@ -14,7 +14,8 @@ import {
 } from '@abp/ng.core';
 import {
   ToasterService,
-  ConfirmationService
+  ConfirmationService,
+  Confirmation
 } from '@abp/ng.theme.shared';
 import { UserProfileService } from '../../proxy/users/user-profile.service';
 
@@ -182,10 +183,10 @@ export class UserProfileComponent implements OnInit {
 
   confirmDelete(): void {
     this.confirmation.warn(
-      '¿Estás seguro de eliminar tu cuenta?',
+      '¿Estás seguro de que deseas eliminar tu cuenta permanentemente? No podrás volver a ingresar con este usuario.',
       'Eliminar cuenta'
-    ).subscribe((status: any) => { 
-      if (status === 1) { 
+    ).subscribe((status: Confirmation.Status) => { 
+      if (status === Confirmation.Status.confirm) { 
         this.deleteAccount();
       }
     });
@@ -205,15 +206,20 @@ export class UserProfileComponent implements OnInit {
     .subscribe({
       next: () => {
         this.toaster.success(
-          'La cuenta fue eliminada.',
+          'Tu cuenta fue eliminada correctamente.',
           'Cuenta eliminada'
         );
 
         setTimeout(() => {
-          this.authService.logout().subscribe(() => {
-            this.router.navigate(['/']);
+          this.authService.logout().subscribe({
+            next: () => {
+              this.router.navigate(['/']);
+            },
+            error: () => {
+              window.location.href = '/';
+            }
           });
-        }, 1000);
+        }, 1200);
       },
       error: err => {
         this.toaster.error(

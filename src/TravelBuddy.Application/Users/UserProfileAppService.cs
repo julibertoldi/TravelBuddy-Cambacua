@@ -3,9 +3,11 @@ using Microsoft.AspNetCore.Identity;
 using System;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Services;
+using Volo.Abp.Authorization;
 using Volo.Abp.Data;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Identity;
+using Volo.Abp.Users;
 
 namespace TravelBuddy.Users;
 
@@ -56,8 +58,6 @@ public class UserProfileAppService : ApplicationService, IUserProfileAppService
         };
     }
 
-    
-
     public async Task<PublicUserProfileDto> GetPublicProfileAsync(Guid userId)
     {
         var user = await _userManager.GetByIdAsync(userId)
@@ -75,8 +75,14 @@ public class UserProfileAppService : ApplicationService, IUserProfileAppService
     [Authorize]
     public async Task DeleteMyAccountAsync(Guid userId)
     {
-        var user = await _userManager.GetByIdAsync(userId)
-                   ?? throw new EntityNotFoundException(typeof(IdentityUser), userId);
+        var currentUserId = CurrentUser.GetId();
+        if (userId != currentUserId)
+        {
+            throw new AbpAuthorizationException("No estás autorizado para eliminar esta cuenta.");
+        }
+
+        var user = await _userManager.GetByIdAsync(currentUserId)
+                   ?? throw new EntityNotFoundException(typeof(IdentityUser), currentUserId);
 
         var result = await _userManager.DeleteAsync(user);
         result.CheckErrors();
