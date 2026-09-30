@@ -55,7 +55,6 @@ export class UserProfileComponent implements OnInit {
   }
 
   private initForm(): void {
-
     this.profileForm = this.fb.group({
       nombre: ['', [Validators.required, Validators.maxLength(64)]],
       apellido: ['', [Validators.required, Validators.maxLength(64)]],
@@ -63,11 +62,9 @@ export class UserProfileComponent implements OnInit {
       fotoPerfilUrl: ['', [Validators.maxLength(1000)]],
       preferencias: ['', [Validators.maxLength(2000)]]
     });
-
   }
 
   private loadProfile(): void {
-
     this.loading = true;
 
     this.restService.request<any, any>({
@@ -75,37 +72,70 @@ export class UserProfileComponent implements OnInit {
       url: '/api/user-profile/me'
     })
     .subscribe({
-
       next: profile => {
-
+        const currentUser = this.configState.getOne('currentUser');
         this.profileForm.patchValue({
-          nombre: profile.nombre,
-          apellido: profile.apellido,
-          email: profile.email,
-          fotoPerfilUrl: profile.fotoPerfilUrl,
-          preferencias: profile.preferencias
+          nombre: profile.nombre || currentUser?.name || '',
+          apellido: profile.apellido || currentUser?.surName || '',
+          email: profile.email || currentUser?.email || '',
+          fotoPerfilUrl: profile.fotoPerfilUrl || '',
+          preferencias: profile.preferencias || ''
         });
 
+        this.profileForm.markAsPristine();
         this.loading = false;
       },
-
       error: err => {
-
+        const currentUser = this.configState.getOne('currentUser');
+        if (currentUser) {
+          this.profileForm.patchValue({
+            nombre: currentUser.name || '',
+            apellido: currentUser.surName || '',
+            email: currentUser.email || ''
+          });
+          this.profileForm.markAsPristine();
+        }
         this.toaster.error(
           err.error?.error?.message ?? 'No se pudo cargar el perfil.',
           'Error'
         );
-
         this.loading = false;
       }
-
     });
-
   }
 
-  onSubmit(): void {
+  getAvatarUrl(): string {
+    const foto = this.profileForm?.get('fotoPerfilUrl')?.value?.trim();
+    if (foto) {
+      return foto;
+    }
+    const nombre = this.profileForm?.get('nombre')?.value?.trim() || '';
+    const apellido = this.profileForm?.get('apellido')?.value?.trim() || '';
+    const nombreCompleto = `${nombre} ${apellido}`.trim() || 'Usuario';
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(nombreCompleto)}&background=a8beb9&color=fff&size=128&bold=true`;
+  }
+
+  handleImageError(event: any): void {
+    const nombre = this.profileForm?.get('nombre')?.value?.trim() || '';
+    const apellido = this.profileForm?.get('apellido')?.value?.trim() || '';
+    const nombreCompleto = `${nombre} ${apellido}`.trim() || 'Usuario';
+    event.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(nombreCompleto)}&background=a8beb9&color=fff&size=128&bold=true`;
+  }
+
+  clearPhoto(): void {
+    const fotoCtrl = this.profileForm.get('fotoPerfilUrl');
+    fotoCtrl?.setValue('');
+    fotoCtrl?.markAsDirty();
+  }
+
+  // Método de guardado protegido contra doble ejecución concurrente
+  saveProfile(): void {
+    if (this.saving) {
+      return;
+    }
 
     if (this.profileForm.invalid) {
+      this.profileForm.markAllAsTouched();
       return;
     }
 
@@ -120,38 +150,37 @@ export class UserProfileComponent implements OnInit {
       this.currentUserId,
       this.profileForm.value
     ).subscribe({
-
       next: () => {
-
         this.toaster.success(
           'Perfil actualizado correctamente.',
           'Éxito'
         );
 
         this.saving = false;
+        
+        // Marca el formulario como sin modificar para opacar el botón de guardar
+        this.profileForm.markAsPristine();
 
         setTimeout(() => {
           window.location.reload();
-        }, 1000);
-
+        }, 1200);
       },
-
       error: err => {
-
         this.toaster.error(
           err.error?.error?.message ?? 'Error al actualizar el perfil.',
           'Error'
         );
-
         this.saving = false;
       }
-
     });
+  }
 
+  // Manejador del submit del formulario
+  onSubmit(): void {
+    this.saveProfile();
   }
 
   confirmDelete(): void {
-
     this.confirmation.warn(
       '¿Estás seguro de eliminar tu cuenta?',
       'Eliminar cuenta'
@@ -159,13 +188,10 @@ export class UserProfileComponent implements OnInit {
       if (status === 1) { 
         this.deleteAccount();
       }
-
     });
-
   }
 
   private deleteAccount(): void {
-
     if (!this.currentUserId) {
       this.toaster.error('Usuario no autenticado.');
       return;
@@ -177,37 +203,25 @@ export class UserProfileComponent implements OnInit {
       this.currentUserId
     )
     .subscribe({
-
       next: () => {
-
         this.toaster.success(
           'La cuenta fue eliminada.',
           'Cuenta eliminada'
         );
 
         setTimeout(() => {
-
           this.authService.logout().subscribe(() => {
             this.router.navigate(['/']);
           });
-
         }, 1000);
-
       },
-
       error: err => {
-
         this.toaster.error(
           err.error?.error?.message ?? 'No fue posible eliminar la cuenta.',
           'Error'
         );
-
         this.deleting = false;
-
       }
-
     });
-
   }
-
 }

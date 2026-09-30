@@ -21,14 +21,22 @@ $color-text-dark: #4a4a4a;
   border-color: $color-verde-menta;
 }
 
-.btn-primary {
-  background-color: $color-verde-menta;
-  border: none;
-  color: white;
-  
-  &:hover {
-    background-color: darken($color-verde-menta, 10%);
-  }
+/* Botón en estado normal / activo */
+.btn-guardar {
+  background-color: #4caf50 !important; /* Verde vivo o el color primario de tu tema */
+  color: #ffffff !important;
+  opacity: 1;
+  transition: opacity 0.3s ease, background-color 0.3s ease;
+  cursor: pointer;
+}
+
+/* Botón cuando el formulario no se ha modificado o está deshabilitado */
+.btn-guardar:disabled,
+.btn-guardar.guardado {
+  background-color: #a5d6a7 !important; /* Verde suave / opaco */
+  color: #ffffff !important;
+  opacity: 0.65;
+  cursor: not-allowed;
 }
 
 .invalid-feedback {

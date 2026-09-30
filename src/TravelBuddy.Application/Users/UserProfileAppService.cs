@@ -26,17 +26,34 @@ public class UserProfileAppService : ApplicationService, IUserProfileAppService
 
         user.Name = input.Nombre;
         user.Surname = input.Apellido;
+        user.SetProfilePicture(input.FotoPerfilUrl);
+        user.SetPreferences(input.Preferencias);
 
-        if (!string.IsNullOrWhiteSpace(input.Email))
+        if (!string.IsNullOrWhiteSpace(input.Email) &&
+            !string.Equals(user.Email, input.Email, StringComparison.OrdinalIgnoreCase))
         {
             (await _userManager.SetEmailAsync(user, input.Email)).CheckErrors();
         }
 
-        user.SetProfilePicture(input.FotoPerfilUrl);
-        user.SetPreferences(input.Preferencias);
-
         var result = await _userManager.UpdateAsync(user);
         result.CheckErrors();
+    }
+
+    [Authorize]
+    public async Task<UserProfileDto> GetMyProfileAsync(Guid userId)
+    {
+        var user = await _userManager.GetByIdAsync(userId)
+                   ?? throw new EntityNotFoundException(typeof(IdentityUser), userId);
+
+        return new UserProfileDto
+        {
+            UserId = user.Id,
+            Nombre = user.Name ?? string.Empty,
+            Apellido = user.Surname ?? string.Empty,
+            Email = user.Email ?? string.Empty,
+            FotoPerfilUrl = user.GetProfilePicture(),
+            Preferencias = user.GetPreferences()
+        };
     }
 
     

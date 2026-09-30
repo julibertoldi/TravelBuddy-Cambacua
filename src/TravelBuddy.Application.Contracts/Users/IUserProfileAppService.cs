@@ -8,6 +8,8 @@ public interface IUserProfileAppService : IApplicationService
 {
     Task UpdateMyProfileAsync(Guid userId, UpdateUserProfileDto input);
 
+    Task<UserProfileDto> GetMyProfileAsync(Guid userId);
+
     Task<PublicUserProfileDto> GetPublicProfileAsync(Guid userId);
 
     Task DeleteMyAccountAsync(Guid userId);

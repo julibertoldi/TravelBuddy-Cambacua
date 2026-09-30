@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -27,12 +27,12 @@ public class UserProfileController : TravelBuddyController
     }
 
     [HttpGet("me")]
-    public async Task<PublicUserProfileDto> GetMyProfileAsync()
+    public async Task<UserProfileDto> GetMyProfileAsync()
     {
         if (!CurrentUser.Id.HasValue)
             throw new UnauthorizedAccessException();
 
-        return await _userProfileAppService.GetPublicProfileAsync(CurrentUser.Id.Value);
+        return await _userProfileAppService.GetMyProfileAsync(CurrentUser.Id.Value);
     }
 
     [HttpDelete("me")]
