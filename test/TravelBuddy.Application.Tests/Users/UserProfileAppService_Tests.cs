@@ -62,6 +62,7 @@ public class UserProfileAppService_Tests
 
         var updatedUser = await _userManager.GetByIdAsync(user.Id);
 
+        updatedUser.UserName.ShouldBe("juliana");
         updatedUser.Name.ShouldBe("Juliana");
         updatedUser.Surname.ShouldBe("Bertoldi");
         updatedUser.Email.ShouldBe("juliana.nuevo@test.com");
@@ -89,6 +90,7 @@ public class UserProfileAppService_Tests
             var profile = await _service.GetMyProfileAsync(user.Id);
 
             profile.UserId.ShouldBe(user.Id);
+            profile.UserName.ShouldBe(user.UserName);
             profile.Nombre.ShouldBe("Ana");
             profile.Apellido.ShouldBe("Gomez");
             profile.Email.ShouldBe(user.Email);
@@ -114,6 +116,40 @@ public class UserProfileAppService_Tests
         profile.UserId.ShouldBe(user.Id);
         profile.Nombre.ShouldBe("Ana");
         profile.Apellido.ShouldBe("Gomez");
+    }
+
+    [Fact]
+    public async Task NombreDeUsuario_DebePermanecerInmutable_AlActualizarPerfil()
+    {
+        var initialUsername = "inmutableUser";
+        var user = new IdentityUser(Guid.NewGuid(), initialUsername, "inmutable@test.com")
+        {
+            Name = "NombreOriginal",
+            Surname = "ApellidoOriginal"
+        };
+        (await _userManager.CreateAsync(user)).CheckErrors();
+
+        using (LoginAs(user.Id))
+        {
+            await _service.UpdateMyProfileAsync(
+                user.Id,
+                new UpdateUserProfileDto
+                {
+                    Nombre = "NuevoNombre",
+                    Apellido = "NuevoApellido",
+                    Email = "nuevo.email@test.com"
+                });
+
+            var profile = await _service.GetMyProfileAsync(user.Id);
+
+            // El username se mantiene inalterado y de solo lectura
+            profile.UserName.ShouldBe(initialUsername);
+            profile.Nombre.ShouldBe("NuevoNombre");
+            profile.Apellido.ShouldBe("NuevoApellido");
+        }
+
+        var persistedUser = await _userManager.GetByIdAsync(user.Id);
+        persistedUser.UserName.ShouldBe(initialUsername);
     }
 }
    

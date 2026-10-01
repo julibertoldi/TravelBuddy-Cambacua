@@ -6,6 +6,16 @@ export interface PublicUserProfileDto {
   fotoPerfilUrl?: string;
 }
 
+export interface UserProfileDto {
+  userId?: string;
+  userName?: string;
+  nombre?: string;
+  apellido?: string;
+  fotoPerfilUrl?: string;
+  preferencias?: string;
+  email?: string;
+}
+
 export interface UpdateUserProfileDto {
   nombre?: string;
   apellido?: string;
@@ -13,3 +23,4 @@ export interface UpdateUserProfileDto {
   preferencias?: string;
   email?: string;
 }
+

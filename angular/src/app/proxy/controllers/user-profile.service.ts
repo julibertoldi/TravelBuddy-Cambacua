@@ -1,6 +1,6 @@
 import { RestService, Rest } from '@abp/ng.core';
 import { Injectable } from '@angular/core';
-import type { PublicUserProfileDto, UpdateUserProfileDto } from '../users/models';
+import type { PublicUserProfileDto, UpdateUserProfileDto, UserProfileDto } from '../users/models';
 
 @Injectable({
   providedIn: 'root',
@@ -18,7 +18,7 @@ export class UserProfileService {
   
 
   getMyProfile = (config?: Partial<Rest.Config>) =>
-    this.restService.request<any, PublicUserProfileDto>({
+    this.restService.request<any, UserProfileDto>({
       method: 'GET',
       url: '/api/user-profile/me',
     },

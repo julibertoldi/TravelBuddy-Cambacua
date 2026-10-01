@@ -1,34 +1,112 @@
-.city-card {
-  background-color: #f5eed3 !important;
-  border-radius: 12px;
+/* ==========================================
+   Variables de Color
+   ========================================== */
+:host {
+  --color-beige-arena: #c7b9ae;
+  --color-crema-pastel: #f5eed3;
+  --color-verde-menta: #a8beb9;
+  --color-text-dark: #4a4a4a;
+}
+
+/* ==========================================
+   Estilos Globales del Componente
+   ========================================== */
+:host {
+  display: block;
+  color: var(--color-text-dark);
 }
 
 .text-beige {
-  color: #c7b9ae;
+  color: var(--color-beige-arena);
+}
+
+.search-container {
+  background-color: #ffffff;
+  border: 1px solid #ded8d3;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
 }
 
 .btn-custom-search {
-  background-color: #a8beb9;
+  background-color: var(--color-verde-menta);
   border: none;
-  color: white;
+  color: #ffffff;
   padding: 0.375rem 1.5rem;
   border-radius: 4px;
+  transition: opacity 0.2s ease-in-out, background-color 0.2s ease-in-out;
+
 }
 
 .btn-custom-search:hover {
-  opacity: 0.9;
+    opacity: 0.9;
+    color: #ffffff;
+  }
+
+
+
+.btn-custom-search:disabled {
+    background-color: #cbd8d5;
+    cursor: not-allowed;
 }
 
 .btn-custom-save {
-  background: none;
-  border: 1px solid #a8beb9; 
-  color: #4a4a4a;
+  background: transparent;
+  border: 1px solid var(--color-verde-menta);
+  color: var(--color-text-dark);
   width: 100%;
   padding: 8px;
   border-radius: 4px;
+  transition: all 0.2s ease-in-out;
+
 }
 
 .btn-custom-save:hover {
-  background-color: #a8beb9;
-  color: white;
+    background-color: var(--color-verde-menta);
+    color: #ffffff;
+}
+
+.btn-custom-save:disabled {
+    border-color: #cbd8d5;
+    color: #949494;
+    cursor: not-allowed;
+}
+
+.city-card {
+  background-color: var(--color-crema-pastel) !important;
+  border-radius: 12px;
+  border: none;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+}
+
+.city-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+}
+
+.city-card .card-body {
+    padding: 1.25rem;
+  color: var(--color-text-dark);
+}
+
+.city-card .card-title {
+    color: var(--color-text-dark);
+    font-weight: 600;
+}
+
+.city-card .card-subtitle {
+  color: #9a887b;
+}
+
+.form-control {
+  border: 1px solid #d8cec7;
+  color: var(--color-text-dark);
+
+.form-control:focus {
+    border-color: var(--color-verde-menta);
+    box-shadow: 0 0 0 0.2rem rgba(168, 190, 185, 0.25);
+  }
 }

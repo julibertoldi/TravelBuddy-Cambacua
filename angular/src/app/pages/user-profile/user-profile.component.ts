@@ -57,6 +57,7 @@ export class UserProfileComponent implements OnInit {
 
   private initForm(): void {
     this.profileForm = this.fb.group({
+      userName: [{ value: '', disabled: true }],
       nombre: ['', [Validators.required, Validators.maxLength(64)]],
       apellido: ['', [Validators.required, Validators.maxLength(64)]],
       email: ['', [Validators.required, Validators.email]],
@@ -76,6 +77,7 @@ export class UserProfileComponent implements OnInit {
       next: profile => {
         const currentUser = this.configState.getOne('currentUser');
         this.profileForm.patchValue({
+          userName: profile.userName || currentUser?.userName || '',
           nombre: profile.nombre || currentUser?.name || '',
           apellido: profile.apellido || currentUser?.surName || '',
           email: profile.email || currentUser?.email || '',
@@ -90,6 +92,7 @@ export class UserProfileComponent implements OnInit {
         const currentUser = this.configState.getOne('currentUser');
         if (currentUser) {
           this.profileForm.patchValue({
+            userName: currentUser.userName || '',
             nombre: currentUser.name || '',
             apellido: currentUser.surName || '',
             email: currentUser.email || ''

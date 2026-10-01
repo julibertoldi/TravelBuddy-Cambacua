@@ -50,6 +50,7 @@ public class UserProfileAppService : ApplicationService, IUserProfileAppService
         return new UserProfileDto
         {
             UserId = user.Id,
+            UserName = user.UserName ?? string.Empty,
             Nombre = user.Name ?? string.Empty,
             Apellido = user.Surname ?? string.Empty,
             Email = user.Email ?? string.Empty,

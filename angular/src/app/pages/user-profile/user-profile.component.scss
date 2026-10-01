@@ -9,11 +9,19 @@ $color-text-dark: #4a4a4a;
   background-color: $color-crema-pastel;
   border: 1px solid $color-beige-arena;
   color: $color-text-dark;
-  
+
   .card-header {
     background: linear-gradient(135deg, $color-verde-menta 0%, darken($color-verde-menta, 12%) 100%) !important;
-    color: white;
+    color: rgb(185, 169, 217);
   }
+}
+
+.badge-solo-lectura {
+  background-color: #5c7893 !important; // Gris azulado oscuro/elegante
+  color: #ffffff !important;
+  font-size: 0.75rem;
+  padding: 0.35em 0.65em;
+  border-radius: 4px;
 }
 
 .form-control:focus {
@@ -23,7 +31,8 @@ $color-text-dark: #4a4a4a;
 
 /* Botón en estado normal / activo */
 .btn-guardar {
-  background-color: #4caf50 !important; /* Verde vivo o el color primario de tu tema */
+  background-color: #4caf50 !important;
+  /* Verde vivo o el color primario de tu tema */
   color: #ffffff !important;
   opacity: 1;
   transition: opacity 0.3s ease, background-color 0.3s ease;
@@ -33,7 +42,8 @@ $color-text-dark: #4a4a4a;
 /* Botón cuando el formulario no se ha modificado o está deshabilitado */
 .btn-guardar:disabled,
 .btn-guardar.guardado {
-  background-color: #a5d6a7 !important; /* Verde suave / opaco */
+  background-color: #a5d6a7 !important;
+  /* Verde suave / opaco */
   color: #ffffff !important;
   opacity: 0.65;
   cursor: not-allowed;
