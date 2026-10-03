@@ -16,11 +16,13 @@ import { DestinationService } from '../../proxy/destinations/destination.service
   styleUrls: ['./cities.component.css']
 })
 export class CitiesComponent implements OnInit {
-  // Variables para la búsqueda y estado
+
   searchForm!: FormGroup; 
   cities: any[] = [];
-  favoriteCityIds: Set<string | number> = new Set(); // Para rastrear favoritos guardados
+  featuredCities: any[] = []; // Lista para las ciudades de muestra al cargar
+  favoriteCityIds: Set<string | number> = new Set();
   loading = false;
+  loadingFeatured = false;
   hasSearched: boolean = false;
 
   constructor(
@@ -32,7 +34,8 @@ export class CitiesComponent implements OnInit {
 
   ngOnInit(): void {
     this.buildForm();
-    this.loadFavorites(); // Carga previa de los favoritos del usuario
+    this.loadFavorites();
+    this.loadFeaturedCities(); // Cargar ciudades destacadas/muestra
   }
 
   buildForm() {
@@ -43,8 +46,27 @@ export class CitiesComponent implements OnInit {
       minPopulation: [null]  
     });
   }
+// Cargar ciudades destacadas/de muestra al iniciar
+loadFeaturedCities(): void {
+  this.loadingFeatured = true;
 
-  // Cargar la lista de favoritos del usuario al iniciar
+  // Forzamos la búsqueda inicial indicando el país "Argentina"
+  this.destinationService.searchCities({ 
+    partialName: 'c',
+    pais: 'AR'  
+  }).subscribe({
+    next: (response: any) => {
+      const results = response.cities || response.items || response || [];
+      this.featuredCities = results.slice(0, 6); // Toma las primeras 6 ciudades de Argentina
+      this.loadingFeatured = false;
+    },
+    error: () => {
+      this.loadingFeatured = false;
+    }
+  });
+}
+
+  // Carga de favoritos normalizando IDs y Nombres en minúsculas
   loadFavorites(): void {
     this.restService.request<any, any[]>({
       method: 'GET',
@@ -52,16 +74,20 @@ export class CitiesComponent implements OnInit {
     }).subscribe({
       next: (data) => {
         if (data && Array.isArray(data)) {
-          // Guarda el destinoId como el id/nombre por compatibilidad de datos de GeoDB
-          const ids = data.map(f => f.destinoId || f.id || f.nombre);
-          this.favoriteCityIds = new Set(ids);
+          const identifiers = data.flatMap(f => [
+            f.destinoId,
+            f.id,
+            (f.nombre || f.name || f.ubicacion || '').toLowerCase().trim()
+          ]).filter(Boolean);
+
+          this.favoriteCityIds = new Set(identifiers);
         }
       },
       error: (err) => console.error('Error al cargar la lista de favoritos', err)
     });
   }
 
-  // Validación de Filtros: Deshabilita el botón si todo está vacío o si ningún campo tiene al menos 3 caracteres
+  // Validación de Filtros
   isSearchInvalid(): boolean {
     if (!this.searchForm) return true;
 
@@ -71,17 +97,16 @@ export class CitiesComponent implements OnInit {
     const countryStr = (country || '').trim();
     const regionStr = (region || '').trim();
 
-    // Si absolutamente todo está vacío
     if (!nameStr && !countryStr && !regionStr && !minPopulation) {
       return true;
     }
 
-    // Si ingresó algún texto, exigir que al menos un campo cumpla un mínimo de 3 caracteres
     const hasValidMinLength = nameStr.length >= 3 || countryStr.length >= 3 || regionStr.length >= 3 || minPopulation > 0;
 
     return !hasValidMinLength;
   }
 
+  // Búsqueda limpia sin líneas duplicadas
   search() {
     if (this.isSearchInvalid()) return;
 
@@ -89,12 +114,10 @@ export class CitiesComponent implements OnInit {
     this.hasSearched = false;
     this.cities = [];
 
-    this.loading = true;
     const { name, country, region } = this.searchForm.value;
-    this.hasSearched = true;
 
     this.destinationService.searchCities({ 
-      partialName: name, 
+      partialName: name || 'a', 
       pais: country || undefined, 
       region: region || undefined
     }).subscribe({
@@ -110,27 +133,40 @@ export class CitiesComponent implements OnInit {
       }
     });
   }
-// Para consultar en el HTML si una ciudad ya está guardada
+
+  // Verificación flexible por ID y por Nombre de la ciudad
   isAlreadySaved(city: any): boolean {
-    const identifier = city.id || city.wikiDataId || city.name;
-    return this.favoriteCityIds.has(identifier);
+    if (!city) return false;
+
+    const cityId = city.id || city.wikiDataId;
+    const cityName = (city.name || city.nombre || '').toLowerCase().trim();
+
+    return this.favoriteCityIds.has(cityId) || this.favoriteCityIds.has(cityName);
   }
-  // Método unificado usando restService
+
+  // Guardar en favoritos y actualizar estado en tiempo real
   saveToFavorites(city: any) {
+    if (this.isAlreadySaved(city)) return;
+
     this.loading = true;
 
-    // Guardar el destino en la base de datos local
     this.destinationService.importFromGeoDb(city.id).subscribe({
       next: (destinoGuardado: any) => {
         const destinoId = destinoGuardado.id || destinoGuardado;
 
-        //  /api/app/favorites/agregar/{destinoId}
         this.restService.request<any, void>({
           method: 'POST',
           url: `/api/app/favorites/agregar/${destinoId}`
         }).subscribe({
           next: () => {
             this.toaster.success(`¡${city.name} se guardó en tus favoritos!`);
+
+            // Agrega al Set inmediatamente para deshabilitar el botón en pantalla
+            const cityId = city.id || city.wikiDataId;
+            const cityName = (city.name || city.nombre || '').toLowerCase().trim();
+            if (cityId) this.favoriteCityIds.add(cityId);
+            if (cityName) this.favoriteCityIds.add(cityName);
+
             this.loading = false;
           },
           error: (err) => {
