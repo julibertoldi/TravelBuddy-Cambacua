@@ -1,6 +1,6 @@
 <div class="container-fluid mt-3">
   <!-- Filtros -->
-  <div class="card shadow-sm mb-4">
+  <div class="card search-container shadow-sm mb-4">
     <div class="card-header bg-white border-bottom p-3">
       <h5 class="mb-0 text-muted">Buscador de Destinos</h5>
     </div>
@@ -22,44 +22,68 @@
           <label class="form-label small text-muted">Población Mínima</label>
           <input type="number" class="form-control" formControlName="minPopulation" placeholder="10000">
         </div>
+        
+        <!-- VALIDACIÓN DE FILTROS EN EL BOTÓN -->
         <div class="col-12 text-end mt-4">
-          <button type="submit" class="btn btn-primary" [disabled]="loading">
+          <button 
+            type="submit" 
+            class="btn btn-custom-search" 
+            [disabled]="isSearchInvalid() || loading">
             <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
-            Buscar
+            {{ loading ? 'Buscando...' : 'Buscar' }}
           </button>
         </div>
       </form>
     </div>
   </div>
 
+  <!-- INDICADOR DE CARGA -->
+  <div *ngIf="loading" class="text-center py-4">
+    <div class="spinner-border text-primary" role="status"></div>
+    <p class="mt-2 text-muted">Consultando API externa...</p>
+  </div>
+
   <!-- Resultados -->
-  <div class="row" *ngIf="cities && cities.length > 0; else noResults">
+  <div class="row" *ngIf="!loading && cities && cities.length > 0; else noResults">
     <div class="col-md-4 mb-4" *ngFor="let city of cities">
-      <div class="card h-100 border-0 shadow-sm">
+      <div class="card city-card h-100 border-0 shadow-sm">
         <!-- Imagen -->
         <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400" class="card-img-top" alt="Imagen de destino">
         
-        <div class="card-body">
-          <h6 class="card-title text-dark mb-1">{{ city.name }}</h6>
-          <p class="card-subtitle text-muted small mb-3">{{ city.region }}, {{ city.country }}</p>
-          
-          <div class="small text-secondary mb-3">
-            <div><strong>Habitantes:</strong> {{ city.population | number }}</div>
-            <div><strong>Lat:</strong> {{ city.latitude }} | <strong>Lon:</strong> {{ city.longitude }}</div>
+        <div class="card-body d-flex flex-column justify-content-between">
+          <div>
+            <h6 class="card-title text-dark mb-1">{{ city.name }}</h6>
+            <p class="card-subtitle text-beige small mb-3">{{ city.region }}, {{ city.country }}</p>
+            
+            <div class="small text-secondary mb-3">
+              <div><strong>Habitantes:</strong> {{ city.population | number }}</div>
+              <div><strong>Lat:</strong> {{ city.latitude }} | <strong>Lon:</strong> {{ city.longitude }}</div>
+            </div>
           </div>
 
-          <button class="btn btn-outline-primary w-100" (click)="saveToFavorites(city)" [disabled]="loading">
-             Guardar en mis favoritos
-            </button>
+          <!-- DETECCIÓN Y BOTÓN GUARDADO -->
+          <button 
+            type="button"
+            class="btn-custom-save w-100 mt-2" 
+            (click)="saveToFavorites(city)" 
+            [disabled]="isAlreadySaved(city) || loading">
+            <i [class]="isAlreadySaved(city) ? 'bi bi-check-circle-fill me-1' : 'bi bi-bookmark-plus me-1'"></i>
+            {{ isAlreadySaved(city) ? 'Guardado en mis favoritos' : 'Guardar en mis favoritos' }}
+          </button>
          
         </div>
       </div>
     </div>
   </div>
 
+  <!-- TEMPLATE / CARTEL DE AVISO CUANDO NO SE ENCUENTRA EL DESTINO -->
   <ng-template #noResults>
     <div class="text-center py-5 text-muted" *ngIf="!loading">
-      <p>Utilice los filtros superiores para comenzar la búsqueda.</p>
+      <div *ngIf="hasSearched" class="alert alert-warning d-inline-block px-4 py-3 shadow-sm rounded-3">
+        <i class="bi bi-exclamation-triangle-fill me-2 text-warning fs-5"></i>
+        No se encontraron destinos o ciudades que coincidan con los filtros ingresados. Intente con otro término.
+      </div>
+      <p *ngIf="!hasSearched">Utilice los filtros superiores para comenzar la búsqueda.</p>
     </div>
   </ng-template>
 </div>
