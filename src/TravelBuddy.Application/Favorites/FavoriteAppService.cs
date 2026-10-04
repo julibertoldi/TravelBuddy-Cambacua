@@ -54,17 +54,24 @@ public class FavoriteAppService : ApplicationService, IFavoriteAppService
         var queryable = await _favoriteRepository.WithDetailsAsync(x => x.Destination);
         var lista = queryable.Where(x => x.UsuarioId == usuarioId).ToList();
 
-        return lista.Select(x => new FavoriteDto
+        var favoritos = queryable.Where(x => x.UsuarioId == usuarioId).ToList();
+
+        var favoritosDto = favoritos.Select(f => new FavoriteDto
         {
-            UsuarioId = x.UsuarioId,
-            DestinoId = x.DestinoId,
-            Name = x.Destination.Name,
-            Country = x.Destination.Country,
-            ImageUrl = x.Destination.ImageUrl,
-            Population = x.Destination.Population,
-            Latitude = x.Destination.Latitude,
-            Longitude = x.Destination.Longitude,
-            CreationTime = x.Destination.CreationTime
+            Name = f.Destination.Name,
+            Description = f.Destination.Description,
+            Region = f.Destination.Region,
+            Country = f.Destination.Country,
+            ImageUrl = f.Destination.ImageUrl,
+            Price = f.Destination.Price,
+            IsAvailable = f.Destination.IsAvailable,
+            GeoDbCityId = f.Destination.GeoDbCityId,
+            Population = f.Destination.Population,
+            Latitude = f.Destination.Latitude,
+            Longitude = f.Destination.Longitude,
+            CreationTime = f.Destination.CreationTime
         }).ToList();
+
+        return favoritosDto;   
     }
 }

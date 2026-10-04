@@ -32,45 +32,45 @@
         <div>
           <!-- Imagen del backend -->
           <img 
-            [src]="fav.imageUrl || fav.imagenUrl" 
+            [src]="fav.imageUrl || 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400'" 
             class="card-img-top" 
-            [alt]="fav.name || fav.nombre || 'Destino'">
+            [alt]="fav.name || 'Destino'">
 
           <div class="card-body">
             <!-- Nombre del Destino -->
-            <h5 class="card-title text-dark fw-bold mb-1 fs-4">{{ fav.name || fav.nombre }}</h5>
+            <h5 class="card-title text-dark fw-bold mb-1 fs-4">{{ fav.name }}</h5>
             
-            <!-- País / Ubicación -->
+            <!-- Región / País -->
             <p class="card-subtitle text-beige small mb-3">
-              {{ fav.country || fav.ubicacion }}
+              <span *ngIf="fav.region">{{ fav.region }}, </span>{{ fav.country }}
             </p>
 
             <!-- Datos Geográficos (Población y Coordenadas) -->
             <div class="small text-secondary mb-3">
-              <!-- Población -->
-              <div *ngIf="fav.poblacion !== undefined && fav.poblacion !== null">
-                <strong>Habitantes:</strong> {{ fav.poblacion | number }}
+              <!-- Población (mapeada a fav.population) -->
+              <div *ngIf="fav.population !== undefined && fav.population !== null">
+                <strong>Habitantes:</strong> {{ fav.population | number }}
               </div>
 
-              <!-- Coordenadas -->
-              <div *ngIf="fav.latitud && fav.longitud">
-                <strong>Lat:</strong> {{ fav.latitud }} | <strong>Lon:</strong> {{ fav.longitud }}
+              <!-- Coordenadas (mapeadas a fav.latitude y fav.longitude) -->
+              <div *ngIf="fav.latitude && fav.longitude">
+                <strong>Lat:</strong> {{ fav.latitude }} | <strong>Lon:</strong> {{ fav.longitude }}
               </div>
 
-              <!-- Mensaje si el destino fue guardado sin esos datos -->
-              <div *ngIf="!fav.poblacion && !fav.latitud" class="text-muted fst-italic">
+              <!-- Mensaje por si la ciudad guardada no tenía datos de población ni coordenadas -->
+              <div *ngIf="(fav.population === undefined || fav.population === null) && !fav.latitude" class="text-muted fst-italic">
                 Sin datos geográficos adicionales
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Footer con Fecha de actualización/guardado y Acción -->
+        <!-- Footer con Fecha de actualización/guardado (mapeada a fav.creationTime) y Acción -->
         <div class="card-footer bg-transparent border-0 px-3 pb-3 d-flex justify-content-between align-items-center">
           <div class="small text-muted d-flex align-items-center">
             <i class="bi bi-clock-history me-1"></i>
             <span>
-              Última act: {{ (fav.creationTime || fav.lastUpdated) ? ((fav.creationTime || fav.lastUpdated) | date:'dd/MM/yyyy HH:mm') : 'Recientemente' }}
+              Última act: {{ fav.creationTime ? (fav.creationTime | date:'dd/MM/yyyy HH:mm') : 'Recientemente' }}
             </span>
           </div>
 

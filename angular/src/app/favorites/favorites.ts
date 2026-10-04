@@ -8,8 +8,13 @@ export interface FavoriteDto {
   usuarioId: string;
   destinoId: string;
   name: string;
+  description?: string;
+  region?: string;
   country: string;
-  imageUrl: string;
+  imageUrl?: string;
+  price?: number;
+  isAvailable?: boolean;
+  geoDbCityId?: number;
   population?: number;
   latitude?: number;
   longitude?: number;
