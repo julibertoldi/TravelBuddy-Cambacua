@@ -1,47 +1,81 @@
-<div class="favorites-container">
-  <h2>Mis Experiencias Favoritas</h2>
+<div class="favorites-wrapper">
+  
+  <!-- Encabezado con Fondo Gris Azulado -->
+  <div class="favorites-header-bar d-flex justify-content-between align-items-center mb-4 p-4 rounded-3 shadow-sm">
+    <div class="d-flex align-items-center">
+      <h2 class="fw-bold text-dark mb-0 me-3">
+        <i class="bi bi-bookmark-heart-fill me-2 text-danger"></i>Mis Favoritos
+      </h2>
+      <!-- Badge con clase personalizada -->
+      <span class="badge badge-gris-azulado fs-6" *ngIf="favoritos.length > 0">
+        {{ favoritos.length }} guardados
+      </span>
+    </div>
 
-  <!-- BOTÓN Busqeuda -->
-  <button class="btn btn-primary mb-3" routerLink="/cities">
-  <i class="fas fa-search me-1"></i> Buscar y agregar más favoritos
-  </button>
+    <!-- Botón de Búsqueda opaco a la derecha -->
+    <button class="btn btn-search-muted" routerLink="/cities">
+      <i class="fas fa-search me-2"></i>Buscar y agregar más favoritos
+    </button>
+  </div>
 
-  <!-- Grid de Favoritos -->
-  <div *ngIf="favoritos.length > 0" class="favorites-grid">
-    <div *ngFor="let fav of favoritos" class="favorite-card">
-      
-      <!-- Renderizado de Imagen Dinámica -->
-      <div class="card-image-container">
-        <img *ngIf="fav.imagenUrl" [src]="fav.imagenUrl" alt="{{ fav.nombre }}" class="card-img" />
-        <div *ngIf="!fav.imagenUrl" class="card-image-placeholder">
-          <span>🏞️</span>
-        </div>
-      </div>
+  <!-- Indicador de Carga -->
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status"></div>
+    <p class="mt-2 text-muted fs-5">Cargando tus destinos favoritos...</p>
+  </div>
 
-      <!-- Contenido de la Tarjeta (Aquí movemos el corazón) -->
-      <div class="card-content">
-        <h3>{{ fav.nombre || 'Destino Guardado' }}</h3>
-        <p class="location-tag" *ngIf="fav.ubicacion">📍 {{ fav.ubicacion }}</p>
-        <p class="price-tag" *ngIf="fav.precio">💰 ${{ fav.precio }}</p>
-        <p class="id-tag">ID: {{ fav.destinoId }}</p>
+  <!-- Grid de Tarjetas de Favoritos -->
+  <div class="row g-4" *ngIf="!loading && favoritos.length > 0; else sinFavoritos">
+    <div class="col-md-6 col-lg-4" *ngFor="let fav of favoritos">
+      <div class="card favorite-card h-100 border-0 shadow-sm d-flex flex-column justify-content-between">
         
-        <!-- Contenedor inferior para alinear los botones -->
-        <div class="card-footer-actions">
-          
-          <!-- Botón de Corazón sin fondo, abajo a la derecha -->
-          <button class="btn-heart-toggle" (click)="toggleFavorito(fav.destinoId)">
-            <span class="heart-icon" [class.active]="esFavorito(fav.destinoId)">♥</span>
+        <div>
+          <!-- Imagen del backend -->
+          <img 
+            [src]="fav.imagenUrl" 
+            class="card-img-top" 
+            [alt]="fav.nombre || 'Destino'">
+
+          <div class="card-body">
+            <!-- Nombre del Destino -->
+            <h5 class="card-title text-dark fw-bold mb-1 fs-4">{{ fav.nombre }}</h5>
+            
+            <!-- País / Ubicación -->
+            <p class="card-subtitle text-beige small mb-3">
+              {{ fav.ubicacion }}
+            </p>
+
+            <!-- Detalle de Destino Guardado -->
+            <div class="small text-secondary mb-3">
+              <div><strong>Estado:</strong> Guardado en lista de seguimiento</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer con Acción -->
+        <div class="card-footer bg-transparent border-0 px-3 pb-3 d-flex justify-content-between align-items-center">
+          <div class="small text-muted d-flex align-items-center">
+            <i class="bi bi-clock-history me-1"></i>
+            <span>Destino Activo</span>
+          </div>
+
+          <!-- Botón de Corazón para Eliminar -->
+          <button class="btn-heart-toggle" (click)="eliminarFavorito(fav.destinoId)" title="Quitar de mis favoritos">
+            <span class="heart-icon active">♥</span>
           </button>
         </div>
-      </div>
 
+      </div>
     </div>
   </div>
 
-<!-- Estado Vacío -->
-<div *ngIf="favoritos.length === 0 && !loading" class="empty-state">
-  <span>✈️</span>
-  <h3>Aún no tenés favoritos guardados</h3>
-  <p>Presioná el botón de arriba para simular la carga de un destino.</p>
-</div>
+  <!-- Estado Vacío -->
+  <ng-template #sinFavoritos>
+    <div *ngIf="!loading" class="empty-state text-center py-5">
+      <span class="fs-1">✈️</span>
+      <h3 class="mt-3 text-dark fw-bold">Aún no tenés favoritos guardados</h3>
+      <p class="text-muted">Utilizá el botón de búsqueda para encontrar destinos e incorporarlos a tu lista.</p>
+    </div>
+  </ng-template>
+
 </div>

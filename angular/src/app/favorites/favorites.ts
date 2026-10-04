@@ -8,9 +8,13 @@ export interface FavoriteDto {
   id: string;
   destinoId: string;
   nombre?: string;
-  ubicacion?: string;
+  pais?: string;
+  poblacion?: number;
+  latitud?: number;
+  longitud?: number;
   imagenUrl?: string;
-  precio?: number;
+  lastModificationTime?: string; // Fecha de última actualización/guardado
+  creationTime?: string;
 }
 
 @Component({
@@ -30,7 +34,7 @@ export class FavoritesComponent implements OnInit {
     this.obtenerFavoritos();
   }
 
-  // 1. GET - Obtiene la lista de destinos 
+  // GET - Obtiene la lista de destinos 
   obtenerFavoritos(): void {
     this.loading = true;
     this.restService.request<any, FavoriteDto[]>({
@@ -46,7 +50,7 @@ export class FavoritesComponent implements OnInit {
     });
   }
 
-  // 2. POST - Agrega un nuevo destino 
+  // POST - Agrega un nuevo destino 
   agregarDestinoPrueba(): void {
     const destinoCanabacuaId = '053ad7de-baf1-55de-dec4-3a1d69591b3e';
     
@@ -61,7 +65,7 @@ export class FavoritesComponent implements OnInit {
     });
   }
 
-  // 3. DELETE - Elimina el destino 
+  // DELETE - Elimina el destino 
   eliminarFavorito(destinoId: string): void {
     this.restService.request<any, void>({
       method: 'DELETE',
