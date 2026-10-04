@@ -32,31 +32,46 @@
         <div>
           <!-- Imagen del backend -->
           <img 
-            [src]="fav.imagenUrl" 
+            [src]="fav.imageUrl || fav.imagenUrl" 
             class="card-img-top" 
-            [alt]="fav.nombre || 'Destino'">
+            [alt]="fav.name || fav.nombre || 'Destino'">
 
           <div class="card-body">
             <!-- Nombre del Destino -->
-            <h5 class="card-title text-dark fw-bold mb-1 fs-4">{{ fav.nombre }}</h5>
+            <h5 class="card-title text-dark fw-bold mb-1 fs-4">{{ fav.name || fav.nombre }}</h5>
             
             <!-- País / Ubicación -->
             <p class="card-subtitle text-beige small mb-3">
-              {{ fav.ubicacion }}
+              {{ fav.country || fav.ubicacion }}
             </p>
 
-            <!-- Detalle de Destino Guardado -->
+            <!-- Datos Geográficos (Población y Coordenadas) -->
             <div class="small text-secondary mb-3">
-              <div><strong>Estado:</strong> Guardado en lista de seguimiento</div>
+              <!-- Población -->
+              <div *ngIf="fav.poblacion !== undefined && fav.poblacion !== null">
+                <strong>Habitantes:</strong> {{ fav.poblacion | number }}
+              </div>
+
+              <!-- Coordenadas -->
+              <div *ngIf="fav.latitud && fav.longitud">
+                <strong>Lat:</strong> {{ fav.latitud }} | <strong>Lon:</strong> {{ fav.longitud }}
+              </div>
+
+              <!-- Mensaje si el destino fue guardado sin esos datos -->
+              <div *ngIf="!fav.poblacion && !fav.latitud" class="text-muted fst-italic">
+                Sin datos geográficos adicionales
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- Footer con Acción -->
+        <!-- Footer con Fecha de actualización/guardado y Acción -->
         <div class="card-footer bg-transparent border-0 px-3 pb-3 d-flex justify-content-between align-items-center">
           <div class="small text-muted d-flex align-items-center">
             <i class="bi bi-clock-history me-1"></i>
-            <span>Destino Activo</span>
+            <span>
+              Última act: {{ (fav.creationTime || fav.lastUpdated) ? ((fav.creationTime || fav.lastUpdated) | date:'dd/MM/yyyy HH:mm') : 'Recientemente' }}
+            </span>
           </div>
 
           <!-- Botón de Corazón para Eliminar -->

@@ -56,12 +56,15 @@ public class FavoriteAppService : ApplicationService, IFavoriteAppService
 
         return lista.Select(x => new FavoriteDto
         {
-            DestinoId = x.DestinoId,
             UsuarioId = x.UsuarioId,
-            Nombre = x.Destination?.Name,         
-            Ubicacion = x.Destination?.Country,   
-            ImagenUrl = x.Destination?.ImageUrl, 
-            Precio = x.Destination?.Price ?? 0
+            DestinoId = x.DestinoId,
+            Name = x.Destination.Name,
+            Country = x.Destination.Country,
+            ImageUrl = x.Destination.ImageUrl,
+            Population = x.Destination.Population,
+            Latitude = x.Destination.Latitude,
+            Longitude = x.Destination.Longitude,
+            CreationTime = x.Destination.CreationTime
         }).ToList();
     }
 }

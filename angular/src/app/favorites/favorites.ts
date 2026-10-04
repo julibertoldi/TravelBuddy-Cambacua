@@ -5,15 +5,14 @@ import { RouterLink } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 
 export interface FavoriteDto {
-  id: string;
+  usuarioId: string;
   destinoId: string;
-  nombre?: string;
-  pais?: string;
-  poblacion?: number;
-  latitud?: number;
-  longitud?: number;
-  imagenUrl?: string;
-  lastModificationTime?: string; // Fecha de última actualización/guardado
+  name: string;
+  country: string;
+  imageUrl: string;
+  population?: number;
+  latitude?: number;
+  longitude?: number;
   creationTime?: string;
 }
 
