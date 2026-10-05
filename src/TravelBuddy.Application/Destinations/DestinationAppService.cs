@@ -45,18 +45,25 @@ namespace TravelBuddy.Destinations
         {
             return await _citySearchService.GetPopularCitiesAsync();
         }
-        // --- MÉTODOS ADMINISTRATIVOS PROTEGIDOS ---
-
-        [Authorize(TravelBuddyPermissions.Admin.Default)]
+        // --- MÉTODOS ADMINISTRATIVOS PROTEGIDOS ---s        
+        [Authorize]
         public override async Task<DestinationDto> CreateAsync(CreateUpdateDestinationDto input)
         {
-            return await base.CreateAsync(input);
+            var destination = ObjectMapper.Map<CreateUpdateDestinationDto, Destination>(input);
+
+            await Repository.InsertAsync(destination, autoSave: true);
+            return ObjectMapper.Map<Destination, DestinationDto>(destination);
         }
 
         [Authorize(TravelBuddyPermissions.Admin.Default)]
         public override async Task<DestinationDto> UpdateAsync(Guid id, CreateUpdateDestinationDto input)
         {
-            return await base.UpdateAsync(id, input);
+            var destination = await Repository.GetAsync(id);
+
+            ObjectMapper.Map(input, destination);
+
+            await Repository.UpdateAsync(destination, autoSave: true);
+            return ObjectMapper.Map<Destination, DestinationDto>(destination);
         }
 
         [Authorize(TravelBuddyPermissions.Admin.Default)]
@@ -65,7 +72,8 @@ namespace TravelBuddy.Destinations
             await base.DeleteAsync(id);
         }
 
-        [Authorize(TravelBuddyPermissions.Admin.Default)]
+        // Permitir que cualquier usuario autenticado (Admin o Usuario Común) pueda importar/guardar
+        [Authorize]
         public async Task<DestinationDto> ImportFromGeoDbAsync(int geoDbCityId)
         {
             var city = await _citySearchService.GetCityDetailsAsync(geoDbCityId);

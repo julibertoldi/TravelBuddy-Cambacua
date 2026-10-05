@@ -7,6 +7,6 @@ namespace TravelBuddy.Calificaciones
     public interface ICalificacionAppService :
         ICrudAppService<CalificacionDto, Guid, CalificacionGetListInput, CreateUpdateCalificacionDto>
     {
-        Task<CalificacionPromedioDto> GetPromedioByDestinoAsync(Guid destinoId);
+       //Task<CalificacionPromedioDto> GetPromedioByDestinoAsync(Guid destinoId);
     }
 }

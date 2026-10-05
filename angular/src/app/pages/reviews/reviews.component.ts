@@ -69,17 +69,28 @@ export class ReviewsComponent implements OnInit {
 
   getCurrentUserId(): string | null {
     const currentUser = this.configState.getOne('currentUser');
-    return currentUser ? currentUser.id : null;
+    return currentUser?.id ?? null;
   }
 
-  loadDestinations(): void {
+loadDestinations(): void {
     this.restService.request<any, any>({
       method: 'GET',
       url: '/api/app/destination'
     }).subscribe({
       next: (response) => {
-        // Handle standard ABP paged response
-        this.destinations = response.items || response;
+        const rawItems = response.items || response;
+        
+        this.destinations = rawItems.map((d: any) => ({
+          id: d.id,
+          // Probamos exhaustivamente todas las variantes posibles (español/inglés, mayúsculas/minúsculas)
+          nombre: d.nombre || d.Name || d.name || 'Sin nombre',
+          descripcion: d.descripcion || d.Description || d.description || '',
+          ubicacion: d.ubicacion || d.Region || d.region || d.Country || d.country || 'Ubicación no especificada',
+          precio: d.precio ?? d.Price ?? d.price ?? 0,
+          imagenUrl: d.imagenUrl || d.ImageUrl || d.imageUrl || '',
+          disponible: d.disponible ?? d.IsAvailable ?? d.isAvailable ?? false
+        }));
+
         if (this.destinations.length > 0) {
           this.selectDestination(this.destinations[0]);
         }
@@ -119,10 +130,11 @@ export class ReviewsComponent implements OnInit {
       }
     });
 
-    // Load average
+// Load average
     this.restService.request<Promedio, any>({
       method: 'GET',
-      url: `/api/app/calificacion/promedio-by-destino?destinoId=${destinoId}`
+      url: '/api/app/calificaciones-custom/promedio-por-destino',
+      params: { destinoId: destinoId }
     }).subscribe({
       next: (response) => {
         this.promedio = response;
@@ -132,7 +144,7 @@ export class ReviewsComponent implements OnInit {
       }
     });
   }
-
+  
   setStars(stars: number): void {
     this.selectedStars = stars;
     this.reviewForm.patchValue({ estrellas: stars });
@@ -163,12 +175,16 @@ export class ReviewsComponent implements OnInit {
     const { estrellas, comentario } = this.reviewForm.value;
     const destinoId = this.selectedDestination.id;
 
-    if (this.isEditing && this.editingReviewId) {
-      // Update
+    const existingReview = this.reviews.find(r => r.usuarioId === this.currentUserId);
+    
+    const reviewIdToUpdate = this.editingReviewId || existingReview?.id;
+
+    if (reviewIdToUpdate) {
+
       const body = { destinoId, estrellas, comentario };
       this.restService.request<any, any>({
         method: 'PUT',
-        url: `/api/app/calificacion/${this.editingReviewId}`,
+        url: `/api/app/calificacion/${reviewIdToUpdate}`,
         body
       }).subscribe({
         next: () => {
@@ -185,7 +201,7 @@ export class ReviewsComponent implements OnInit {
         }
       });
     } else {
-      // Create
+
       const body = { destinoId, estrellas, comentario };
       this.restService.request<any, any>({
         method: 'POST',
@@ -206,12 +222,12 @@ export class ReviewsComponent implements OnInit {
     }
   }
 
-  editReview(review: Review): void {
+editReview(review: Review): void {
     this.isEditing = true;
     this.editingReviewId = review.id;
-    this.selectedStars = review.estrellas;
+    this.selectedStars = review.estrellas || review.estrellas; 
     this.reviewForm.setValue({
-      estrellas: review.estrellas,
+      estrellas: review.estrellas || review.estrellas,
       comentario: review.comentario
     });
   }
@@ -250,5 +266,14 @@ export class ReviewsComponent implements OnInit {
       return false;
     }
     return this.reviews.some(r => r.usuarioId === this.currentUserId);
+  }
+
+  startEditingMyReview(): void {
+    const myReview = this.reviews.find(r => r.usuarioId === this.currentUserId);
+    if (myReview) {
+      this.editReview(myReview); 
+    } else {
+      this.isEditing = true;
+    }
   }
 }
