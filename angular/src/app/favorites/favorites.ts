@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms'; 
 import { RestService } from '@abp/ng.core';
 import { RouterLink } from '@angular/router';
-
 import { finalize } from 'rxjs/operators';
 
 export interface FavoriteDto {
@@ -29,7 +29,7 @@ export interface FavoriteDto {
 @Component({
   selector: 'app-favorites',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, FormsModule], 
   templateUrl: './favorites.html',
   styleUrls: ['./favorites.scss']
 })
@@ -37,14 +37,13 @@ export class FavoritesComponent implements OnInit {
   favoritos: FavoriteDto[] = [];
   loading = false;
 
-  // Variables para controlar el Modal de Confirmación
+  // Variable de filtro y modal
+  searchTerm: string = '';
   showConfirmModal = false;
   destinoAEliminarId: string | null = null;
   destinoAEliminarNombre: string = '';
 
-  constructor(
-    private restService: RestService
-  ) { }
+  constructor(private restService: RestService) { }
 
   ngOnInit(): void {
     this.obtenerFavoritos();
@@ -66,6 +65,29 @@ export class FavoritesComponent implements OnInit {
       });
   }
 
+  // Getter mejorado para filtrado dinámico flexible (nombre, región, país o ubicación)
+  get favoritosFiltrados(): FavoriteDto[] {
+    if (!this.searchTerm || this.searchTerm.trim() === '') {
+      return this.favoritos;
+    }
+
+    const busqueda = this.searchTerm.toLowerCase().trim();
+
+    return this.favoritos.filter(fav => {
+      const nombre = (fav.name || fav.nombre || '').toLowerCase();
+      const pais = (fav.country || fav.ubicacion || '').toLowerCase();
+      const region = (fav.region || '').toLowerCase();
+
+      return nombre.includes(busqueda) || pais.includes(busqueda) || region.includes(busqueda);
+    });
+  }
+onSearchChange(): void {
+    // Permite refrescar la lista filtrada al tipear en el input
+  }
+
+  limpiarBusqueda(): void {
+    this.searchTerm = '';
+  }
   confirmarEliminar(fav: FavoriteDto): void {
     const id = fav.destinoId || fav.id;
     const nombre = fav.nombre || fav.name || 'este destino';
@@ -78,14 +100,12 @@ export class FavoritesComponent implements OnInit {
     this.showConfirmModal = true;
   }
 
-  // 3. Cierra la ventana de confirmación
   cancelarEliminacion(): void {
     this.showConfirmModal = false;
     this.destinoAEliminarId = null;
     this.destinoAEliminarNombre = '';
   }
 
-  // 4. DELETE - Elimina el destino tras confirmar
   eliminarFavorito(destinoId: string): void {
     if (!destinoId) return;
 
@@ -104,7 +124,6 @@ export class FavoritesComponent implements OnInit {
     });
   }
 
-  // Mantiene tu función de toggle original si la usás en otras partes
   toggleFavorito(destinoId: string): void {
     const yaEsFavorito = this.favoritos.some(f => (f.destinoId || f.id) === destinoId);
 
