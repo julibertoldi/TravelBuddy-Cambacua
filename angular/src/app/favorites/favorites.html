@@ -32,17 +32,17 @@
         <div>
           <!-- Imagen del backend -->
           <img 
-            [src]="fav.imageUrl || 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400'" 
+            [src]="fav.imageUrl || fav.imagenUrl || 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400'" 
             class="card-img-top" 
-            [alt]="fav.name || 'Destino'">
+            [alt]="fav.name || fav.nombre || 'Destino'">
 
           <div class="card-body">
             <!-- Nombre del Destino -->
-            <h5 class="card-title text-dark fw-bold mb-1 fs-4">{{ fav.name }}</h5>
+            <h5 class="card-title text-dark fw-bold mb-1 fs-4">{{ fav.name || fav.nombre }}</h5>
             
             <!-- Región / País -->
             <p class="card-subtitle text-beige small mb-3">
-              <span *ngIf="fav.region">{{ fav.region }}, </span>{{ fav.country }}
+              <span *ngIf="fav.region">{{ fav.region }}, </span>{{ fav.country || fav.ubicacion }}
             </p>
 
             <!-- Datos Geográficos (Población y Coordenadas) -->
@@ -65,7 +65,7 @@
           </div>
         </div>
 
-        <!-- Footer con Fecha de actualización/guardado (mapeada a fav.creationTime) y Acción -->
+        <!-- Footer con Fecha de actualización/guardado y Acción -->
         <div class="card-footer bg-transparent border-0 px-3 pb-3 d-flex justify-content-between align-items-center">
           <div class="small text-muted d-flex align-items-center">
             <i class="bi bi-clock-history me-1"></i>
@@ -74,23 +74,50 @@
             </span>
           </div>
 
-          <!-- Botón de Corazón para Eliminar -->
-          <button class="btn-heart-toggle" (click)="eliminarFavorito(fav.destinoId)" title="Quitar de mis favoritos">
-            <span class="heart-icon active">♥</span>
-          </button>
+          <!-- Contenedor inferior con el botón de corazón -->
+          <div class="card-footer-actions">
+            <button type="button" class="btn-heart-toggle" (click)="confirmarEliminar(fav)">
+              <span class="heart-icon" [class.active]="esFavorito(fav.destinoId || fav.id!)">♥</span>
+            </button>
+          </div>
         </div>
 
       </div>
     </div>
   </div>
 
-  <!-- Estado Vacío -->
+  <!-- Template para Estado Vacío (asociado al else sinFavoritos) -->
   <ng-template #sinFavoritos>
-    <div *ngIf="!loading" class="empty-state text-center py-5">
-      <span class="fs-1">✈️</span>
-      <h3 class="mt-3 text-dark fw-bold">Aún no tenés favoritos guardados</h3>
-      <p class="text-muted">Utilizá el botón de búsqueda para encontrar destinos e incorporarlos a tu lista.</p>
+    <div class="empty-state text-center py-5" *ngIf="!loading">
+      <span class="empty-icon fs-1">✈️</span>
+      <h3 class="mt-3">Aún no tenés favoritos guardados</h3>
+      <p class="text-muted">Presioná el botón de arriba para buscar y agregar destinos a tu lista.</p>
     </div>
   </ng-template>
+
+  <!-- Modal de Confirmación -->
+  <div class="custom-modal-overlay" *ngIf="showConfirmModal" (click)="cancelarEliminacion()">
+    <div class="custom-modal-card" (click)="$event.stopPropagation()">
+      
+      <div class="modal-icon-wrapper">
+        <span class="warning-icon">⚠️️</span>
+      </div>
+
+      <h3 class="modal-title-text">Quitar de favoritos</h3>
+      <p class="modal-body-text">
+        ¿Estás seguro de que deseas quitar <strong>"{{ destinoAEliminarNombre }}"</strong> de tus favoritos?
+      </p>
+
+      <div class="modal-actions-wrapper">
+        <button type="button" class="btn-modal-cancel" (click)="cancelarEliminacion()">
+          Cancelar
+        </button>
+        <button type="button" class="btn-modal-confirm" (click)="eliminarFavorito(destinoAEliminarId!)">
+          Sí
+        </button>
+      </div>
+
+    </div>
+  </div>
 
 </div>

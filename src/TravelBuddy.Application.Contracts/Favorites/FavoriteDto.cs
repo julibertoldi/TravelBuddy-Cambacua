@@ -5,6 +5,7 @@ namespace TravelBuddy.Favorites;
 
 public class FavoriteDto
 {
+    public Guid DestinoId { get; set; }
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public string Region { get; set; } = string.Empty;

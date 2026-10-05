@@ -58,6 +58,7 @@ public class FavoriteAppService : ApplicationService, IFavoriteAppService
 
         var favoritosDto = favoritos.Select(f => new FavoriteDto
         {
+            DestinoId = f.DestinoId,
             Name = f.Destination.Name,
             Description = f.Destination.Description,
             Region = f.Destination.Region,
