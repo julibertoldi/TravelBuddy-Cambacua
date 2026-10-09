@@ -9,7 +9,7 @@ using Volo.Abp.Domain.Repositories;
 
 namespace TravelBuddy.Calificaciones
 {
-    [AllowAnonymous] // Permite probar todo en Swagger sin tokens
+    [Authorize] // Exigir autenticación para proteger la privacidad
     public class CalificacionAppService :
         CrudAppService<
             Calificacion,
@@ -24,25 +24,11 @@ namespace TravelBuddy.Calificaciones
         {
         }
 
-        [AllowAnonymous]
-        public override async Task<CalificacionDto> GetAsync(Guid id)
-        {
-            return await base.GetAsync(id);
-        }
-
-        [AllowAnonymous]
-        public override async Task<Volo.Abp.Application.Dtos.PagedResultDto<CalificacionDto>> GetListAsync(CalificacionGetListInput input)
-        {
-            return await base.GetListAsync(input);
-        }
-
-        [AllowAnonymous]
         public override async Task<CalificacionDto> CreateAsync(CreateUpdateCalificacionDto input)
         {
-            // Usamos el ID del usuario actual, o un ID vacío temporal para poder probar en Swagger sin login
-            var usuarioId = CurrentUser.Id ?? Guid.Empty;
+            var usuarioId = CurrentUser.Id ?? throw new UserFriendlyException("Debe iniciar sesión para calificar.");
 
-            // Control de duplicados: se fija si este usuario ya calificó este destino
+            // Control de duplicados: una sola reseña por usuario por destino
             var exists = await Repository.AnyAsync(x => x.DestinoId == input.DestinoId && x.UsuarioId == usuarioId);
             if (exists)
             {
@@ -61,7 +47,6 @@ namespace TravelBuddy.Calificaciones
             return ObjectMapper.Map<Calificacion, CalificacionDto>(entity);
         }
 
-        [AllowAnonymous]
         public override async Task<CalificacionDto> UpdateAsync(Guid id, CreateUpdateCalificacionDto input)
         {
             var entity = await Repository.GetAsync(id);
@@ -74,7 +59,6 @@ namespace TravelBuddy.Calificaciones
             return ObjectMapper.Map<Calificacion, CalificacionDto>(entity);
         }
 
-        [AllowAnonymous]
         public override async Task DeleteAsync(Guid id)
         {
             var entity = await Repository.GetAsync(id);
@@ -82,8 +66,6 @@ namespace TravelBuddy.Calificaciones
 
             await Repository.DeleteAsync(entity, autoSave: true);
         }
-
-        [AllowAnonymous]
         public async Task<CalificacionPromedioDto> GetPromedioByDestinoAsync(Guid destinoId)
         {
             var query = await Repository.GetQueryableAsync();
@@ -116,16 +98,28 @@ namespace TravelBuddy.Calificaciones
         protected override async Task<IQueryable<Calificacion>> CreateFilteredQueryAsync(CalificacionGetListInput input)
         {
             var query = await base.CreateFilteredQueryAsync(input);
+
             if (input.DestinoId.HasValue)
             {
                 query = query.Where(x => x.DestinoId == input.DestinoId.Value);
             }
+
+            var userId = CurrentUser.Id;
+            if (userId.HasValue)
+            {
+                // Solo muestra la reseña perteneciente al usuario logueado
+                query = query.Where(x => x.UsuarioId == userId.Value);
+            }
+            else
+            {
+                query = query.Where(x => false);
+            }
+
             return query;
         }
 
         private void EnsureOwner(Calificacion entity)
         {
-            // Desactivado temporalmente para pruebas locales sin login
             if (CurrentUser.Id.HasValue && entity.UsuarioId != CurrentUser.Id.Value)
             {
                 throw new AbpAuthorizationException();
