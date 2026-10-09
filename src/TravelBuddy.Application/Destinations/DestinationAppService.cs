@@ -63,7 +63,7 @@ namespace TravelBuddy.Destinations
             ObjectMapper.Map(input, destination);
 
             await Repository.UpdateAsync(destination, autoSave: true);
-            return ObjectMapper.Map<Destination, DestinationDto>(destination);
+            return ObjectMapper.Map<Destination, DestinationDto>(destination);          
         }
 
         [Authorize(TravelBuddyPermissions.Admin.Default)]
@@ -84,7 +84,7 @@ namespace TravelBuddy.Destinations
             var destination = new Destination(GuidGenerator.Create(), city.Name,
                 $"Ciudad importada desde GeoDB ({city.Country})", city.Region, city.Country)
             {
-                GeoDbCityId = geoDbCityId,
+                GeoDbCityId = geoDbCityId,      
                 Population = city.Population,
                 Latitude = city.Latitude,
                 Longitude = city.Longitude,
