@@ -23,9 +23,6 @@ public class TravelBuddyApplicationAutoMapperProfile : Profile
             .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.ImagenUrl))
             .ForMember(dest => dest.IsAvailable, opt => opt.MapFrom(src => src.Disponible));
 
-        CreateMap<Experiencias.Experiencia, Experiencias.ExperienciaDto>();
-        CreateMap<Experiencias.CreateUpdateExperienciaDto, Experiencias.Experiencia>();
-
         CreateMap<Calificaciones.Calificacion, Calificaciones.CalificacionDto>();
         CreateMap<Calificaciones.CreateUpdateCalificacionDto, Calificaciones.Calificacion>();
 

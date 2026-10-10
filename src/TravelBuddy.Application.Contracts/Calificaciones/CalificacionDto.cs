@@ -8,6 +8,8 @@ namespace TravelBuddy.Calificaciones
         public Guid DestinoId { get; set; }
         public Guid UsuarioId { get; set; }
         public int Estrellas { get; set; }
+        public string Titulo { get; set; } = string.Empty;
         public string Comentario { get; set; } = string.Empty;
+        public string PalabrasClave { get; set; } = string.Empty;
     }
 }

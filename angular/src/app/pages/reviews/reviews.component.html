@@ -124,6 +124,20 @@
                     </div>
                   </div>
 
+                  <!-- Titulo -->
+                  <div class="mb-3">
+                    <label for="titulo" class="form-label text-muted font-weight-bold">Título</label>
+                    <input
+                      id="titulo"
+                      class="form-control border shadow-sm rounded-lg"
+                      formControlName="titulo"
+                      placeholder="Ej. Increíble experiencia"
+                    />
+                    <div *ngIf="reviewForm.get('titulo')?.invalid && reviewForm.get('titulo')?.touched" class="text-danger small mt-1">
+                      El título es requerido y debe tener menos de 200 caracteres.
+                    </div>
+                  </div>
+
                   <!-- Comment Textarea -->
                   <div class="mb-3">
                     <label for="comentario" class="form-label text-muted font-weight-bold">Comentario</label>
@@ -143,6 +157,18 @@
                       </div>
                     </div>
                   </div>
+
+                  <!-- Palabras Clave -->
+                  <div class="mb-3">
+                    <label for="palabrasClave" class="form-label text-muted font-weight-bold">Palabras Clave</label>
+                    <input
+                      id="palabrasClave"
+                      class="form-control border shadow-sm rounded-lg"
+                      formControlName="palabrasClave"
+                      placeholder="Ej. relajante, familiar, aventura"
+                    />
+                  </div>
+
 
                   <!-- Submit button -->
                   <button
@@ -167,12 +193,18 @@
                 <div *ngIf="currentUserId && hasReviewed() && !isEditing" class="py-3">
                   <i class="fa fa-check-circle fa-3x text-success mb-3"></i>
                   <h5 class="text-dark-blue font-weight-bold mb-2">¡Destino Calificado!</h5>
-                  <p class="text-muted mb-3 small px-3">Ya has calificado este destino. Puedes editar o eliminar tu reseña directamente en la lista de opiniones.</p>
+                  <p class="text-muted mb-3 small px-3">Ya has calificado este destino. Puedes editar o eliminar tu reseña aquí.</p>
                     <button 
                       (click)="startEditingMyReview()" 
                       class="btn btn-sm btn-outline-primary rounded-pill px-4"
                     >
                       <i class="fa fa-edit me-1"></i>Editar mi reseña
+                    </button>
+                    <button 
+                      (click)="deleteReview(getMyReviewId())" 
+                      class="btn btn-sm btn-outline-danger rounded-pill px-4 ms-2"
+                    >
+                      <i class="fa fa-trash-alt me-1"></i>Eliminar mi reseña
                     </button>
                 </div>
               </div>
@@ -180,52 +212,7 @@
           </div>
         </div>
 
-        <!-- Reviews List Card -->
-        <div class="card shadow-sm border-0 bg-glass">
-          <div class="card-header bg-transparent border-bottom py-3">
-            <h5 class="mb-0 text-dark-blue font-weight-bold">
-              <i class="fa fa-comments me-2 text-primary"></i>Opiniones de Viajeros
-            </h5>
-          </div>
-          <div class="card-body">
-            <div class="reviews-list">
-              <div *ngFor="let rev of reviews" class="review-item p-3 border-bottom d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center">
-                <div class="flex-grow-1">
-                  <div class="d-flex align-items-center mb-1">
-                    <span class="user-avatar me-2 rounded-circle flex-center" [class.user-me]="rev.usuarioId === currentUserId">
-                      {{ rev.usuarioId === currentUserId ? 'Tú' : 'V' }}
-                    </span>
-                    <span class="font-weight-bold text-dark-blue me-3">
-                      {{ rev.usuarioId === currentUserId ? 'Tu Calificación' : 'Viajero Anónimo' }}
-                    </span>
-                    <small class="text-muted">{{ rev.creationTime | date:'shortDate' }}</small>
-                  </div>
-                  <div class="review-stars text-warning mb-2 small">
-                    <i *ngFor="let star of getStarArray(rev.estrellas)" class="fas fa-star"></i>
-                    <i *ngFor="let star of getEmptyStarArray(rev.estrellas)" class="far fa-star text-muted"></i>
-                  </div>
-                  <p class="mb-0 text-secondary font-weight-normal text-break italic-comentario">"{{ rev.comentario }}"</p>
-                </div>
 
-                <!-- Delete / Edit options for Owner -->
-                <div *ngIf="rev.usuarioId === currentUserId" class="review-actions mt-2 mt-sm-0 ms-sm-3 d-flex gap-2">
-                  <button (click)="editReview(rev)" class="btn btn-sm btn-action btn-edit-icon" title="Editar">
-                    <i class="fa fa-pencil-alt text-primary"></i>
-                  </button>
-                  <button (click)="deleteReview(rev.id)" class="btn btn-sm btn-action btn-delete-icon" title="Eliminar">
-                    <i class="fa fa-trash-alt text-danger"></i>
-                  </button>
-                </div>
-              </div>
-
-              <div *ngIf="reviews.length === 0" class="text-center py-5 text-muted">
-                <i class="far fa-comments fa-3x mb-3 text-secondary opacity-50"></i>
-                <h6 class="font-weight-bold text-dark-blue">No hay opiniones aún</h6>
-                <p class="mb-0 small">Sé el primero en calificar este destino turístico.</p>
-              </div>
-            </div>
-          </div>
-        </div>
 
       </div>
       

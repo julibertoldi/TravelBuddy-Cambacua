@@ -20,7 +20,9 @@ interface Review {
   destinoId: string;
   usuarioId: string;
   estrellas: number;
+  titulo: string;
   comentario: string;
+  palabrasClave: string;
   creationTime: string;
 }
 
@@ -60,7 +62,9 @@ export class ReviewsComponent implements OnInit {
   ) {
     this.reviewForm = this.fb.group({
       estrellas: [0, [Validators.required, Validators.min(1), Validators.max(5)]],
-      comentario: ['', [Validators.required, Validators.maxLength(2000)]]
+      titulo: ['', [Validators.required, Validators.maxLength(200)]],
+      comentario: ['', [Validators.required, Validators.maxLength(2000)]],
+      palabrasClave: ['', [Validators.maxLength(200)]]
     });
   }
 
@@ -109,7 +113,7 @@ loadDestinations(): void {
     this.editingReviewId = null;
     this.selectedStars = 0;
     this.hoveredStars = 0;
-    this.reviewForm.reset({ estrellas: 0, comentario: '' });
+    this.reviewForm.reset({ estrellas: 0, titulo: '', comentario: '', palabrasClave: '' });
     this.errorMessage = null;
     this.successMessage = null;
 
@@ -174,7 +178,7 @@ loadDestinations(): void {
       return;
     }
 
-    const { estrellas, comentario } = this.reviewForm.value;
+    const { estrellas, titulo, comentario, palabrasClave } = this.reviewForm.value;
     const destinoId = this.selectedDestination.id;
 
     const existingReview = this.reviews.find(r => r.usuarioId === this.currentUserId);
@@ -183,7 +187,7 @@ loadDestinations(): void {
 
     if (reviewIdToUpdate) {
 
-      const body = { destinoId, estrellas, comentario };
+      const body = { destinoId, estrellas, titulo, comentario, palabrasClave };
       this.restService.request<any, any>({
         method: 'PUT',
         url: `/api/app/calificacion/${reviewIdToUpdate}`,
@@ -194,7 +198,7 @@ loadDestinations(): void {
           this.errorMessage = null;
           this.isEditing = false;
           this.editingReviewId = null;
-          this.reviewForm.reset({ estrellas: 0, comentario: '' });
+          this.reviewForm.reset({ estrellas: 0, titulo: '', comentario: '', palabrasClave: '' });
           this.selectedStars = 0;
           this.loadReviewsAndPromedio(destinoId);
         },
@@ -204,7 +208,7 @@ loadDestinations(): void {
       });
     } else {
 
-      const body = { destinoId, estrellas, comentario };
+      const body = { destinoId, estrellas, titulo, comentario, palabrasClave };
       this.restService.request<any, any>({
         method: 'POST',
         url: '/api/app/calificacion',
@@ -213,7 +217,7 @@ loadDestinations(): void {
         next: () => {
           this.successMessage = 'Reseña creada correctamente.';
           this.errorMessage = null;
-          this.reviewForm.reset({ estrellas: 0, comentario: '' });
+          this.reviewForm.reset({ estrellas: 0, titulo: '', comentario: '', palabrasClave: '' });
           this.selectedStars = 0;
           this.loadReviewsAndPromedio(destinoId);
         },
@@ -230,7 +234,9 @@ editReview(review: Review): void {
     this.selectedStars = review.estrellas || review.estrellas; 
     this.reviewForm.setValue({
       estrellas: review.estrellas || review.estrellas,
-      comentario: review.comentario
+      titulo: review.titulo,
+      comentario: review.comentario,
+      palabrasClave: review.palabrasClave
     });
   }
 
@@ -238,7 +244,7 @@ editReview(review: Review): void {
     this.isEditing = false;
     this.editingReviewId = null;
     this.selectedStars = 0;
-    this.reviewForm.reset({ estrellas: 0, comentario: '' });
+    this.reviewForm.reset({ estrellas: 0, titulo: '', comentario: '', palabrasClave: '' });
   }
 
   deleteReview(reviewId: string): void {
@@ -261,6 +267,11 @@ editReview(review: Review): void {
         this.errorMessage = 'Error al eliminar la reseña.';
       }
     });
+  }
+
+  getMyReviewId(): string {
+    const myReview = this.reviews.find(r => r.usuarioId === this.currentUserId);
+    return myReview ? myReview.id : '';
   }
 
   hasReviewed(): boolean {

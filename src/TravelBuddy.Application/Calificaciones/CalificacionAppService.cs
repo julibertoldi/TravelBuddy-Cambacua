@@ -40,7 +40,9 @@ namespace TravelBuddy.Calificaciones
                 input.DestinoId,
                 usuarioId,
                 input.Estrellas,
-                input.Comentario
+                input.Titulo,
+                input.Comentario,
+                input.PalabrasClave
             );
 
             await Repository.InsertAsync(entity, autoSave: true);
@@ -53,7 +55,9 @@ namespace TravelBuddy.Calificaciones
             EnsureOwner(entity);
 
             entity.SetEstrellas(input.Estrellas);
+            entity.SetTitulo(input.Titulo);
             entity.SetComentario(input.Comentario);
+            entity.SetPalabrasClave(input.PalabrasClave);
 
             await Repository.UpdateAsync(entity, autoSave: true);
             return ObjectMapper.Map<Calificacion, CalificacionDto>(entity);

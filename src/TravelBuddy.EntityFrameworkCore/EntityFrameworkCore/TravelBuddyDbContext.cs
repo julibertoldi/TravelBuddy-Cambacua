@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TravelBuddy.Destinations;
-using TravelBuddy.Experiencias;
+
 using TravelBuddy.Favorites;
 using TravelBuddy.Statistics;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
@@ -25,9 +25,9 @@ public class TravelBuddyDbContext :
     AbpDbContext<TravelBuddyDbContext>,
     IIdentityDbContext
 {
-    /* Entidades de tus módulos de dominio */
+    /* Entidades de tus mï¿½dulos de dominio */
     public DbSet<Destination> Destinations { get; set; }
-    public DbSet<Experiencia> Experiencias { get; set; }
+    
     public DbSet<Calificaciones.Calificacion> Calificaciones { get; set; }
     public DbSet<Favorite> Favoritos { get; set; }
     public DbSet<Notificaciones.Notification> Notificaciones { get; set; }
@@ -55,7 +55,7 @@ public class TravelBuddyDbContext :
     {
         base.OnModelCreating(builder);
 
-        /* Configuración de los módulos predeterminados de ABP */
+        /* Configuraciï¿½n de los mï¿½dulos predeterminados de ABP */
         builder.ConfigurePermissionManagement();
         builder.ConfigureSettingManagement();
         builder.ConfigureBackgroundJobs();
@@ -65,7 +65,7 @@ public class TravelBuddyDbContext :
         builder.ConfigureFeatureManagement();
         builder.ConfigureBlobStoring();
 
-        /* Configuración de tus entidades de dominio */
+        /* Configuraciï¿½n de tus entidades de dominio */
 
         // 1. Destinations
         builder.Entity<Destination>(b =>
@@ -81,13 +81,6 @@ public class TravelBuddyDbContext :
             b.Property(x => x.IsAvailable).IsRequired();
 
             b.HasIndex(x => x.GeoDbCityId);
-        });
-
-        // 2. Experiencias
-        builder.Entity<Experiencia>(b =>
-        {
-            b.ToTable(TravelBuddyConsts.DbTablePrefix + "Experiencias", TravelBuddyConsts.DbSchema);
-            b.ConfigureByConvention();
         });
 
         // 3. Calificaciones

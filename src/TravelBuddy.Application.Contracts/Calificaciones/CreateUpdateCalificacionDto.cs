@@ -12,7 +12,13 @@ namespace TravelBuddy.Calificaciones
         public int Estrellas { get; set; }
 
         [Required]
+        [StringLength(200)]
+        public string Titulo { get; set; } = string.Empty;
+
+        [Required]
         [StringLength(2000)]
         public string Comentario { get; set; } = string.Empty;
+
+        public string PalabrasClave { get; set; } = string.Empty;
     }
 }
