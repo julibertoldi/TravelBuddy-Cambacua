@@ -11,7 +11,7 @@ using Volo.Abp.Users;
 namespace TravelBuddy.Favorites;
 
 [Authorize]
-[RemoteService(IsEnabled = false)]
+//[RemoteService(IsEnabled = false)]
 public class FavoriteAppService : ApplicationService, IFavoriteAppService
 {
     private readonly IRepository<Favorite> _favoriteRepository;

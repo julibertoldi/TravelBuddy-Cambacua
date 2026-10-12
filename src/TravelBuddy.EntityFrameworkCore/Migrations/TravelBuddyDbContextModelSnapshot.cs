@@ -68,13 +68,18 @@ namespace TravelBuddy.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("LastModifierId");
 
+                    b.Property<string>("PalabrasClave")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Titulo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<Guid>("UsuarioId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("DestinoId", "UsuarioId")
-                        .IsUnique();
 
                     b.ToTable("AppCalificaciones", (string)null);
                 });
@@ -168,65 +173,6 @@ namespace TravelBuddy.Migrations
                     b.ToTable("AppDestinations", (string)null);
                 });
 
-            modelBuilder.Entity("TravelBuddy.Experiencias.Experiencia", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .HasMaxLength(40)
-                        .HasColumnType("nvarchar(40)")
-                        .HasColumnName("ConcurrencyStamp");
-
-                    b.Property<DateTime>("CreationTime")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("CreationTime");
-
-                    b.Property<Guid?>("CreatorId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("CreatorId");
-
-                    b.Property<string>("Descripcion")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("DestinoId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ExtraProperties")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("ExtraProperties");
-
-                    b.Property<DateTime?>("LastModificationTime")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("LastModificationTime");
-
-                    b.Property<Guid?>("LastModifierId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("LastModifierId");
-
-                    b.Property<string>("PalabrasClave")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Titulo")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("UsuarioId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Valoracion")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("AppExperiencias", (string)null);
-                });
-
             modelBuilder.Entity("TravelBuddy.Favorites.Favorite", b =>
                 {
                     b.Property<Guid>("UsuarioId")
@@ -236,6 +182,8 @@ namespace TravelBuddy.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("UsuarioId", "DestinoId");
+
+                    b.HasIndex("DestinoId");
 
                     b.HasIndex("UsuarioId", "DestinoId")
                         .IsUnique();
@@ -318,7 +266,7 @@ namespace TravelBuddy.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ApiCallLogs", (string)null);
+                    b.ToTable("ApiCallLogs");
                 });
 
             modelBuilder.Entity("TravelBuddy.Statistics.SearchLogs", b =>
@@ -350,7 +298,7 @@ namespace TravelBuddy.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("SearchLogs", (string)null);
+                    b.ToTable("SearchLogs");
                 });
 
             modelBuilder.Entity("Volo.Abp.AuditLogging.AuditLog", b =>
@@ -2128,6 +2076,17 @@ namespace TravelBuddy.Migrations
                         .IsUnique();
 
                     b.ToTable("AbpSettingDefinitions", (string)null);
+                });
+
+            modelBuilder.Entity("TravelBuddy.Favorites.Favorite", b =>
+                {
+                    b.HasOne("TravelBuddy.Destinations.Destination", "Destination")
+                        .WithMany()
+                        .HasForeignKey("DestinoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Destination");
                 });
 
             modelBuilder.Entity("Volo.Abp.AuditLogging.AuditLogAction", b =>

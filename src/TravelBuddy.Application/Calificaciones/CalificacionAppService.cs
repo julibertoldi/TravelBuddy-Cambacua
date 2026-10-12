@@ -28,13 +28,6 @@ namespace TravelBuddy.Calificaciones
         {
             var usuarioId = CurrentUser.Id ?? throw new UserFriendlyException("Debe iniciar sesión para calificar.");
 
-            // Control de duplicados: una sola reseña por usuario por destino
-            var exists = await Repository.AnyAsync(x => x.DestinoId == input.DestinoId && x.UsuarioId == usuarioId);
-            if (exists)
-            {
-                throw new BusinessException("TravelBuddy:Calificacion:YaExiste");
-            }
-
             var entity = new Calificacion(
                 GuidGenerator.Create(),
                 input.DestinoId,
@@ -70,6 +63,7 @@ namespace TravelBuddy.Calificaciones
 
             await Repository.DeleteAsync(entity, autoSave: true);
         }
+
         public async Task<CalificacionPromedioDto> GetPromedioByDestinoAsync(Guid destinoId)
         {
             var query = await Repository.GetQueryableAsync();
@@ -111,12 +105,12 @@ namespace TravelBuddy.Calificaciones
             var userId = CurrentUser.Id;
             if (userId.HasValue)
             {
-                // Solo muestra la reseña perteneciente al usuario logueado
+                // Solo muestra las reseñas pertenecientes al usuario logueado
                 query = query.Where(x => x.UsuarioId == userId.Value);
             }
             else
             {
-                query = query.Where(x => false);
+                query = query.Where(x => false); // Corregido aquí
             }
 
             return query;

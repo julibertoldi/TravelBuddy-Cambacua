@@ -3,8 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RestService, ConfigStateService } from '@abp/ng.core';
 
-
-
 interface Destination {
   id: string;
   nombre: string;
@@ -78,7 +76,7 @@ export class ReviewsComponent implements OnInit {
     return currentUser?.id ?? null;
   }
 
-loadDestinations(): void {
+  loadDestinations(): void {
     this.restService.request<any, any>({
       method: 'GET',
       url: '/api/app/destination'
@@ -87,8 +85,7 @@ loadDestinations(): void {
         const rawItems = response.items || response;
         
         this.destinations = rawItems.map((d: any) => ({
-          id: d.id,
-          // Probamos exhaustivamente todas las variantes posibles (español/inglés, mayúsculas/minúsculas)
+          id: d.id || d.Id,
           nombre: d.nombre || d.Name || d.name || 'Sin nombre',
           descripcion: d.descripcion || d.Description || d.description || '',
           ubicacion: d.ubicacion || d.Region || d.region || d.Country || d.country || 'Ubicación no especificada',
@@ -109,11 +106,7 @@ loadDestinations(): void {
 
   selectDestination(destination: Destination): void {
     this.selectedDestination = destination;
-    this.isEditing = false;
-    this.editingReviewId = null;
-    this.selectedStars = 0;
-    this.hoveredStars = 0;
-    this.reviewForm.reset({ estrellas: 0, titulo: '', comentario: '', palabrasClave: '' });
+    this.cancelEdit();
     this.errorMessage = null;
     this.successMessage = null;
 
@@ -123,20 +116,30 @@ loadDestinations(): void {
   }
 
   loadReviewsAndPromedio(destinoId: string): void {
-    // Load reviews
+    // Load reviews with casing normalization
     this.restService.request<any, any>({
       method: 'GET',
       url: `/api/app/calificacion?destinoId=${destinoId}`
     }).subscribe({
       next: (response) => {
-        this.reviews = response.items || response;
+        const rawItems = response.items || response;
+        this.reviews = rawItems.map((r: any) => ({
+          id: r.id || r.Id,
+          destinoId: r.destinoId || r.DestinoId,
+          usuarioId: r.usuarioId || r.UsuarioId || r.userId || r.UserId,
+          estrellas: r.estrellas ?? r.Estrellas ?? 0,
+          titulo: r.titulo || r.Titulo || '',
+          comentario: r.comentario || r.Comentario || '',
+          palabrasClave: r.palabrasClave || r.PalabrasClave || '',
+          creationTime: r.creationTime || r.CreationTime || ''
+        }));
       },
       error: (err) => {
         this.errorMessage = 'Error al cargar las reseñas.';
       }
     });
 
-// Load average
+    // Load average
     this.restService.request<Promedio, any>({
       method: 'GET',
       url: '/api/app/calificaciones-custom/promedio-por-destino',
@@ -181,33 +184,26 @@ loadDestinations(): void {
     const { estrellas, titulo, comentario, palabrasClave } = this.reviewForm.value;
     const destinoId = this.selectedDestination.id;
 
-    const existingReview = this.reviews.find(r => r.usuarioId === this.currentUserId);
-    
-    const reviewIdToUpdate = this.editingReviewId || existingReview?.id;
-
-    if (reviewIdToUpdate) {
-
+    if (this.isEditing && this.editingReviewId) {
+      // Actualizar registro existente seleccionado
       const body = { destinoId, estrellas, titulo, comentario, palabrasClave };
       this.restService.request<any, any>({
         method: 'PUT',
-        url: `/api/app/calificacion/${reviewIdToUpdate}`,
+        url: `/api/app/calificacion/${this.editingReviewId}`,
         body
       }).subscribe({
         next: () => {
-          this.successMessage = 'Reseña actualizada correctamente.';
+          this.successMessage = 'Entrada actualizada correctamente.';
           this.errorMessage = null;
-          this.isEditing = false;
-          this.editingReviewId = null;
-          this.reviewForm.reset({ estrellas: 0, titulo: '', comentario: '', palabrasClave: '' });
-          this.selectedStars = 0;
+          this.cancelEdit();
           this.loadReviewsAndPromedio(destinoId);
         },
         error: (err) => {
-          this.errorMessage = err.error?.error?.message || 'Error al actualizar la reseña.';
+          this.errorMessage = err.error?.error?.message || 'Error al actualizar la entrada.';
         }
       });
     } else {
-
+      // Crear nueva entrada en la bitácora
       const body = { destinoId, estrellas, titulo, comentario, palabrasClave };
       this.restService.request<any, any>({
         method: 'POST',
@@ -215,28 +211,27 @@ loadDestinations(): void {
         body
       }).subscribe({
         next: () => {
-          this.successMessage = 'Reseña creada correctamente.';
+          this.successMessage = 'Nueva entrada agregada a tu bitácora.';
           this.errorMessage = null;
-          this.reviewForm.reset({ estrellas: 0, titulo: '', comentario: '', palabrasClave: '' });
-          this.selectedStars = 0;
+          this.cancelEdit();
           this.loadReviewsAndPromedio(destinoId);
         },
         error: (err) => {
-          this.errorMessage = err.error?.error?.message || 'Error al enviar la reseña.';
+          this.errorMessage = err.error?.error?.message || 'Error al guardar la entrada.';
         }
       });
     }
   }
 
-editReview(review: Review): void {
+  editReview(review: Review): void {
     this.isEditing = true;
     this.editingReviewId = review.id;
-    this.selectedStars = review.estrellas || review.estrellas; 
+    this.selectedStars = review.estrellas; 
     this.reviewForm.setValue({
-      estrellas: review.estrellas || review.estrellas,
+      estrellas: review.estrellas,
       titulo: review.titulo,
       comentario: review.comentario,
-      palabrasClave: review.palabrasClave
+      palabrasClave: review.palabrasClave || ''
     });
   }
 
@@ -248,7 +243,12 @@ editReview(review: Review): void {
   }
 
   deleteReview(reviewId: string): void {
-    if (!confirm('¿Estás seguro de que quieres eliminar esta reseña?')) {
+    if (!reviewId) {
+      this.errorMessage = 'No se encontró el ID de la reseña para eliminar.';
+      return;
+    }
+
+    if (!confirm('¿Estás seguro de que quieres eliminar esta entrada?')) {
       return;
     }
 
@@ -257,14 +257,14 @@ editReview(review: Review): void {
       url: `/api/app/calificacion/${reviewId}`
     }).subscribe({
       next: () => {
-        this.successMessage = 'Reseña eliminada correctamente.';
+        this.successMessage = 'Entrada eliminada correctamente.';
         this.errorMessage = null;
         if (this.selectedDestination) {
           this.loadReviewsAndPromedio(this.selectedDestination.id);
         }
       },
       error: (err) => {
-        this.errorMessage = 'Error al eliminar la reseña.';
+        this.errorMessage = 'Error al eliminar la entrada.';
       }
     });
   }
@@ -272,6 +272,10 @@ editReview(review: Review): void {
   getMyReviewId(): string {
     const myReview = this.reviews.find(r => r.usuarioId === this.currentUserId);
     return myReview ? myReview.id : '';
+  }
+
+  hasReviews(): boolean {
+    return this.reviews && this.reviews.length > 0;
   }
 
   hasReviewed(): boolean {
@@ -288,5 +292,11 @@ editReview(review: Review): void {
     } else {
       this.isEditing = true;
     }
+  }
+    startNewReview(): void {
+    this.isEditing = false;
+    this.editingReviewId = null;
+    this.selectedStars = 0;
+    this.reviewForm.reset({ estrellas: 0, titulo: '', comentario: '', palabrasClave: '' });
   }
 }

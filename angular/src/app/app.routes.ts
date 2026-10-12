@@ -55,14 +55,7 @@ export const APP_ROUTES: Routes = [
       ),
   },
 
-  {
-    path: 'experiences',
-    canActivate: [authGuard],
-    loadComponent: () =>
-      import('./pages/experiences/experiences.component').then(
-        c => c.ExperiencesComponent
-      ),
-  },
+
 
   {
     path: 'notifications-settings',

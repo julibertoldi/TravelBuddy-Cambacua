@@ -46,13 +46,7 @@ function configureRoutes() {
       order: 5,
       layout: eLayoutType.application,
     },
-    {
-      path: '/experiences',
-      name: 'Experiencias',
-      iconClass: 'fas fa-map-marked-alt',
-      order: 6,
-      layout: eLayoutType.application,
-    },
+
     {
       path: '/notifications-settings',
       name: 'Configuración Notificaciones',

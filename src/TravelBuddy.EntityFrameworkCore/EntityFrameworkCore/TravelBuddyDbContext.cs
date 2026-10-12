@@ -91,7 +91,6 @@ public class TravelBuddyDbContext :
 
             b.Property(x => x.Comentario).IsRequired().HasMaxLength(2000);
             b.Property(x => x.Estrellas).IsRequired();
-            b.HasIndex(x => new { x.DestinoId, x.UsuarioId }).IsUnique();
         });
 
         // 4. Favoritos
