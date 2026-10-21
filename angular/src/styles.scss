@@ -36,4 +36,35 @@
     height: 20px;
     background-image: url('/assets/images/getting-started/x.svg');
   }
+
+/* --- Bloqueo de registro público de ABP --- */
+app-register, 
+.abp-account-register,
+form[name="registerForm"] {
+  display: none !important;
+}
+
+/* Contenedor de aviso amigable cuando se intenta acceder al registro */
+.register-disabled-notice {
+  background-color: #fff3cd;
+  color: #856404;
+  padding: 20px;
+  border: 1px solid #ffeeba;
+  border-radius: 8px;
+  text-align: center;
+  font-family: inherit;
+  margin: 40px auto;
+  max-width: 500px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+
+  h4 {
+    margin-bottom: 10px;
+    font-weight: bold;
+  }
+  
+  p {
+    margin: 0;
+    font-size: 14px;
+  }
+}
 }

@@ -1,24 +1,36 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Authorization;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using TravelBuddy.Destinations;
 using TravelBuddy.Favorites;
+using TravelBuddy.Permissions;
 using TravelBuddy.Statistics;
-using Volo.Abp.Application.Services;
-using Volo.Abp.Domain.Repositories;
-using System.IO;
-using System.Text;
 using Volo.Abp.Content;
+using Volo.Abp.Domain.Repositories;
 
 namespace TravelBuddy.Statistics
 {
-    public class StatisticsAppService : ApplicationService, IStatisticsAppService
+    [Authorize(TravelBuddyPermissions.Admin.Metrics)]
+    public class StatisticsAppService : TravelBuddyAppService, IStatisticsAppService
     {
         private readonly IRepository<SearchLogs, Guid> _searchLogRepository;
         private readonly IRepository<Destination, Guid> _destinationRepository;
         private readonly IRepository<Favorite> _favoriteRepository;
         private readonly IRepository<ApiCallLog, Guid> _apiCallLogRepository;
+        private static string Csv(string? value)
+        {
+            if (string.IsNullOrEmpty(value)) return "\"\"";
+
+            // Evita que Excel interprete el texto como fórmula
+            if (value[0] is '=' or '+' or '-' or '@')
+                value = "'" + value;
+
+            return "\"" + value.Replace("\"", "\"\"") + "\"";
+        }
 
         public StatisticsAppService(
             IRepository<SearchLogs, Guid> searchLogRepository,
@@ -108,8 +120,14 @@ namespace TravelBuddy.Statistics
             // Filas de datos
             foreach (var log in logs)
             {
-                var errorMsg = log.ErrorMessage?.Replace(",", " ") ?? ""; // Evitamos romper el CSV con comas
-                sb.AppendLine($"{log.Id},{log.Endpoint},{log.StatusCode},{log.ResponseTimeMs},{log.IsSuccess},{errorMsg},{log.Timestamp:yyyy-MM-dd HH:mm:ss}");
+                sb.AppendLine(string.Join(",",
+                    log.Id,
+                    Csv(log.Endpoint),
+                    log.StatusCode,
+                    log.ResponseTimeMs,
+                    log.IsSuccess,
+                    Csv(log.ErrorMessage),
+                    log.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")));
             }
 
             var byteArray = Encoding.UTF8.GetBytes(sb.ToString());

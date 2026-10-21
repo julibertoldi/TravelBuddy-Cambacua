@@ -107,6 +107,7 @@ loadFeaturedCities(): void {
   }
 
   // Búsqueda limpia sin líneas duplicadas
+  // Búsqueda limpia enviando minPopulation y normalizando el país a formato ISO
   search() {
     if (this.isSearchInvalid()) return;
 
@@ -114,12 +115,23 @@ loadFeaturedCities(): void {
     this.hasSearched = false;
     this.cities = [];
 
-    const { name, country, region } = this.searchForm.value;
+    const { name, country, region, minPopulation } = this.searchForm.value;
 
-    this.destinationService.searchCities({ 
+    // Normalizar país básico a código ISO si escriben el nombre común
+    let countryCode = (country || '').trim();
+    if (countryCode.toLowerCase() === 'argentina') {
+      countryCode = 'AR';
+    } else if (countryCode.toLowerCase() === 'estados unidos' || countryCode.toLowerCase() === 'united states') {
+      countryCode = 'US';
+    } else if (countryCode.length > 2) {
+      countryCode = countryCode.toUpperCase(); // Por si ingresan otro código de 2 letras
+    }
+
+this.destinationService.searchCities({ 
       partialName: name || 'a', 
-      pais: country || undefined, 
-      region: region || undefined
+      pais: countryCode || undefined, 
+      region: region || undefined,
+      poblacionMinima: minPopulation ? Number(minPopulation) : undefined
     }).subscribe({
       next: (response: any) => {
         this.cities = response.cities || response.items || response || [];

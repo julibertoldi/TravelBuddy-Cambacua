@@ -10,4 +10,6 @@ public interface IFavoriteAppService : IApplicationService
     Task AgregarFavoritoAsync(Guid destinoId);
     Task QuitarFavoritoAsync(Guid destinoId);
     Task<List<FavoriteDto>> ObtenerMisFavoritosAsync();
+
+    Task AgregarDesdeGeoDbAsync(int geoDbCityId);
 }
