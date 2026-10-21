@@ -49,12 +49,10 @@ public class UserProfileAppService_Tests
         using (LoginAs(user.Id))
         {
             await _service.UpdateMyProfileAsync(
-                user.Id,
                 new UpdateUserProfileDto
                 {
                     Nombre = "Juliana",
                     Apellido = "Bertoldi",
-                    Email = "juliana.nuevo@test.com",
                     FotoPerfilUrl = "http://foto.test/juli.png",
                     Preferencias = "playa"
                 });
@@ -65,7 +63,7 @@ public class UserProfileAppService_Tests
         updatedUser.UserName.ShouldBe("juliana");
         updatedUser.Name.ShouldBe("Juliana");
         updatedUser.Surname.ShouldBe("Bertoldi");
-        updatedUser.Email.ShouldBe("juliana.nuevo@test.com");
+        updatedUser.Email.ShouldBe("juliana@test.com");
 
         updatedUser.GetProfilePicture().ShouldBe("http://foto.test/juli.png");
         updatedUser.GetPreferences().ShouldBe("playa");
@@ -87,7 +85,7 @@ public class UserProfileAppService_Tests
 
         using (LoginAs(user.Id))
         {
-            var profile = await _service.GetMyProfileAsync(user.Id);
+            var profile = await _service.GetMyProfileAsync();
 
             profile.UserId.ShouldBe(user.Id);
             profile.UserName.ShouldBe(user.UserName);
@@ -132,15 +130,13 @@ public class UserProfileAppService_Tests
         using (LoginAs(user.Id))
         {
             await _service.UpdateMyProfileAsync(
-                user.Id,
                 new UpdateUserProfileDto
                 {
                     Nombre = "NuevoNombre",
                     Apellido = "NuevoApellido",
-                    Email = "nuevo.email@test.com"
                 });
 
-            var profile = await _service.GetMyProfileAsync(user.Id);
+            var profile = await _service.GetMyProfileAsync();
 
             // El username se mantiene inalterado y de solo lectura
             profile.UserName.ShouldBe(initialUsername);

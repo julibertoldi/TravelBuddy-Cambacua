@@ -1,2 +1,2 @@
+export * from './calificacion.service';
 export * from './favorite.service';
-export * from './user-profile.service';

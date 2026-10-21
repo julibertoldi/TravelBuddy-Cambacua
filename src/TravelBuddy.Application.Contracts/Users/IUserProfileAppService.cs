@@ -6,11 +6,10 @@ namespace TravelBuddy.Users;
 
 public interface IUserProfileAppService : IApplicationService
 {
-    Task UpdateMyProfileAsync(Guid userId, UpdateUserProfileDto input);
+    Task UpdateMyProfileAsync(UpdateUserProfileDto input);
 
-    Task<UserProfileDto> GetMyProfileAsync(Guid userId);
+    Task<UserProfileDto> GetMyProfileAsync();
 
     Task<PublicUserProfileDto> GetPublicProfileAsync(Guid userId);
 
-    Task DeleteMyAccountAsync(Guid userId);
 }

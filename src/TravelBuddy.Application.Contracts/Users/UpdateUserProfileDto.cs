@@ -1,17 +1,16 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
-namespace TravelBuddy.Users
+public class UpdateUserProfileDto
 {
-    public class UpdateUserProfileDto
-    {
-        public string Nombre { get; set; } = string.Empty;
-        public string Apellido { get; set; } = string.Empty;
-        public string? FotoPerfilUrl { get; set; }
-        public string? Preferencias { get; set; }
-        public string? Email { get; set; }
-    }
+    [Required, StringLength(64)]
+    public string Nombre { get; set; } = string.Empty;
+
+    [Required, StringLength(64)]
+    public string Apellido { get; set; } = string.Empty;
+
+    [StringLength(512)]
+    public string? FotoPerfilUrl { get; set; }
+
+    [StringLength(2000)]
+    public string? Preferencias { get; set; }
 }

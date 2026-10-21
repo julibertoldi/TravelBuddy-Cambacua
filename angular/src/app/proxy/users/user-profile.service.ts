@@ -1,4 +1,4 @@
-import type { PublicUserProfileDto, UpdateUserProfileDto } from './models';
+import type { PublicUserProfileDto, UpdateUserProfileDto, UserProfileDto } from './models';
 import { RestService, Rest } from '@abp/ng.core';
 import { Injectable } from '@angular/core';
 
@@ -9,10 +9,10 @@ export class UserProfileService {
   apiName = 'Default';
   
 
-  deleteMyAccount = (userId: string, config?: Partial<Rest.Config>) =>
-    this.restService.request<any, void>({
-      method: 'DELETE',
-      url: `/api/app/user-profile/my-account/${userId}`,
+  getMyProfile = (config?: Partial<Rest.Config>) =>
+    this.restService.request<any, UserProfileDto>({
+      method: 'GET',
+      url: '/api/app/user-profile/my-profile',
     },
     { apiName: this.apiName,...config });
   
@@ -25,10 +25,10 @@ export class UserProfileService {
     { apiName: this.apiName,...config });
   
 
-  updateMyProfile = (userId: string, input: UpdateUserProfileDto, config?: Partial<Rest.Config>) =>
+  updateMyProfile = (input: UpdateUserProfileDto, config?: Partial<Rest.Config>) =>
     this.restService.request<any, void>({
       method: 'PUT',
-      url: `/api/app/user-profile/my-profile/${userId}`,
+      url: '/api/app/user-profile/my-profile',
       body: input,
     },
     { apiName: this.apiName,...config });

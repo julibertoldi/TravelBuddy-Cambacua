@@ -9,6 +9,15 @@ export class NotificationService {
   apiName = 'Default';
   
 
+  enviarAlertaPorEmailByUserEmailAndDestino = (userEmail: string, destino: string, config?: Partial<Rest.Config>) =>
+    this.restService.request<any, void>({
+      method: 'POST',
+      url: '/api/app/notification/enviar-alerta-por-email',
+      params: { userEmail, destino },
+    },
+    { apiName: this.apiName,...config });
+  
+
   getList = (config?: Partial<Rest.Config>) =>
     this.restService.request<any, NotificationDto[]>({
       method: 'GET',

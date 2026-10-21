@@ -72,7 +72,7 @@ namespace TravelBuddy.Destinations
             await base.DeleteAsync(id);
         }
 
-        [Authorize(TravelBuddyPermissions.Admin.Default)]
+        [Authorize]
         public async Task<DestinationDto> ImportFromGeoDbAsync(int geoDbCityId)
         {
             var city = await _citySearchService.GetCityDetailsAsync(geoDbCityId);

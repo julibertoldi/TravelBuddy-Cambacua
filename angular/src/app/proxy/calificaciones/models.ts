@@ -4,7 +4,9 @@ export interface CalificacionDto extends AuditedEntityDto<string> {
   destinoId?: string;
   usuarioId?: string;
   estrellas: number;
+  titulo?: string;
   comentario?: string;
+  palabrasClave?: string;
 }
 
 export interface CalificacionGetListInput extends PagedAndSortedResultRequestDto {
@@ -19,5 +21,7 @@ export interface CalificacionPromedioDto {
 export interface CreateUpdateCalificacionDto {
   destinoId: string;
   estrellas: number;
+  titulo: string;
   comentario: string;
+  palabrasClave?: string;
 }
