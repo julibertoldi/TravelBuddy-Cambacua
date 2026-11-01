@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { NotificationService, NotificationSettingsDto } from '../../shared/services/notification.service';
+import type { NotificationDto, NotificationSettingsDto, UpcomingEventNotificationDto } from '../../proxy/notifications/models';
+import { NotificationService } from '../../shared/services/notification.service';
 
 @Component({
   selector: 'app-notifications-settings',
@@ -11,12 +12,12 @@ import { NotificationService, NotificationSettingsDto } from '../../shared/servi
   styleUrl: './notifications-settings.scss'
 })
 export class NotificationsSettings implements OnInit {
-  notifications: any[] = [];
-  upcomingEvents: any[] = [];
+  notifications: NotificationDto[] = [];
+  upcomingEvents: UpcomingEventNotificationDto[] = [];
   settings: NotificationSettingsDto = {
-    receiveEventAlerts: true,
-    receiveEmailNotifications: true,
-    receivePromotions: false
+    emailNotificationsEnabled: true,
+    newReviewNotificationsEnabled: true,
+    upcomingEventsEnabled: false
   };
 
   loadingNotifications = false;
