@@ -1,5 +1,6 @@
 import { authGuard, permissionGuard } from '@abp/ng.core';
 import { Routes } from '@angular/router';
+import { adminGuard } from './guards/admin.guard';
 
 export const APP_ROUTES: Routes = [
   {
@@ -26,6 +27,13 @@ export const APP_ROUTES: Routes = [
     loadComponent: () =>
       import('./favorites/favorites').then(c => c.FavoritesComponent),
   },
+
+  {
+  path: 'account/manage',
+  redirectTo: 'user-profile',
+  pathMatch: 'full',
+  },
+  
   {
     path: 'account',
     loadChildren: () =>
@@ -33,11 +41,13 @@ export const APP_ROUTES: Routes = [
   },
   {
     path: 'identity',
+    canActivate: [authGuard, adminGuard],
     loadChildren: () =>
       import('@abp/ng.identity').then(c => c.createRoutes()),
   },
   {
     path: 'setting-management',
+    canActivate: [authGuard, adminGuard],
     loadChildren: () =>
       import('@abp/ng.setting-management').then(c => c.createRoutes()),
   },
@@ -57,13 +67,10 @@ export const APP_ROUTES: Routes = [
         m => m.NotificationsSettings
       ),
   },
-  {
-    path: 'admin',
-    canActivate: [authGuard, permissionGuard],
-    data: {
-      requiredPolicy: 'TravelBuddy.Admin',
-    },
-    loadComponent: () =>
-      import('./pages/admin/admin.component').then(c => c.AdminComponent),
-  },
+{
+  path: 'admin',
+  canActivate: [authGuard, adminGuard],
+  loadComponent: () =>
+    import('./pages/admin/admin.component').then(c => c.AdminComponent),
+},
 ];
