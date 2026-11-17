@@ -44,6 +44,7 @@ public class UserProfileAppService : ApplicationService, IUserProfileAppService
         {
             UserId = user.Id,
             UserName = user.UserName ?? string.Empty,
+            Email = user.Email ?? string.Empty,
             Nombre = user.Name ?? string.Empty,
             Apellido = user.Surname ?? string.Empty,
             FotoPerfilUrl = user.GetProfilePicture(),

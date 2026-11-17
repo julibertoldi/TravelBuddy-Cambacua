@@ -109,11 +109,14 @@ public class UserProfileAppService_Tests
 
         (await _userManager.CreateAsync(user)).CheckErrors();
 
-        var profile = await _service.GetPublicProfileAsync(user.Id);
+        using (LoginAs(user.Id))
+        {
+            var profile = await _service.GetPublicProfileAsync(user.Id);
 
-        profile.UserId.ShouldBe(user.Id);
-        profile.Nombre.ShouldBe("Ana");
-        profile.Apellido.ShouldBe("Gomez");
+            profile.UserId.ShouldBe(user.Id);
+            profile.Nombre.ShouldBe("Ana");
+            profile.Apellido.ShouldBe("Gomez");
+        }
     }
 
     [Fact]
