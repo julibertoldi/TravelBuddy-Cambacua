@@ -12,6 +12,9 @@ using System.Linq;
 using TravelBuddy.Destinations;
 using Volo.Abp.Guids;
 using Volo.Abp.Linq;
+using Volo.Abp.Identity;
+using TravelBuddy.Users;
+using System.Text.Json;
 
 namespace TravelBuddy.Notifications
 {
@@ -21,18 +24,21 @@ namespace TravelBuddy.Notifications
         private readonly IRepository<Notification, Guid> _notificationRepository;
         private readonly IRepository<Destination, Guid> _destinationRepository;
         private readonly IGuidGenerator _guidGenerator;
+        private readonly IdentityUserManager _userManager;
         public IAsyncQueryableExecuter AsyncExecuter { get; set; }
 
         public ReviewCreatedEventHandler(
             IRepository<Favorite> favoriteRepository,
             IRepository<Notification, Guid> notificationRepository,
             IRepository<Destination, Guid> destinationRepository,
-            IGuidGenerator guidGenerator)
+            IGuidGenerator guidGenerator,
+            IdentityUserManager userManager)
         {
             _favoriteRepository = favoriteRepository;
             _notificationRepository = notificationRepository;
             _destinationRepository = destinationRepository;
             _guidGenerator = guidGenerator;
+            _userManager = userManager;
         }
 
         [UnitOfWork]
@@ -49,6 +55,26 @@ namespace TravelBuddy.Notifications
 
             foreach (var favorite in favoriteUsers)
             {
+                var user = await _userManager.GetByIdAsync(favorite.UsuarioId);
+                var preferencesJson = user.GetNotificationSettings() ?? user.GetPreferences();
+                NotificationSettingsDto settings;
+                try
+                {
+                    settings = string.IsNullOrWhiteSpace(preferencesJson)
+                        ? new NotificationSettingsDto()
+                        : JsonSerializer.Deserialize<NotificationSettingsDto>(preferencesJson,
+                            new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new NotificationSettingsDto();
+                }
+                catch (JsonException)
+                {
+                    settings = new NotificationSettingsDto();
+                }
+
+                if (!settings.NewReviewNotificationsEnabled)
+                {
+                    continue;
+                }
+
                 var notification = new Notification(
                     _guidGenerator.Create(),
                     favorite.UsuarioId,

@@ -51,33 +51,9 @@ namespace TravelBuddy.Notifications
             if (!userId.HasValue) return new List<NotificationDto>();
 
             var localNotifications = await _notificationRepository.GetListAsync(n => n.UserId == userId.Value);
-            var result = ObjectMapper.Map<List<Notification>, List<NotificationDto>>(localNotifications);
-
-            // Incorporar eventos próximos como notificaciones
-            try
-            {
-                var upcomingEvents = await GetUpcomingFavoriteEventsAsync();
-                foreach (var upcoming in upcomingEvents)
-                {
-                    if (upcoming.FechaEvento >= DateTime.UtcNow.Date)
-                    {
-                        result.Add(new NotificationDto
-                        {
-                            Id = Guid.NewGuid(),
-                            Title = $"Próximo evento en {upcoming.NombreDestino}",
-                            Message = $"El evento '{upcoming.TituloEvento}' será el {upcoming.FechaEvento:d}",
-                            CreationTime = DateTime.UtcNow,
-                            IsRead = false
-                        });
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.LogWarning(ex, "Failed to fetch upcoming events for notifications.");
-            }
-
-            return result.OrderByDescending(n => n.CreationTime).ToList();
+            return ObjectMapper.Map<List<Notification>, List<NotificationDto>>(localNotifications)
+                .OrderByDescending(n => n.CreationTime)
+                .ToList();
         }
 
         public async Task MarkAsReadAsync(Guid id)
@@ -96,7 +72,7 @@ namespace TravelBuddy.Notifications
             if (!userId.HasValue) return new NotificationSettingsDto();
 
             var user = await _userManager.GetByIdAsync(userId.Value);
-            var preferencesJson = user.GetPreferences();
+            var preferencesJson = user.GetNotificationSettings() ?? user.GetPreferences();
 
             if (!string.IsNullOrWhiteSpace(preferencesJson))
             {
@@ -119,8 +95,7 @@ namespace TravelBuddy.Notifications
             if (!userId.HasValue) throw new AbpAuthorizationException();
 
             var user = await _userManager.GetByIdAsync(userId.Value);
-            var preferencesJson = JsonSerializer.Serialize(input);
-            user.SetPreferences(preferencesJson);
+            user.SetNotificationSettings(JsonSerializer.Serialize(input));
             await _userManager.UpdateAsync(user);
         }
 
@@ -128,6 +103,11 @@ namespace TravelBuddy.Notifications
         {
             var userId = CurrentUser.Id;
             if (!userId.HasValue)
+            {
+                return new List<UpcomingEventNotificationDto>();
+            }
+
+            if (!(await GetSettingsAsync()).UpcomingEventsEnabled)
             {
                 return new List<UpcomingEventNotificationDto>();
             }
@@ -169,6 +149,18 @@ namespace TravelBuddy.Notifications
         }
         public async Task EnviarAlertaPorEmail(string userEmail, string destino)
         {
+            var userId = CurrentUser.Id ?? throw new AbpAuthorizationException();
+            var user = await _userManager.FindByEmailAsync(userEmail);
+            if (user == null || user.Id != userId)
+            {
+                throw new AbpAuthorizationException();
+            }
+
+            if (!(await GetSettingsAsync()).EmailNotificationsEnabled)
+            {
+                return;
+            }
+
             await _emailSender.SendAsync(
                 userEmail,
                 $"Novedades en tu destino: {destino}",
