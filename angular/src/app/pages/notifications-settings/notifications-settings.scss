@@ -148,6 +148,27 @@ $color-text-dark: #4a4a4a;
   padding-right: 0.25rem;
 }
 
+.notification-tabs {
+  display: flex;
+  gap: 0.35rem;
+  margin-bottom: 0.9rem;
+  border-bottom: 1px solid $color-beige-arena;
+
+  button {
+    padding: 0.45rem 0.7rem;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    background: transparent;
+    color: $color-text-dark;
+    cursor: pointer;
+
+    &[aria-selected='true'] {
+      border-bottom-color: darken($color-verde-menta, 25%);
+      font-weight: 600;
+    }
+  }
+}
+
 .item-card {
   background-color: white;
   border: 1px solid lighten($color-beige-arena, 5%);
@@ -192,6 +213,13 @@ $color-text-dark: #4a4a4a;
     margin: 0;
     font-size: 0.8rem;
     opacity: 0.85;
+  }
+
+  .notif-content time {
+    display: block;
+    margin-top: 0.4rem;
+    font-size: 0.75rem;
+    opacity: 0.7;
   }
 
   .btn-read {

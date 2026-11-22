@@ -3,14 +3,21 @@ import { Injectable } from '@angular/core';
 import { RestService } from '@abp/ng.core';
 import { Observable } from 'rxjs';
 
+export interface NotificationSettingsDto {
+  receiveEventAlerts: boolean;
+  receiveEmailNotifications: boolean;
+  receivePromotions: boolean;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class NotificationService {
   constructor(private restService: RestService) {}
 
-  getNotifications(): Observable<NotificationDto[]> {
-    return this.restService.request<any, NotificationDto[]>({
+  // 1. Notificaciones (OK)
+  getNotifications(): Observable<any[]> {
+    return this.restService.request<any, any[]>({
       method: 'GET',
       url: '/api/app/notification'
     });
@@ -38,8 +45,9 @@ export class NotificationService {
     });
   }
 
-  getFavoriteUpcomingEvents(): Observable<UpcomingEventNotificationDto[]> {
-    return this.restService.request<any, UpcomingEventNotificationDto[]>({
+  // 3. PRUEBA NUEVA: Eventos favoritos próximos
+  getFavoriteUpcomingEvents(): Observable<any[]> {
+    return this.restService.request<any, any[]>({
       method: 'GET',
       url: '/api/app/notification/upcoming-favorite-events'
     });

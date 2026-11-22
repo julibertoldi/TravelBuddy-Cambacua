@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import type { NotificationDto, NotificationSettingsDto, UpcomingEventNotificationDto } from '../../proxy/notifications/models';
-import { NotificationService } from '../../shared/services/notification.service';
+import { NotificationService, NotificationSettingsDto } from '../../shared/services/notification.service';
 
 @Component({
   selector: 'app-notifications-settings',
@@ -12,12 +11,12 @@ import { NotificationService } from '../../shared/services/notification.service'
   styleUrl: './notifications-settings.scss'
 })
 export class NotificationsSettings implements OnInit {
-  notifications: NotificationDto[] = [];
-  upcomingEvents: UpcomingEventNotificationDto[] = [];
+  notifications: any[] = [];
+  upcomingEvents: any[] = [];
   settings: NotificationSettingsDto = {
-    emailNotificationsEnabled: true,
-    newReviewNotificationsEnabled: true,
-    upcomingEventsEnabled: false
+    receiveEventAlerts: true,
+    receiveEmailNotifications: true,
+    receivePromotions: false
   };
 
   loadingNotifications = false;
@@ -26,6 +25,14 @@ export class NotificationsSettings implements OnInit {
   savedSuccess = false;
 
   constructor(private notificationService: NotificationService) {}
+
+  get visibleNotifications(): NotificationDto[] {
+    return this.notificationView === 'recent' ? this.notifications.slice(0, 5) : this.notifications;
+  }
+
+  get unreadCount(): number {
+    return this.notifications.filter(notification => !notification.isRead).length;
+  }
 
   ngOnInit(): void {
     this.loadAllData();
