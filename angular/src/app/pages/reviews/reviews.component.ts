@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RestService, ConfigStateService } from '@abp/ng.core';
+import { FavoriteService } from '../../proxy/controllers/favorite.service';
 
 interface Destination {
   id: string;
@@ -56,6 +57,7 @@ export class ReviewsComponent implements OnInit {
   constructor(
     private restService: RestService,
     private configState: ConfigStateService,
+    private favoriteService: FavoriteService,
     private fb: FormBuilder
   ) {
     this.reviewForm = this.fb.group({
@@ -77,21 +79,17 @@ export class ReviewsComponent implements OnInit {
   }
 
   loadDestinations(): void {
-    this.restService.request<any, any>({
-      method: 'GET',
-      url: '/api/app/destination'
-    }).subscribe({
-      next: (response) => {
-        const rawItems = response.items || response;
-        
-        this.destinations = rawItems.map((d: any) => ({
-          id: d.id || d.Id,
-          nombre: d.nombre || d.Name || d.name || 'Sin nombre',
-          descripcion: d.descripcion || d.Description || d.description || '',
-          ubicacion: d.ubicacion || d.Region || d.region || d.Country || d.country || 'Ubicación no especificada',
-          precio: d.precio ?? d.Price ?? d.price ?? 0,
-          imagenUrl: d.imagenUrl || d.ImageUrl || d.imageUrl || '',
-          disponible: d.disponible ?? d.IsAvailable ?? d.isAvailable ?? false
+    this.favoriteService.obtenerMisFavoritos().subscribe({
+      next: (favorites) => {
+        this.errorMessage = null;
+        this.destinations = favorites.map((favorite) => ({
+          id: favorite.destinoId ?? '',
+          nombre: favorite.name ?? 'Sin nombre',
+          descripcion: favorite.description ?? '',
+          ubicacion: favorite.region || favorite.country || 'Ubicación no especificada',
+          precio: favorite.price ?? 0,
+          imagenUrl: favorite.imageUrl ?? '',
+          disponible: favorite.isAvailable ?? false
         }));
 
         if (this.destinations.length > 0) {
@@ -99,7 +97,7 @@ export class ReviewsComponent implements OnInit {
         }
       },
       error: (err) => {
-        this.errorMessage = 'Error al cargar los destinos.';
+        this.errorMessage = 'Error al cargar tus favoritos.';
       }
     });
   }

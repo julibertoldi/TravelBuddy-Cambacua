@@ -1,77 +1,86 @@
-﻿using Moq;
 using System;
+using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Shouldly;
 using TravelBuddy.Calificaciones;
+using Volo.Abp.Authorization;
 using Volo.Abp.Domain.Repositories;
-using Volo.Abp.Users;
+using Volo.Abp.Security.Claims;
 using Xunit;
 
-namespace TravelBuddy.Application.Tests.Calificaciones
+namespace TravelBuddy.Application.Tests.Calificaciones;
+
+public class CalificacionAppService_Tests : TravelBuddyApplicationTestBase<TravelBuddyApplicationTestModule>
 {
-    public class CalificacionAppService_Tests
+    private readonly ICalificacionAppService _service;
+    private readonly IRepository<Calificacion, Guid> _repository;
+    private readonly ICurrentPrincipalAccessor _currentPrincipalAccessor;
+
+    public CalificacionAppService_Tests()
     {
-        private readonly Mock<IRepository<Calificacion, Guid>> _calificacionRepositoryMock;
-        private readonly Mock<ICurrentUser> _currentUserMock;
-        private readonly CalificacionAppService _appService;
+        _service = GetRequiredService<ICalificacionAppService>();
+        _repository = GetRequiredService<IRepository<Calificacion, Guid>>();
+        _currentPrincipalAccessor = GetRequiredService<ICurrentPrincipalAccessor>();
+    }
 
-        public CalificacionAppService_Tests()
+    private IDisposable LoginAs(Guid userId)
+    {
+        var claims = new List<Claim>
         {
-            _calificacionRepositoryMock = new Mock<IRepository<Calificacion, Guid>>();
-            _currentUserMock = new Mock<ICurrentUser>();
+            new(AbpClaimTypes.UserId, userId.ToString()),
+            new(AbpClaimTypes.UserName, "reviewer")
+        };
 
-            _currentUserMock.Setup(u => u.Id).Returns(Guid.NewGuid());
-            _currentUserMock.Setup(u => u.IsAuthenticated).Returns(true);
+        return _currentPrincipalAccessor.Change(
+            new ClaimsPrincipal(new ClaimsIdentity(claims, "TestAuth")));
+    }
 
-          //  _appService = new CalificacionAppService(
-          //     _calificacionRepositoryMock.Object,
-          //      _currentUserMock.Object
-          //  );
-        }
+    [Fact]
+    public async Task Promedio_y_total_solo_incluyen_calificaciones_del_usuario_actual()
+    {
+        var destinoId = Guid.NewGuid();
+        var currentUserId = Guid.NewGuid();
+        var otherUserId = Guid.NewGuid();
 
-        [Fact]
-        public async Task ShouldCreateCalificacion_WhenUserHasNotRatedBefore()
+        await _repository.InsertAsync(new Calificacion(
+            Guid.NewGuid(), destinoId, currentUserId, 4, "Buena", "Comentario propio", string.Empty));
+        await _repository.InsertAsync(new Calificacion(
+            Guid.NewGuid(), destinoId, currentUserId, 2, "Regular", "Otro comentario propio", string.Empty));
+        await _repository.InsertAsync(new Calificacion(
+            Guid.NewGuid(), destinoId, otherUserId, 5, "Excelente", "Comentario privado ajeno", string.Empty));
+
+        using (LoginAs(currentUserId))
         {
-            var input = new CreateUpdateCalificacionDto
-            {
-                DestinoId = Guid.NewGuid(),
-                Estrellas = 5,
-                Comentario = "Un destino increíble, superó mis expectativas."
-            };
+            var result = await _service.GetPromedioByDestinoAsync(destinoId);
 
-            var result = await _appService.CreateAsync(input);
-
-            Assert.NotNull(result);
-            Assert.Equal(5, result.Estrellas);
-            Assert.Equal("Un destino increíble, superó mis expectativas.", result.Comentario);
+            result.TotalCalificaciones.ShouldBe(2);
+            result.Promedio.ShouldBe(3);
         }
+    }
 
-        [Fact]
-        public async Task ShouldReturnAverageRating_WhenDestinoHasRatings()
+    [Fact]
+    public async Task Promedio_y_total_son_cero_si_el_usuario_no_tiene_calificaciones()
+    {
+        var destinoId = Guid.NewGuid();
+        var currentUserId = Guid.NewGuid();
+
+        await _repository.InsertAsync(new Calificacion(
+            Guid.NewGuid(), destinoId, Guid.NewGuid(), 5, "Ajena", "Comentario privado ajeno", string.Empty));
+
+        using (LoginAs(currentUserId))
         {
-            var destinoId = Guid.NewGuid();
+            var result = await _service.GetPromedioByDestinoAsync(destinoId);
 
-            var result = await _appService.GetPromedioByDestinoAsync(destinoId);
-
-            Assert.NotNull(result);
-            Assert.True(result.TotalCalificaciones >= 0);
-            Assert.True(result.Promedio >= 0 && result.Promedio <= 5);
+            result.TotalCalificaciones.ShouldBe(0);
+            result.Promedio.ShouldBe(0);
         }
+    }
 
-        [Fact]
-        public async Task ShouldAllowUpdate_WhenUserIsTheOwnerOfCalificacion()
-        {
-            var calificacionId = Guid.NewGuid();
-            var input = new CreateUpdateCalificacionDto
-            {
-                DestinoId = Guid.NewGuid(),
-                Estrellas = 4,
-                Comentario = "Comentario actualizado"
-            };
-
-            var result = await _appService.UpdateAsync(calificacionId, input);
-
-            Assert.NotNull(result);
-            Assert.Equal(4, result.Estrellas);
-        }
+    [Fact]
+    public async Task Promedio_requiere_usuario_autenticado()
+    {
+        await Should.ThrowAsync<AbpAuthorizationException>(
+            () => _service.GetPromedioByDestinoAsync(Guid.NewGuid()));
     }
 }

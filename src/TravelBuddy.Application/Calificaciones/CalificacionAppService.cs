@@ -6,6 +6,7 @@ using Volo.Abp;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Authorization;
 using Volo.Abp.Domain.Repositories;
+using Volo.Abp.Users;
 
 namespace TravelBuddy.Calificaciones
 {
@@ -68,17 +69,14 @@ namespace TravelBuddy.Calificaciones
         {
             var query = await Repository.GetQueryableAsync();
 
-            var filteredQuery = query.Where(x => x.DestinoId == destinoId);
+            var currentUserId = CurrentUser.GetId();
+            var filteredQuery = query.Where(x => x.DestinoId == destinoId && x.UsuarioId == currentUserId);
 
             var total = await AsyncExecuter.CountAsync(filteredQuery);
 
             if (total == 0)
             {
-                return new CalificacionPromedioDto
-                {
-                    Promedio = 0,
-                    TotalCalificaciones = 0
-                };
+                return new CalificacionPromedioDto();
             }
 
             var sum = await AsyncExecuter.SumAsync(
