@@ -33,6 +33,8 @@ public static class TravelBuddyModuleExtensionConfigurator
                 p => p.Attributes.Add(new StringLengthAttribute(1000)));
                 user.AddOrUpdateProperty<string>(UserExtensionProperties.Preferences,
                 p => p.Attributes.Add(new StringLengthAttribute(2000)));
+                user.AddOrUpdateProperty<string>(UserExtensionProperties.NotificationSettings,
+                p => p.Attributes.Add(new StringLengthAttribute(2000)));
             });
         });
     }

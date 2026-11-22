@@ -23,4 +23,10 @@ public static class UserExtensions
 
     public static void SetPreferences(this IdentityUser user, string? value) =>
         user.SetProperty(UserExtensionProperties.Preferences, value);
+
+    public static string? GetNotificationSettings(this IdentityUser user) =>
+        user.GetProperty<string?>(UserExtensionProperties.NotificationSettings);
+
+    public static void SetNotificationSettings(this IdentityUser user, string? value) =>
+        user.SetProperty(UserExtensionProperties.NotificationSettings, value);
 }
