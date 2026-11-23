@@ -1,51 +1,70 @@
-using Microsoft.Extensions.Configuration;
+using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using Shouldly;
 using TravelBuddy.Cities;
 using Xunit;
 
-//Prueba de integracion sobre GeoDbCitySearchService.
-//Contiene dos metodos de prueba (exito o ningun resultado).
+namespace TravelBuddy.Application.Tests.Integration;
 
-namespace TravelBuddy.Application.Tests.Integration
+public class GeoDbCitySearchService_Integration_Tests
 {
-    public class GeoDbCitySearchService_Integration_Tests
+    [Fact]
+    public async Task ShouldReturnCityDetailsFromResponse()
     {
-        private readonly ICitySearchService _service;
+        var service = CreateService(
+            """{"data":{"id":123,"city":"Buenos Aires","country":"Argentina","region":"Buenos Aires","latitude":-34.6,"longitude":-58.4,"population":3000000}}""");
 
-        public GeoDbCitySearchService_Integration_Tests()
+        var result = await service.GetCityDetailsAsync(123);
+
+        result.Name.ShouldBe("Buenos Aires");
+        result.Country.ShouldBe("Argentina");
+        result.Population.ShouldBe(3000000);
+    }
+
+    [Fact]
+    public async Task ShouldReturnPopularCitiesFromResponse()
+    {
+        var service = CreateService(
+            """{"data":[{"id":1,"city":"Buenos Aires","country":"Argentina"}]}""");
+
+        var result = await service.GetPopularCitiesAsync();
+
+        result.Cities.Count.ShouldBe(1);
+        result.Cities[0].Name.ShouldBe("Buenos Aires");
+    }
+
+    private static ICitySearchService CreateService(string json)
+    {
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["GeoDb:BaseUrl"] = "https://example.test/cities",
+                ["GeoDb:ApiKey"] = "test-key",
+                ["GeoDb:ApiHost"] = "example.test"
+            })
+            .Build();
+        var client = new HttpClient(new FakeGeoDbHttpMessageHandler(
+            _ => new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent(json, Encoding.UTF8, "application/json")
+            }));
+
+        return new GeoDbCitySearchService(client, configuration);
+    }
+
+    private sealed class FakeGeoDbHttpMessageHandler(
+        System.Func<HttpRequestMessage, HttpResponseMessage> responseFactory) : HttpMessageHandler
+    {
+        protected override Task<HttpResponseMessage> SendAsync(
+            HttpRequestMessage request,
+            CancellationToken cancellationToken)
         {
-            var config = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json", optional: false)
-                .Build();
-
-            var httpClient = new HttpClient();
-            _service = new GeoDbCitySearchService(httpClient, config);
-        }
-
-        [Fact]
-        public async Task ShouldReturnCities_WhenSearchingValidName()
-        {
-            var request = new CitySearchRequestDto { PartialName = "Buenos" };
-
-            var result = await _service.SearchCitiesAsync(request);
-
-            Assert.NotNull(result);
-            Assert.NotEmpty(result.Cities);
-            Assert.Contains(result.Cities, c => c.Name.Contains("Buenos"));
-        }
-
-        [Fact]
-        public async Task ShouldReturnEmpty_WhenSearchingNonexistentName()
-        {
-            await Task.Delay(3000); // espera 3 segundos para evitar límite (para las request a la api)
-            var request = new CitySearchRequestDto { PartialName = "Xyzqwertycity" };
-
-            var result = await _service.SearchCitiesAsync(request);
-
-            Assert.NotNull(result);
-            Assert.Empty(result.Cities);
+            return Task.FromResult(responseFactory(request));
         }
     }
 }
-

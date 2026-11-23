@@ -1,3 +1,4 @@
+using System;
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -39,11 +40,12 @@ public class TravelBuddyApplicationTestModule : AbpModule
             options.UseDbFunction = false;
         });
 
+        var databaseName = $"TestDb-{Guid.NewGuid():N}";
         Configure<AbpDbContextOptions>(options =>
         {
             options.Configure<TravelBuddyDbContext>(dbContextOptions =>
             {
-                dbContextOptions.DbContextOptions.UseInMemoryDatabase("TestDb");
+                dbContextOptions.DbContextOptions.UseInMemoryDatabase(databaseName);
             });
         });
     }

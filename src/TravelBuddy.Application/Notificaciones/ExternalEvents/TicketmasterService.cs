@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using TravelBuddy.Notifications;
 using TravelBuddy.Notifications.ExternalEvents;
+using TravelBuddy.Statistics;
 using Volo.Abp.DependencyInjection;
 
 namespace TravelBuddy.Notificaciones.ExternalEvents
@@ -17,15 +18,18 @@ namespace TravelBuddy.Notificaciones.ExternalEvents
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IConfiguration _configuration;
         private readonly ILogger<TicketmasterService> _logger;
+        private readonly MetricsLogWriter _metricsLogWriter;
 
         public TicketmasterService(
             IHttpClientFactory httpClientFactory,
             IConfiguration configuration,
-            ILogger<TicketmasterService> logger)
+            ILogger<TicketmasterService> logger,
+            MetricsLogWriter metricsLogWriter)
         {
             _httpClientFactory = httpClientFactory;
             _configuration = configuration;
             _logger = logger;
+            _metricsLogWriter = metricsLogWriter;
         }
 
         public async Task<List<UpcomingEventNotificationDto>> GetEventsByCityAsync(Guid destinationId, string cityName)
@@ -45,8 +49,33 @@ namespace TravelBuddy.Notificaciones.ExternalEvents
             {
                 var client = _httpClientFactory.CreateClient();
                 var requestUrl = $"{baseUrl}events.json?apikey={apiKey}&city={Uri.EscapeDataString(cityName)}&sort=date,asc";
+                var endpoint = $"{new Uri(requestUrl).GetLeftPart(UriPartial.Path)}";
+                var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+                HttpResponseMessage response;
 
-                var response = await client.GetAsync(requestUrl);
+                try
+                {
+                    response = await client.GetAsync(requestUrl);
+                }
+                catch (Exception ex)
+                {
+                    stopwatch.Stop();
+                    await _metricsLogWriter.RecordApiCallAsync(
+                        endpoint,
+                        0,
+                        stopwatch.ElapsedMilliseconds,
+                        false,
+                        ex.Message);
+                    throw;
+                }
+
+                stopwatch.Stop();
+                await _metricsLogWriter.RecordApiCallAsync(
+                    endpoint,
+                    (int)response.StatusCode,
+                    stopwatch.ElapsedMilliseconds,
+                    response.IsSuccessStatusCode,
+                    response.IsSuccessStatusCode ? null : response.ReasonPhrase);
 
                 if (!response.IsSuccessStatusCode)
                 {

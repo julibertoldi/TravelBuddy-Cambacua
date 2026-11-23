@@ -5,7 +5,6 @@
   </div>
   <hr>
 
-  <!-- Fila 1: Estadísticas Generales -->
   <div class="row mb-4" *ngIf="stats">
     <div class="col-md-3"><div class="card bg-primary text-white p-3"><h5>Usuarios</h5><h3>{{ stats.totalUsers }}</h3></div></div>
     <div class="col-md-3"><div class="card bg-success text-white p-3"><h5>Destinos</h5><h3>{{ stats.totalDestinations }}</h3></div></div>
@@ -13,19 +12,69 @@
     <div class="col-md-3"><div class="card bg-danger text-white p-3"><h5>Errores API</h5><h3>{{ stats.externalApiErrorsCount }}</h3></div></div>
   </div>
 
-  <!-- Fila 2: Tabla de Logs -->
-  <div class="card shadow-sm">
-    <div class="card-header bg-dark text-white">Bitácora de API</div>
+  <div class="row mb-4" *ngIf="dashboard">
+    <div class="col-md-3"><div class="card p-3"><h5>Total de búsquedas</h5><h3>{{ dashboard.totalSearches }}</h3></div></div>
+    <div class="col-md-3"><div class="card p-3"><h5>Destinos guardados</h5><h3>{{ dashboard.totalSavedDestinations }}</h3></div></div>
+    <div class="col-md-3"><div class="card p-3"><h5>Llamadas a API</h5><h3>{{ dashboard.totalApiCalls }}</h3></div></div>
+    <div class="col-md-3"><div class="card p-3"><h5>Tiempo promedio (ms)</h5><h3>{{ dashboard.averageResponseTimeMs }}</h3></div></div>
+    <div class="col-md-3 mt-3"><div class="card bg-danger text-white p-3"><h5>Errores API</h5><h3>{{ dashboard.totalApiErrors }}</h3></div></div>
+  </div>
+
+  <div class="card shadow-sm mb-4" *ngIf="dashboard">
+    <div class="card-header bg-dark text-white">Destinos más consultados</div>
     <table class="table table-striped mb-0">
       <thead>
-        <tr><th>Fecha</th><th>Endpoint</th><th>Status</th><th>Éxito</th></tr>
+        <tr><th>Destino</th><th>Consultas</th></tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let destination of dashboard.topDestinations">
+          <td>{{ destination.destinationName }}</td>
+          <td>{{ destination.viewCount }}</td>
+        </tr>
+        <tr *ngIf="dashboard.topDestinations.length === 0">
+          <td colspan="2" class="text-center">Todavía no hay consultas de destinos.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="card-header bg-dark text-white">Últimas llamadas externas fallidas</div>
+    <table class="table table-striped mb-0">
+      <thead>
+        <tr><th>Fecha</th><th>Endpoint</th><th>Status</th><th>Tiempo (ms)</th><th>Error</th></tr>
       </thead>
       <tbody>
         <tr *ngFor="let log of apiLogs">
           <td>{{ log.timestamp | date:'short' }}</td>
           <td><code>{{ log.endpoint }}</code></td>
-          <td><span class="badge" [ngClass]="log.statusCode === 200 ? 'bg-success' : 'bg-danger'">{{ log.statusCode }}</span></td>
-          <td>{{ log.isSuccess ? 'Sí' : 'No' }}</td>
+          <td><span class="badge bg-danger">{{ log.statusCode }}</span></td>
+          <td>{{ log.responseTimeMs }}</td>
+          <td>{{ log.errorMessage }}</td>
+        </tr>
+        <tr *ngIf="apiLogs.length === 0">
+          <td colspan="5" class="text-center">No hay llamadas fallidas registradas.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card shadow-sm mt-4">
+    <div class="card-header bg-dark text-white">Excepciones internas (ABP)</div>
+    <table class="table table-striped mb-0">
+      <thead>
+        <tr><th>Fecha</th><th>Método</th><th>URL</th><th>Status</th><th>Excepción</th></tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let error of internalErrors">
+          <td>{{ error.executionTime | date:'short' }}</td>
+          <td>{{ error.httpMethod }}</td>
+          <td><code>{{ error.url }}</code></td>
+          <td>{{ error.httpStatusCode }}</td>
+          <td class="text-break">{{ error.exceptions }}</td>
+        </tr>
+        <tr *ngIf="internalErrors.length === 0">
+          <td colspan="5" class="text-center">No hay excepciones internas registradas.</td>
         </tr>
       </tbody>
     </table>

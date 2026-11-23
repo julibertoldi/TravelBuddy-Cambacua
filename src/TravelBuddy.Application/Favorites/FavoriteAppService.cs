@@ -117,7 +117,7 @@ public class FavoriteAppService : ApplicationService, IFavoriteAppService
             Population = f.Destination.Population,
             Latitude = f.Destination.Latitude,
             Longitude = f.Destination.Longitude,
-            CreationTime = f.Destination.CreationTime
+            LastUpdated = f.Destination.LastUpdated
         }).ToList();
 
         return favoritosDto;

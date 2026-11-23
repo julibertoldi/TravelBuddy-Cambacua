@@ -2,7 +2,9 @@
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Shouldly;
+using TravelBuddy.Destinations;
 using TravelBuddy.Favorites;
+using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Security.Claims;
 using Volo.Abp.Users;
 using Xunit;
@@ -12,6 +14,7 @@ namespace TravelBuddy.Favorites;
 public class FavoriteAppService_Tests : TravelBuddyApplicationTestBase<TravelBuddyApplicationTestModule>
 {
     private readonly IFavoriteAppService _favoriteAppService;
+    private readonly IRepository<Destination, Guid> _destinationRepository;
     private readonly ICurrentUser _currentUser;
     private readonly ICurrentPrincipalAccessor _currentPrincipalAccessor;
 
@@ -25,6 +28,7 @@ public class FavoriteAppService_Tests : TravelBuddyApplicationTestBase<TravelBud
     public FavoriteAppService_Tests()
     {
         _favoriteAppService = GetRequiredService<IFavoriteAppService>();
+        _destinationRepository = GetRequiredService<IRepository<Destination, Guid>>();
         _currentUser = GetRequiredService<ICurrentUser>();
         _currentPrincipalAccessor = GetRequiredService<ICurrentPrincipalAccessor>();
     }
@@ -43,9 +47,21 @@ public class FavoriteAppService_Tests : TravelBuddyApplicationTestBase<TravelBud
         return _currentPrincipalAccessor.Change(claimsPrincipal);
     }
 
+    private Task SeedDestinationAsync(Guid id, string name, DateTime? lastUpdated = null)
+    {
+        return _destinationRepository.InsertAsync(
+            new Destination(id, name, "Description", "Region", "Country")
+            {
+                LastUpdated = lastUpdated ?? DateTime.UtcNow
+            },
+            autoSave: true);
+    }
+
     [Fact]
     public async Task Agregar_Un_Destino_A_Favoritos()
     {
+        await SeedDestinationAsync(_destinoCanabacuaId, "Canabacua");
+
         using (LoginUsuarioSimulado())
         {
             _currentUser.IsAuthenticated.ShouldBeTrue();
@@ -65,6 +81,8 @@ public class FavoriteAppService_Tests : TravelBuddyApplicationTestBase<TravelBud
     [Fact]
     public async Task No_Debe_Duplicar_Favorito_Si_Ya_Existe()
     {
+        await SeedDestinationAsync(_destinoMarDelPlataId, "Mar del Plata");
+
         using (LoginUsuarioSimulado())
         {
             // Act: Se agrega el mismo destino dos veces
@@ -80,6 +98,9 @@ public class FavoriteAppService_Tests : TravelBuddyApplicationTestBase<TravelBud
     [Fact]
     public async Task Quitar_Un_Destino_De_Favoritos()
     {
+        await SeedDestinationAsync(_destinoCanabacuaId, "Canabacua");
+        await SeedDestinationAsync(_destinoMarDelPlataId, "Mar del Plata");
+
         using (LoginUsuarioSimulado())
         {
             // Arrange: Agregamos ambos destinos previamente
@@ -93,6 +114,22 @@ public class FavoriteAppService_Tests : TravelBuddyApplicationTestBase<TravelBud
             var favoritos = await _favoriteAppService.ObtenerMisFavoritosAsync();
             favoritos.Count.ShouldBe(1);
             favoritos[0].DestinoId.ShouldBe(_destinoMarDelPlataId);
+        }
+    }
+
+    [Fact]
+    public async Task Favorito_Expone_LastUpdated_Del_Destino()
+    {
+        var lastUpdated = new DateTime(2026, 11, 23, 12, 0, 0, DateTimeKind.Utc);
+        await SeedDestinationAsync(_destinoCanabacuaId, "Canabacua", lastUpdated);
+
+        using (LoginUsuarioSimulado())
+        {
+            await _favoriteAppService.AgregarFavoritoAsync(_destinoCanabacuaId);
+
+            var favorite = await _favoriteAppService.ObtenerMisFavoritosAsync();
+
+            favorite.ShouldHaveSingleItem().LastUpdated.ShouldBe(lastUpdated);
         }
     }
 }

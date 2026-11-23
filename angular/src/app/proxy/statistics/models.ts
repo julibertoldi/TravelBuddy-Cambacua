@@ -22,3 +22,11 @@ export interface DestinationStatDto {
   destinationName?: string;
   viewCount: number;
 }
+
+export interface AuditLogExceptionDto {
+  executionTime: string;
+  httpMethod?: string;
+  url?: string;
+  httpStatusCode?: number;
+  exceptions: string;
+}

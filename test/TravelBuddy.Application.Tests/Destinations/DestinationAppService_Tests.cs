@@ -6,8 +6,10 @@ using Moq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Shouldly;
+using Volo.Abp.Authorization;
 using TravelBuddy.Cities;
 using TravelBuddy.Destinations;
+using TravelBuddy.Statistics;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Uow;
 using Xunit;
@@ -18,11 +20,14 @@ public class DestinationAppService_Tests : TravelBuddyApplicationTestBase<Travel
 {
     private readonly IDestinationAppService _destinationAppService;
     private readonly IRepository<Destination, Guid> _destinationRepository;
+    private readonly IRepository<SearchLogs, Guid> _searchLogRepository;
     private Mock<ICitySearchService> _citySearchServiceMock;
     private readonly IUnitOfWorkManager _unitOfWorkManager;
 
     protected override void AfterAddApplication(IServiceCollection services)
     {
+        services.AddAlwaysAllowAuthorization();
+
         _citySearchServiceMock = new Mock<ICitySearchService>();
 
         // Configuración por defecto para búsquedas
@@ -51,6 +56,7 @@ public class DestinationAppService_Tests : TravelBuddyApplicationTestBase<Travel
     {
         _destinationAppService = GetRequiredService<IDestinationAppService>();
         _destinationRepository = GetRequiredService<IRepository<Destination, Guid>>();
+        _searchLogRepository = GetRequiredService<IRepository<SearchLogs, Guid>>();
         _unitOfWorkManager = GetRequiredService<IUnitOfWorkManager>();
     }
 
@@ -65,6 +71,29 @@ public class DestinationAppService_Tests : TravelBuddyApplicationTestBase<Travel
             result.ShouldNotBeNull();
             result.Cities.ShouldNotBeEmpty();
             result.Cities[0].Name.ShouldBe("Rio de Janeiro");
+
+            await uow.CompleteAsync();
+        }
+    }
+
+    [Fact]
+    public async Task Should_Log_Search_Term_And_Country()
+    {
+        using (var uow = _unitOfWorkManager.Begin())
+        {
+            var request = new CitySearchRequestDto
+            {
+                PartialName = "Rio",
+                Pais = "Brazil"
+            };
+
+            var result = await _destinationAppService.SearchCitiesAsync(request);
+            var log = await _searchLogRepository.FirstOrDefaultAsync(
+                item => item.SearchTerm == "Rio | País: Brazil");
+
+            result.Cities.ShouldNotBeEmpty();
+            log.ShouldNotBeNull();
+            log.SearchTime.ShouldBeGreaterThan(DateTime.MinValue);
 
             await uow.CompleteAsync();
         }
@@ -136,6 +165,36 @@ public class DestinationAppService_Tests : TravelBuddyApplicationTestBase<Travel
 
             var count = await _destinationRepository.CountAsync(d => d.GeoDbCityId == existingGeoDbId);
             count.ShouldBe(1);
+
+            await uow.CompleteAsync();
+        }
+    }
+
+    [Fact]
+    public async Task Should_Increment_ViewCount_When_Opening_Saved_Destination_Details()
+    {
+        var destination = new Destination(
+            Guid.NewGuid(),
+            "Ciudad consultada",
+            "Descripción",
+            "Región",
+            "País")
+        {
+            GeoDbCityId = 123,
+            ViewCount = 4
+        };
+        using (var seedUow = _unitOfWorkManager.Begin())
+        {
+            await _destinationRepository.InsertAsync(destination, autoSave: true);
+            await seedUow.CompleteAsync();
+        }
+
+        using (var uow = _unitOfWorkManager.Begin())
+        {
+            await _destinationAppService.GetCityDetailsAsync(123);
+
+            var updated = await _destinationRepository.GetAsync(destination.Id);
+            updated.ViewCount.ShouldBe(5);
 
             await uow.CompleteAsync();
         }

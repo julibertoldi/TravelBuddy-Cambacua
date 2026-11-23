@@ -12,6 +12,7 @@ namespace TravelBuddy.Statistics
     {
         Task<AdminDashboardDto> GetDashboardStatisticsAsync();
         Task<List<ApiCallLogDto>> GetApiCallLogsAsync();
+        Task<List<AuditLogExceptionDto>> GetInternalErrorLogsAsync();
         Task<IRemoteStreamContent> ExportApiLogsCsvAsync();
     }
 }

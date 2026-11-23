@@ -23,7 +23,7 @@ export interface FavoriteDto {
   population?: number;
   latitude?: number;
   longitude?: number;
-  creationTime?: string;
+  lastUpdated?: string;
 }
 
 @Component({

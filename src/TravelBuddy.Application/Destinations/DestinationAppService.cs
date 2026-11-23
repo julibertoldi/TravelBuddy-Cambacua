@@ -3,6 +3,7 @@ using System;
 using System.Threading.Tasks;
 using TravelBuddy.Cities;
 using TravelBuddy.Permissions; 
+using TravelBuddy.Statistics;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Users;
@@ -19,26 +20,46 @@ namespace TravelBuddy.Destinations
     {
         private readonly ICitySearchService _citySearchService;
         private readonly ICurrentUser _currentUser;
+        private readonly MetricsLogWriter _metricsLogWriter;
   
 
         public DestinationAppService(
             IRepository<Destination, Guid> repository,
             ICitySearchService citySearchService,
-            ICurrentUser currentUser)
+            ICurrentUser currentUser,
+            MetricsLogWriter metricsLogWriter)
             : base(repository)
         {
             _citySearchService = citySearchService;
             _currentUser = currentUser;
+            _metricsLogWriter = metricsLogWriter;
         }
 
         public async Task<CitySearchResultDto> SearchCitiesAsync(CitySearchRequestDto request)
         {
-            return await _citySearchService.SearchCitiesAsync(request);
+            var searchTerm = request.PartialName?.Trim() ?? string.Empty;
+            if (!string.IsNullOrWhiteSpace(request.Pais))
+            {
+                searchTerm = string.IsNullOrWhiteSpace(searchTerm)
+                    ? $"País: {request.Pais.Trim()}"
+                    : $"{searchTerm} | País: {request.Pais.Trim()}";
+            }
+
+            try
+            {
+                return await _citySearchService.SearchCitiesAsync(request);
+            }
+            finally
+            {
+                await _metricsLogWriter.RecordSearchAsync(searchTerm, _currentUser.Id);
+            }
         }
 
         public async Task<CityDetailDto> GetCityDetailsAsync(int cityId)
         {
-            return await _citySearchService.GetCityDetailsAsync(cityId);
+            var city = await _citySearchService.GetCityDetailsAsync(cityId);
+            await _metricsLogWriter.RecordDestinationViewAsync(cityId);
+            return city;
         }
 
         public async Task<CitySearchResultDto> GetPopularCitiesAsync()

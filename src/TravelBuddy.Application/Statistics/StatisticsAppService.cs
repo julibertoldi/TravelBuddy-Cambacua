@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,7 @@ using TravelBuddy.Favorites;
 using TravelBuddy.Permissions;
 using TravelBuddy.Statistics;
 using Volo.Abp.Content;
+using Volo.Abp.AuditLogging;
 using Volo.Abp.Domain.Repositories;
 
 namespace TravelBuddy.Statistics
@@ -21,6 +23,7 @@ namespace TravelBuddy.Statistics
         private readonly IRepository<Destination, Guid> _destinationRepository;
         private readonly IRepository<Favorite> _favoriteRepository;
         private readonly IRepository<ApiCallLog, Guid> _apiCallLogRepository;
+        private readonly IRepository<AuditLog, Guid> _auditLogRepository;
         private static string Csv(string? value)
         {
             if (string.IsNullOrEmpty(value)) return "\"\"";
@@ -36,12 +39,14 @@ namespace TravelBuddy.Statistics
             IRepository<SearchLogs, Guid> searchLogRepository,
             IRepository<Destination, Guid> destinationRepository,
             IRepository<Favorite> favoriteRepository,
-            IRepository<ApiCallLog, Guid> apiCallLogRepository)
+            IRepository<ApiCallLog, Guid> apiCallLogRepository,
+            IRepository<AuditLog, Guid> auditLogRepository)
         {
             _searchLogRepository = searchLogRepository;
             _destinationRepository = destinationRepository;
             _favoriteRepository = favoriteRepository;
             _apiCallLogRepository = apiCallLogRepository;
+            _auditLogRepository = auditLogRepository;
         }
 
         public async Task<AdminDashboardDto> GetDashboardStatisticsAsync()
@@ -89,6 +94,7 @@ namespace TravelBuddy.Statistics
 
             var logs = await AsyncExecuter.ToListAsync(
                 queryableLogs
+                    .Where(x => !x.IsSuccess || x.StatusCode >= 400)
                     .OrderByDescending(x => x.Timestamp)
                     .Take(50)
                     .Select(x => new ApiCallLogDto
@@ -106,18 +112,46 @@ namespace TravelBuddy.Statistics
             return logs;
         }
 
+        public async Task<List<AuditLogExceptionDto>> GetInternalErrorLogsAsync()
+        {
+            var queryableLogs = await _auditLogRepository.GetQueryableAsync();
+
+            return await AsyncExecuter.ToListAsync(
+                queryableLogs
+                    .Where(x => x.Exceptions != null && x.Exceptions != string.Empty)
+                    .OrderByDescending(x => x.ExecutionTime)
+                    .Take(50)
+                    .Select(x => new AuditLogExceptionDto
+                    {
+                        ExecutionTime = x.ExecutionTime,
+                        HttpMethod = x.HttpMethod,
+                        Url = x.Url,
+                        HttpStatusCode = x.HttpStatusCode,
+                        Exceptions = x.Exceptions
+                    }));
+        }
+
         public async Task<IRemoteStreamContent> ExportApiLogsCsvAsync()
         {
             var queryableLogs = await _apiCallLogRepository.GetQueryableAsync();
             var logs = await AsyncExecuter.ToListAsync(
                 queryableLogs.OrderByDescending(x => x.Timestamp)
             );
+            var dashboard = await GetDashboardStatisticsAsync();
 
             var sb = new StringBuilder();
-            // Cabecera del CSV
-            sb.AppendLine("ID,Endpoint,StatusCode,ResponseTimeMs,IsSuccess,ErrorMessage,Timestamp");
+            sb.AppendLine("ID,Endpoint,StatusCode,ResponseTimeMs,IsSuccess,ErrorMessage,Timestamp,Metric,Value,TopDestination,ViewCount");
+            AppendMetric(sb, "TotalSearches", dashboard.TotalSearches);
+            AppendMetric(sb, "TotalSavedDestinations", dashboard.TotalSavedDestinations);
+            AppendMetric(sb, "TotalApiCalls", dashboard.TotalApiCalls);
+            AppendMetric(sb, "AverageResponseTimeMs", dashboard.AverageResponseTimeMs);
+            AppendMetric(sb, "TotalApiErrors", dashboard.TotalApiErrors);
 
-            // Filas de datos
+            foreach (var destination in dashboard.TopDestinations)
+            {
+                sb.AppendLine($",,,,,,,,,{Csv(destination.DestinationName)},{destination.ViewCount}");
+            }
+
             foreach (var log in logs)
             {
                 sb.AppendLine(string.Join(",",
@@ -127,13 +161,22 @@ namespace TravelBuddy.Statistics
                     log.ResponseTimeMs,
                     log.IsSuccess,
                     Csv(log.ErrorMessage),
-                    log.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")));
+                    Csv(log.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")),
+                    string.Empty,
+                    string.Empty,
+                    string.Empty,
+                    string.Empty));
             }
 
             var byteArray = Encoding.UTF8.GetBytes(sb.ToString());
             var stream = new MemoryStream(byteArray);
 
             return new RemoteStreamContent(stream, "api-logs-report.csv", "text/csv");
+        }
+
+        private static void AppendMetric(StringBuilder csv, string metricName, object value)
+        {
+            csv.AppendLine($",,,,,,,{Csv(metricName)},{Csv(Convert.ToString(value, CultureInfo.InvariantCulture))},,");
         }
     }
 }
