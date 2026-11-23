@@ -12,6 +12,12 @@ public static class UserExtensions
     public static void SetProfilePicture(this IdentityUser user, string? value) =>
         user.SetProperty(UserExtensionProperties.ProfilePictureUrl, value);
 
+    public static string? GetProfilePictureContentType(this IdentityUser user) =>
+        user.GetProperty<string?>(UserExtensionProperties.ProfilePictureContentType);
+
+    public static void SetProfilePictureContentType(this IdentityUser user, string? value) =>
+        user.SetProperty(UserExtensionProperties.ProfilePictureContentType, value);
+
     public static string? GetPreferences(this IdentityUser user) => 
         user.GetProperty<string?>(UserExtensionProperties.Preferences);
 

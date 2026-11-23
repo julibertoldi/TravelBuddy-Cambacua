@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using TravelBuddy.Localization;
 using TravelBuddy.MultiTenancy;
+using TravelBuddy.Users;
 using Volo.Abp.Localization;
 using Volo.Abp.Modularity;
 using Volo.Abp.MultiTenancy;
@@ -16,6 +17,7 @@ using Volo.Abp.BackgroundJobs;
 using Volo.Abp.Emailing;
 using Volo.Abp.FeatureManagement;
 using Volo.Abp.Identity;
+using Volo.Abp.BlobStoring;
 
 namespace TravelBuddy;
 
@@ -37,6 +39,14 @@ public class TravelBuddyDomainModule : AbpModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
+        Configure<AbpBlobStoringOptions>(options =>
+        {
+            options.Containers.Configure<ProfilePictureContainer>(container =>
+            {
+                container.UseDatabase();
+            });
+        });
+
         Configure<AbpMultiTenancyOptions>(options =>
         {
             options.IsEnabled = MultiTenancyConsts.IsEnabled;

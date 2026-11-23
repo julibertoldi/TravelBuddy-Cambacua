@@ -43,6 +43,7 @@ public class UserProfileAppService_Tests
     {
         // Prepara
         var user = new IdentityUser(Guid.NewGuid(), "juliana", "juliana@test.com");
+        user.SetProfilePicture("/api/app/user-profile/profile-picture/legacy.jpg");
         (await _userManager.CreateAsync(user)).CheckErrors();
 
         // ejecuta
@@ -53,7 +54,6 @@ public class UserProfileAppService_Tests
                 {
                     Nombre = "Juliana",
                     Apellido = "Bertoldi",
-                    FotoPerfilUrl = "http://foto.test/juli.png",
                     Preferencias = "playa"
                 });
         }
@@ -65,7 +65,7 @@ public class UserProfileAppService_Tests
         updatedUser.Surname.ShouldBe("Bertoldi");
         updatedUser.Email.ShouldBe("juliana@test.com");
 
-        updatedUser.GetProfilePicture().ShouldBe("http://foto.test/juli.png");
+        updatedUser.GetProfilePicture().ShouldBe("/api/app/user-profile/profile-picture/legacy.jpg");
         updatedUser.GetPreferences().ShouldBe("playa");
     }
 
@@ -92,7 +92,7 @@ public class UserProfileAppService_Tests
             profile.Nombre.ShouldBe("Ana");
             profile.Apellido.ShouldBe("Gomez");
             profile.Email.ShouldBe(user.Email);
-            profile.FotoPerfilUrl.ShouldBe("https://example.com/foto.jpg");
+            profile.FotoPerfilUrl.ShouldBeNull();
             profile.Preferencias.ShouldBe("montaña y playa");
         }
     }
@@ -150,5 +150,6 @@ public class UserProfileAppService_Tests
         var persistedUser = await _userManager.GetByIdAsync(user.Id);
         persistedUser.UserName.ShouldBe(initialUsername);
     }
+
 }
    

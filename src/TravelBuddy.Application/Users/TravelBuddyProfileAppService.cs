@@ -11,6 +11,7 @@ using Volo.Abp.DependencyInjection;
 using Volo.Abp.Identity;
 using Volo.Abp.Identity.Settings;
 using Volo.Abp.Users;
+using Volo.Abp.Data;
 
 namespace TravelBuddy.Users;
 
@@ -34,12 +35,14 @@ public class TravelBuddyProfileAppService : ProfileAppService
     [Authorize]
     public override async Task<ProfileDto> UpdateAsync(UpdateProfileDto input)
     {
+        var currentUser = await _userManager.GetByIdAsync(CurrentUser.GetId());
+        input.SetProperty(UserExtensionProperties.ProfilePictureUrl, currentUser.GetProfilePicture());
+
         if (!await _permissionChecker.IsGrantedAsync(TravelBuddyPermissions.Admin.Default))
         {
-            var user = await _userManager.GetByIdAsync(CurrentUser.GetId());
-            if (!string.Equals(user.UserName, input.UserName, StringComparison.InvariantCultureIgnoreCase) ||
-                !string.Equals(user.Email, input.Email, StringComparison.InvariantCultureIgnoreCase) ||
-                !string.Equals(user.PhoneNumber, input.PhoneNumber, StringComparison.InvariantCultureIgnoreCase))
+            if (!string.Equals(currentUser.UserName, input.UserName, StringComparison.InvariantCultureIgnoreCase) ||
+                !string.Equals(currentUser.Email, input.Email, StringComparison.InvariantCultureIgnoreCase) ||
+                !string.Equals(currentUser.PhoneNumber, input.PhoneNumber, StringComparison.InvariantCultureIgnoreCase))
             {
                 throw new UserFriendlyException("Solo se permite modificar nombre, foto y preferencias de notificación.");
             }

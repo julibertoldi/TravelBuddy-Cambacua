@@ -7,6 +7,7 @@ import { provideSettingManagementConfig } from '@abp/ng.setting-management/confi
 import { provideFeatureManagementConfig } from '@abp/ng.feature-management';
 import { provideAbpThemeShared } from '@abp/ng.theme.shared';
 import { provideIdentityConfig } from '@abp/ng.identity/config';
+import { provideIdentity } from '@abp/ng.identity';
 import { provideAccountConfig } from '@abp/ng.account/config';
 import { registerLocale } from '@abp/ng.core/locale';
 import { provideThemeLeptonX } from '@abp/ng.theme.lepton-x';
@@ -15,6 +16,7 @@ import { provideLogo, withEnvironmentOptions } from "@volo/ngx-lepton-x.core";
 import { environment } from '../environments/environment';
 import { APP_ROUTES } from './app.routes';    
 import { APP_ROUTE_PROVIDER } from './route.provider';
+import { identityProfilePictureOptions } from './identity/user-profile-picture-contributors';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -29,6 +31,7 @@ export const appConfig: ApplicationConfig = {
     ),
     provideAbpOAuth(),
     provideIdentityConfig(),
+    provideIdentity(identityProfilePictureOptions),
     provideSettingManagementConfig(),
     provideFeatureManagementConfig(),
     provideThemeLeptonX(),

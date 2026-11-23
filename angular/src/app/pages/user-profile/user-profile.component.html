@@ -91,23 +91,20 @@
               </div>
             </div>
 
-            <!-- Foto de Perfil URL -->
+            <!-- Foto de perfil -->
             <div class="mb-3">
               <div class="d-flex justify-content-between align-items-center mb-1">
-                <label for="fotoPerfilUrl" class="form-label fw-semibold mb-0">URL de la Foto de Perfil</label>
-                <button *ngIf="profileForm.get('fotoPerfilUrl')?.value" type="button"
+                <label for="profilePicture" class="form-label fw-semibold mb-0">Foto de perfil (opcional)</label>
+                <button *ngIf="currentPhotoUrl || previewUrl" type="button"
                   class="btn btn-sm btn-link text-danger p-0 text-decoration-none" (click)="clearPhoto()">
                   <i class="bi bi-x-circle me-1"></i>Quitar foto
                 </button>
               </div>
-              <input type="text" id="fotoPerfilUrl" formControlName="fotoPerfilUrl" class="form-control"
-                [ngClass]="{ 'is-invalid': profileForm.get('fotoPerfilUrl')?.touched && profileForm.get('fotoPerfilUrl')?.invalid }"
-                placeholder="https://ejemplo.com/foto.jpg" />
-              <div class="form-text text-muted">Proporciona un enlace directo a una imagen (formato JPG, PNG, etc.). Se
-                previsualiza arriba en tiempo real.</div>
-              <div class="invalid-feedback" *ngIf="profileForm.get('fotoPerfilUrl')?.hasError('maxlength')">
-                El enlace no puede superar los 1000 caracteres.
-              </div>
+              <input type="file" id="profilePicture" class="form-control"
+                accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp"
+                [disabled]="saving" (change)="onPhotoSelected($event)" />
+              <div class="form-text text-muted">JPEG, PNG o WebP. Tamaño máximo: 2 MiB.</div>
+              <div class="text-danger small mt-1" *ngIf="photoError">{{ photoError }}</div>
             </div>
 
             <!-- Preferencias -->
@@ -132,7 +129,7 @@
               </button>
 
               <button type="submit" class="btn btn-guardar d-flex align-items-center"
-                [disabled]="profileForm.pristine || profileForm.invalid || saving || loading">
+                [disabled]="(!profileForm.dirty && !photoChanged) || profileForm.invalid || saving || loading">
                 <span *ngIf="saving" class="spinner-border spinner-border-sm me-2" role="status"
                   aria-hidden="true"></span>
                 <i *ngIf="!saving" class="fas fa-download me-1"></i>

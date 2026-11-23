@@ -1,6 +1,8 @@
 using System;
 using System.Threading.Tasks;
+using Volo.Abp;
 using Volo.Abp.Application.Services;
+using Volo.Abp.Content;
 
 namespace TravelBuddy.Users;
 
@@ -12,4 +14,13 @@ public interface IUserProfileAppService : IApplicationService
 
     Task<PublicUserProfileDto> GetPublicProfileAsync(Guid userId);
 
+    Task<string> UploadMyProfilePictureAsync(IRemoteStreamContent input);
+
+    [RemoteService(IsEnabled = false)]
+    Task<string> UploadUserProfilePictureAsync(Guid userId, IRemoteStreamContent input);
+
+    Task DeleteMyProfilePictureAsync();
+
+    [RemoteService(IsEnabled = false)]
+    Task<IRemoteStreamContent> GetProfilePictureAsync(Guid userId, string blobName);
 }

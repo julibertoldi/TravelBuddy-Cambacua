@@ -19,6 +19,5 @@ export interface UserProfileDto {
 export interface UpdateUserProfileDto {
   nombre: string;
   apellido: string;
-  fotoPerfilUrl?: string | null;
   preferencias?: string | null;
 }

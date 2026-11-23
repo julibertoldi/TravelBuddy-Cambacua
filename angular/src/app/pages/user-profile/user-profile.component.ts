@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormBuilder,
@@ -9,6 +9,9 @@ import {
 import { ConfigStateService } from '@abp/ng.core';
 import { ToasterService } from '@abp/ng.theme.shared';
 import { UserProfileService } from '../../proxy/users/user-profile.service';
+import { ProfilePictureApiService } from './profile-picture-api.service';
+import { validateProfilePictureFile } from './profile-picture-validation';
+import { Observable, of, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-user-profile',
@@ -17,10 +20,11 @@ import { UserProfileService } from '../../proxy/users/user-profile.service';
   templateUrl: './user-profile.component.html',
   styleUrls: ['./user-profile.component.scss']
 })
-export class UserProfileComponent implements OnInit {
+export class UserProfileComponent implements OnInit, OnDestroy {
 
   private fb = inject(FormBuilder);
   private userProfileService = inject(UserProfileService);
+  private profilePictureApi = inject(ProfilePictureApiService);
   private toaster = inject(ToasterService);
   private configState = inject(ConfigStateService);
 
@@ -28,6 +32,11 @@ export class UserProfileComponent implements OnInit {
 
   loading = true;
   saving = false;
+  currentPhotoUrl = '';
+  previewUrl = '';
+  photoError = '';
+  selectedPhoto: File | null = null;
+  removePhotoRequested = false;
 
   ngOnInit(): void {
     this.initForm();
@@ -40,7 +49,6 @@ export class UserProfileComponent implements OnInit {
       email: [{ value: '', disabled: true }],
       nombre: ['', [Validators.required, Validators.maxLength(64)]],
       apellido: ['', [Validators.required, Validators.maxLength(64)]],
-      fotoPerfilUrl: ['', [Validators.maxLength(512)]],
       preferencias: ['', [Validators.maxLength(2000)]]
     });
   }
@@ -51,12 +59,12 @@ export class UserProfileComponent implements OnInit {
     this.userProfileService.getMyProfile().subscribe({
       next: profile => {
         const currentUser = this.configState.getOne('currentUser');
+        this.currentPhotoUrl = profile.fotoPerfilUrl || '';
         this.profileForm.patchValue({
           userName: profile.userName || currentUser?.userName || '',
           email: profile.email || currentUser?.email || '',
           nombre: profile.nombre || currentUser?.name || '',
           apellido: profile.apellido || currentUser?.surName || '',
-          fotoPerfilUrl: profile.fotoPerfilUrl || '',
           preferencias: profile.preferencias || ''
         });
 
@@ -84,15 +92,15 @@ export class UserProfileComponent implements OnInit {
   }
 
   getAvatarUrl(): string {
-    const foto = this.profileForm?.get('fotoPerfilUrl')?.value?.trim();
-    if (foto) {
-      return foto;
-    }
-    return this.defaultAvatarUrl();
+    return this.previewUrl || this.currentPhotoUrl || this.defaultAvatarUrl();
   }
 
-  handleImageError(event: any): void {
-    event.target.src = this.defaultAvatarUrl();
+  get photoChanged(): boolean {
+    return this.selectedPhoto !== null || this.removePhotoRequested;
+  }
+
+  handleImageError(event: Event): void {
+    (event.target as HTMLImageElement).src = this.defaultAvatarUrl();
   }
 
   private defaultAvatarUrl(): string {
@@ -103,9 +111,34 @@ export class UserProfileComponent implements OnInit {
   }
 
   clearPhoto(): void {
-    const fotoCtrl = this.profileForm.get('fotoPerfilUrl');
-    fotoCtrl?.setValue('');
-    fotoCtrl?.markAsDirty();
+    this.revokePreviewUrl();
+    this.selectedPhoto = null;
+    this.photoError = '';
+    this.removePhotoRequested = Boolean(this.currentPhotoUrl);
+    this.profileForm.markAsDirty();
+  }
+
+  onPhotoSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = '';
+    this.photoError = '';
+
+    if (!file) {
+      return;
+    }
+
+    const validationError = validateProfilePictureFile(file);
+    if (validationError) {
+      this.photoError = validationError;
+      return;
+    }
+
+    this.revokePreviewUrl();
+    this.selectedPhoto = file;
+    this.removePhotoRequested = false;
+    this.previewUrl = URL.createObjectURL(file);
+    this.profileForm.markAsDirty();
   }
 
   saveProfile(): void {
@@ -124,14 +157,32 @@ export class UserProfileComponent implements OnInit {
     const profileUpdate = {
       nombre: this.profileForm.get('nombre')?.value ?? '',
       apellido: this.profileForm.get('apellido')?.value ?? '',
-      fotoPerfilUrl: this.profileForm.get('fotoPerfilUrl')?.value ?? '',
       preferencias: this.profileForm.get('preferencias')?.value ?? ''
     };
 
-    this.userProfileService.updateMyProfile(profileUpdate).subscribe({
+    let photoRequest: Observable<string | void> = of(this.currentPhotoUrl);
+    if (this.selectedPhoto) {
+      photoRequest = this.profilePictureApi.uploadMyProfilePicture(this.selectedPhoto);
+    } else if (this.removePhotoRequested) {
+      photoRequest = this.profilePictureApi.deleteMyProfilePicture().pipe(
+        switchMap(() => of('')),
+      );
+    }
+
+    photoRequest.pipe(
+      switchMap(photoUrl => {
+        if (typeof photoUrl === 'string') {
+          this.currentPhotoUrl = photoUrl;
+        }
+        return this.userProfileService.updateMyProfile(profileUpdate);
+      }),
+    ).subscribe({
       next: () => {
         this.toaster.success('Perfil actualizado correctamente.', 'Éxito');
         this.saving = false;
+        this.selectedPhoto = null;
+        this.removePhotoRequested = false;
+        this.revokePreviewUrl();
         this.profileForm.markAsPristine();
 
         setTimeout(() => {
@@ -150,5 +201,16 @@ export class UserProfileComponent implements OnInit {
 
   onSubmit(): void {
     this.saveProfile();
+  }
+
+  ngOnDestroy(): void {
+    this.revokePreviewUrl();
+  }
+
+  private revokePreviewUrl(): void {
+    if (this.previewUrl.startsWith('blob:')) {
+      URL.revokeObjectURL(this.previewUrl);
+    }
+    this.previewUrl = '';
   }
 }

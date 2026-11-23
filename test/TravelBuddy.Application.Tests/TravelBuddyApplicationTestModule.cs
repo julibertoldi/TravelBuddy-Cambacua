@@ -1,8 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.EntityFrameworkCore.InMemory;
 using TravelBuddy.EntityFrameworkCore;
+using TravelBuddy.Users;
 using Volo.Abp.Autofac;
+using Volo.Abp.BlobStoring;
 using Volo.Abp.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore.GlobalFilters;
 using Volo.Abp.Identity.EntityFrameworkCore;
@@ -28,6 +31,8 @@ public class TravelBuddyApplicationTestModule : AbpModule
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
         context.Services.AddEntityFrameworkInMemoryDatabase();
+        context.Services.Replace(
+            ServiceDescriptor.Singleton<IBlobContainer<ProfilePictureContainer>, InMemoryProfilePictureBlobContainer>());
 
         Configure<AbpEfCoreGlobalFilterOptions>(options =>
         {
