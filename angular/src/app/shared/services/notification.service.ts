@@ -1,13 +1,9 @@
-import type { NotificationDto, NotificationSettingsDto, UpcomingEventNotificationDto } from '../../proxy/notifications/models';
 import { Injectable } from '@angular/core';
 import { RestService } from '@abp/ng.core';
 import { Observable } from 'rxjs';
+import type { NotificationDto, NotificationSettingsDto, UpcomingEventNotificationDto } from '../../proxy/notifications/models';
 
-export interface NotificationSettingsDto {
-  receiveEventAlerts: boolean;
-  receiveEmailNotifications: boolean;
-  receivePromotions: boolean;
-}
+export type { NotificationDto, NotificationSettingsDto, UpcomingEventNotificationDto } from '../../proxy/notifications/models';
 
 @Injectable({
   providedIn: 'root'
@@ -16,8 +12,8 @@ export class NotificationService {
   constructor(private restService: RestService) {}
 
   // 1. Notificaciones (OK)
-  getNotifications(): Observable<any[]> {
-    return this.restService.request<any, any[]>({
+  getNotifications(): Observable<NotificationDto[]> {
+    return this.restService.request<any, NotificationDto[]>({
       method: 'GET',
       url: '/api/app/notification'
     });
@@ -46,8 +42,8 @@ export class NotificationService {
   }
 
   // 3. PRUEBA NUEVA: Eventos favoritos próximos
-  getFavoriteUpcomingEvents(): Observable<any[]> {
-    return this.restService.request<any, any[]>({
+  getUpcomingFavoriteEvents(): Observable<UpcomingEventNotificationDto[]> {
+    return this.restService.request<any, UpcomingEventNotificationDto[]>({
       method: 'GET',
       url: '/api/app/notification/upcoming-favorite-events'
     });
