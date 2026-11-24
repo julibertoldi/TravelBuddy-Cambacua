@@ -30,3 +30,11 @@ export interface AuditLogExceptionDto {
   httpStatusCode?: number;
   exceptions: string;
 }
+
+export interface AuditEventDto {
+  userName?: string;
+  action: string;
+  executionTime: string;
+  clientIpAddress?: string;
+  result: string;
+}

@@ -1,4 +1,4 @@
-import type { AdminDashboardDto, ApiCallLogDto, AuditLogExceptionDto } from './models';
+import type { AdminDashboardDto, ApiCallLogDto, AuditEventDto, AuditLogExceptionDto } from './models';
 import { RestService, Rest } from '@abp/ng.core';
 import { Injectable } from '@angular/core';
 
@@ -29,6 +29,13 @@ export class StatisticsService {
     this.restService.request<any, AuditLogExceptionDto[]>({
       method: 'GET',
       url: '/api/app/statistics/internal-error-logs',
+    },
+    { apiName: this.apiName,...config });
+
+  getCriticalAuditEvents = (config?: Partial<Rest.Config>) =>
+    this.restService.request<any, AuditEventDto[]>({
+      method: 'GET',
+      url: '/api/app/statistics/critical-audit-events',
     },
     { apiName: this.apiName,...config });
   

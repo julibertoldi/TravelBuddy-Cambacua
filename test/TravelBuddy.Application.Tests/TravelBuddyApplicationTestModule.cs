@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore.InMemory;
 using TravelBuddy.EntityFrameworkCore;
 using TravelBuddy.Users;
 using Volo.Abp.Autofac;
+using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BlobStoring;
 using Volo.Abp.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore.GlobalFilters;
@@ -46,6 +47,14 @@ public class TravelBuddyApplicationTestModule : AbpModule
             options.Configure<TravelBuddyDbContext>(dbContextOptions =>
             {
                 dbContextOptions.DbContextOptions.UseInMemoryDatabase(databaseName);
+            });
+            options.Configure<IdentityDbContext>(dbContextOptions =>
+            {
+                dbContextOptions.DbContextOptions.UseInMemoryDatabase($"{databaseName}-identity");
+            });
+            options.Configure<AbpAuditLoggingDbContext>(dbContextOptions =>
+            {
+                dbContextOptions.DbContextOptions.UseInMemoryDatabase($"{databaseName}-audit");
             });
         });
     }

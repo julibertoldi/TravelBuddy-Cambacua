@@ -1,12 +1,16 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Shouldly;
+using Volo.Abp.AuditLogging;
+using Volo.Abp.Auditing;
 using TravelBuddy.Calificaciones;
 using Volo.Abp.Authorization;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Security.Claims;
+using Volo.Abp.Uow;
 using Xunit;
 
 namespace TravelBuddy.Application.Tests.Calificaciones;
@@ -15,12 +19,16 @@ public class CalificacionAppService_Tests : TravelBuddyApplicationTestBase<Trave
 {
     private readonly ICalificacionAppService _service;
     private readonly IRepository<Calificacion, Guid> _repository;
+    private readonly IRepository<AuditLog, Guid> _auditLogRepository;
+    private readonly IUnitOfWorkManager _unitOfWorkManager;
     private readonly ICurrentPrincipalAccessor _currentPrincipalAccessor;
 
     public CalificacionAppService_Tests()
     {
         _service = GetRequiredService<ICalificacionAppService>();
         _repository = GetRequiredService<IRepository<Calificacion, Guid>>();
+        _auditLogRepository = GetRequiredService<IRepository<AuditLog, Guid>>();
+        _unitOfWorkManager = GetRequiredService<IUnitOfWorkManager>();
         _currentPrincipalAccessor = GetRequiredService<ICurrentPrincipalAccessor>();
     }
 
@@ -82,5 +90,44 @@ public class CalificacionAppService_Tests : TravelBuddyApplicationTestBase<Trave
     {
         await Should.ThrowAsync<AbpAuthorizationException>(
             () => _service.GetPromedioByDestinoAsync(Guid.NewGuid()));
+    }
+
+    [Fact]
+    public async Task Alta_cambio_y_baja_de_calificacion_quedan_en_entity_history()
+    {
+        using (LoginAs(Guid.NewGuid()))
+        {
+            var input = new CreateUpdateCalificacionDto
+            {
+                DestinoId = Guid.NewGuid(),
+                Estrellas = 4,
+                Titulo = "Primera opinión",
+                Comentario = "Comentario inicial",
+                PalabrasClave = "viaje"
+            };
+
+            var created = await _service.CreateAsync(input);
+            input.Estrellas = 5;
+            input.Comentario = "Comentario actualizado";
+            await _service.UpdateAsync(created.Id, input);
+            await _service.DeleteAsync(created.Id);
+        }
+
+        using (var uow = _unitOfWorkManager.Begin())
+        {
+            var auditLogsQuery = await _auditLogRepository.WithDetailsAsync(x => x.EntityChanges);
+            var changes = auditLogsQuery
+                .ToList()
+                .SelectMany(auditLog => auditLog.EntityChanges)
+                .Where(change => change.EntityTypeFullName == typeof(Calificacion).FullName)
+                .Select(change => change.ChangeType)
+                .ToList();
+
+            changes.ShouldContain(EntityChangeType.Created);
+            changes.ShouldContain(EntityChangeType.Updated);
+            changes.ShouldContain(EntityChangeType.Deleted);
+
+            await uow.CompleteAsync();
+        }
     }
 }

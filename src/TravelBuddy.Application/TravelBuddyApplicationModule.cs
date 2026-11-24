@@ -1,13 +1,17 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using TravelBuddy.Cities;
+using TravelBuddy.Calificaciones;
+using TravelBuddy.Favorites;
 using TravelBuddy.Infraestructure;
 using Volo.Abp.Account;
 using Volo.Abp.AutoMapper;
+using Volo.Abp.Auditing;
 using Volo.Abp.FeatureManagement;
 using Volo.Abp.Identity;
 using Volo.Abp.Modularity;
 using Volo.Abp.PermissionManagement;
 using Volo.Abp.SettingManagement;
+using Volo.Abp;
 
 
 namespace TravelBuddy
@@ -26,6 +30,15 @@ namespace TravelBuddy
     {
         public override void ConfigureServices(ServiceConfigurationContext context)
         {
+            Configure<AbpAuditingOptions>(options =>
+            {
+                options.EntityHistorySelectors.Add(
+                    new NamedTypeSelector(
+                        "TravelBuddy",
+                        entityType => entityType == typeof(Favorite) ||
+                                      entityType == typeof(Calificacion)));
+            });
+
             Configure<AbpAutoMapperOptions>(options =>
             {
                 options.AddMaps<TravelBuddyApplicationModule>();

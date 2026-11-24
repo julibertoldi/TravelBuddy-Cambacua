@@ -105,6 +105,43 @@
     </div>
   </div>
 
+  <div class="card shadow-sm mt-4">
+    <div class="card-header bg-dark text-white">
+      <h5 class="mb-0">Auditoría de acciones críticas y accesos fallidos</h5>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-striped mb-0">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Usuario</th>
+              <th>Acción</th>
+              <th>IP</th>
+              <th>Resultado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let event of auditEvents">
+              <td>{{ event.executionTime | date:'short' }}</td>
+              <td>{{ event.userName || '-' }}</td>
+              <td>{{ event.action }}</td>
+              <td>{{ event.clientIpAddress || '-' }}</td>
+              <td>
+                <span class="badge" [ngClass]="event.result === 'Fallido' ? 'bg-danger' : 'bg-success'">
+                  {{ event.result }}
+                </span>
+              </td>
+            </tr>
+            <tr *ngIf="auditEvents.length === 0">
+              <td colspan="5" class="text-center py-3 text-muted">No hay eventos de auditoría para mostrar.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
   <ng-template #loadingStats>
     <div class="text-center py-3">
       <div class="spinner-border text-primary" role="status"></div>

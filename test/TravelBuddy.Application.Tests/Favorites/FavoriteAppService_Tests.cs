@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Shouldly;
+using Volo.Abp.AuditLogging;
+using Volo.Abp.Auditing;
+using Volo.Abp.Uow;
 using TravelBuddy.Destinations;
 using TravelBuddy.Favorites;
 using Volo.Abp.Domain.Repositories;
@@ -15,6 +19,8 @@ public class FavoriteAppService_Tests : TravelBuddyApplicationTestBase<TravelBud
 {
     private readonly IFavoriteAppService _favoriteAppService;
     private readonly IRepository<Destination, Guid> _destinationRepository;
+    private readonly IRepository<AuditLog, Guid> _auditLogRepository;
+    private readonly IUnitOfWorkManager _unitOfWorkManager;
     private readonly ICurrentUser _currentUser;
     private readonly ICurrentPrincipalAccessor _currentPrincipalAccessor;
 
@@ -29,6 +35,8 @@ public class FavoriteAppService_Tests : TravelBuddyApplicationTestBase<TravelBud
     {
         _favoriteAppService = GetRequiredService<IFavoriteAppService>();
         _destinationRepository = GetRequiredService<IRepository<Destination, Guid>>();
+        _auditLogRepository = GetRequiredService<IRepository<AuditLog, Guid>>();
+        _unitOfWorkManager = GetRequiredService<IUnitOfWorkManager>();
         _currentUser = GetRequiredService<ICurrentUser>();
         _currentPrincipalAccessor = GetRequiredService<ICurrentPrincipalAccessor>();
     }
@@ -114,6 +122,34 @@ public class FavoriteAppService_Tests : TravelBuddyApplicationTestBase<TravelBud
             var favoritos = await _favoriteAppService.ObtenerMisFavoritosAsync();
             favoritos.Count.ShouldBe(1);
             favoritos[0].DestinoId.ShouldBe(_destinoMarDelPlataId);
+        }
+    }
+
+    [Fact]
+    public async Task Alta_y_baja_de_favorito_quedan_en_entity_history()
+    {
+        await SeedDestinationAsync(_destinoCanabacuaId, "Canabacua");
+
+        using (LoginUsuarioSimulado())
+        {
+            await _favoriteAppService.AgregarFavoritoAsync(_destinoCanabacuaId);
+            await _favoriteAppService.QuitarFavoritoAsync(_destinoCanabacuaId);
+        }
+
+        using (var uow = _unitOfWorkManager.Begin())
+        {
+            var auditLogsQuery = await _auditLogRepository.WithDetailsAsync(x => x.EntityChanges);
+            var changes = auditLogsQuery
+                .ToList()
+                .SelectMany(auditLog => auditLog.EntityChanges)
+                .Where(change => change.EntityTypeFullName == typeof(Favorite).FullName)
+                .Select(change => change.ChangeType)
+                .ToList();
+
+            changes.ShouldContain(EntityChangeType.Created);
+            changes.ShouldContain(EntityChangeType.Deleted);
+
+            await uow.CompleteAsync();
         }
     }
 
