@@ -71,12 +71,45 @@
           <td>{{ error.httpMethod }}</td>
           <td><code>{{ error.url }}</code></td>
           <td>{{ error.httpStatusCode }}</td>
-          <td class="text-break">{{ error.exceptions }}</td>
+          <td class="text-break">{{ error.message }}</td>
         </tr>
         <tr *ngIf="internalErrors.length === 0">
           <td colspan="5" class="text-center">No hay excepciones internas registradas.</td>
         </tr>
       </tbody>
     </table>
+  </div>
+
+  <div class="card shadow-sm mt-4">
+    <div class="card-header bg-dark text-white">Auditoría: acciones críticas</div>
+    <div class="table-responsive">
+      <table class="table table-striped mb-0">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Usuario</th>
+            <th>Acción</th>
+            <th>IP</th>
+            <th>Resultado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let event of auditEvents">
+            <td>{{ event.executionTime | date:'short' }}</td>
+            <td>{{ event.userName || '-' }}</td>
+            <td>{{ event.action }}</td>
+            <td>{{ event.clientIpAddress || '-' }}</td>
+            <td>
+              <span class="badge" [ngClass]="event.result === 'Fallido' ? 'bg-danger' : 'bg-success'">
+                {{ event.result }}
+              </span>
+            </td>
+          </tr>
+          <tr *ngIf="auditEvents.length === 0">
+            <td colspan="5" class="text-center">No hay acciones críticas para mostrar.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>

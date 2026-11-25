@@ -37,6 +37,10 @@ namespace TravelBuddy
                         "TravelBuddy",
                         entityType => entityType == typeof(Favorite) ||
                                       entityType == typeof(Calificacion)));
+                options.EntityHistorySelectors.Add(
+                    new NamedTypeSelector(
+                        "IdentityUserRole",
+                        entityType => entityType == typeof(IdentityUserRole)));
             });
 
             Configure<AbpAutoMapperOptions>(options =>

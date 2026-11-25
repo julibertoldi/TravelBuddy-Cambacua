@@ -140,6 +140,8 @@ public class StatisticsAppService_Tests : TravelBuddyApplicationTestBase<TravelB
         options.EntityHistorySelectors.ShouldContain(
             selector => selector.Predicate(typeof(Favorite)) &&
                         selector.Predicate(typeof(Calificacion)));
+        options.EntityHistorySelectors.ShouldContain(
+            selector => selector.Predicate(typeof(IdentityUserRole)));
     }
 
     [Fact]
@@ -158,15 +160,21 @@ public class StatisticsAppService_Tests : TravelBuddyApplicationTestBase<TravelB
                 new[]
                 {
                     ("TravelBuddy.Users.TravelBuddyIdentityUserAppService", "CreateAsync"),
+                    ("TravelBuddy.Users.TravelBuddyIdentityUserAppService", "UpdateAsync"),
                     ("TravelBuddy.Users.TravelBuddyIdentityUserAppService", "DeleteAsync"),
                     ("TravelBuddy.Users.TravelBuddyIdentityUserAppService", "UpdateRolesAsync"),
+                    ("Volo.Abp.Identity.IdentityUserController", "CreateAsync"),
                     ("TravelBuddy.Users.TravelBuddyIdentityUserAppService", "GetListAsync")
                 },
                 new[]
                 {
                     CreateEntityChange(typeof(Favorite), EntityChangeType.Created, executionTime),
-                    CreateEntityChange(typeof(Favorite), EntityChangeType.Deleted, executionTime.AddSeconds(1)),
-                    CreateEntityChange(typeof(Calificacion), EntityChangeType.Updated, executionTime.AddSeconds(2))
+                    CreateEntityChange(typeof(Favorite), EntityChangeType.Updated, executionTime.AddSeconds(1)),
+                    CreateEntityChange(typeof(Favorite), EntityChangeType.Deleted, executionTime.AddSeconds(2)),
+                    CreateEntityChange(typeof(Calificacion), EntityChangeType.Created, executionTime.AddSeconds(3)),
+                    CreateEntityChange(typeof(Calificacion), EntityChangeType.Updated, executionTime.AddSeconds(4)),
+                    CreateEntityChange(typeof(Calificacion), EntityChangeType.Deleted, executionTime.AddSeconds(5)),
+                    CreateEntityChange(typeof(IdentityUserRole), EntityChangeType.Created, executionTime.AddSeconds(6))
                 });
             await _auditLogRepository.InsertAsync(auditLog, autoSave: true);
 
@@ -183,20 +191,33 @@ public class StatisticsAppService_Tests : TravelBuddyApplicationTestBase<TravelB
                     Array.Empty<EntityChangeInfo>()),
                 autoSave: true);
 
+            await _auditLogRepository.InsertAsync(
+                CreateAuditLog(
+                    Guid.NewGuid(),
+                    "admin",
+                    Guid.NewGuid(),
+                    executionTime.AddSeconds(12),
+                    new[]
+                    {
+                        ("TravelBuddy.Users.TravelBuddyIdentityUserAppService", "UpdateAsync")
+                    },
+                    Array.Empty<EntityChangeInfo>()),
+                autoSave: true);
+
             var failedLoginActions = new[]
             {
-                IdentitySecurityLogActionConsts.LoginFailed,
-                IdentitySecurityLogActionConsts.LoginLockedout,
-                IdentitySecurityLogActionConsts.LoginNotAllowed,
-                IdentitySecurityLogActionConsts.LoginInvalidUserName,
-                IdentitySecurityLogActionConsts.LoginInvalidUserNameOrPassword
+                (IdentitySecurityLogActionConsts.LoginFailed, "Inicio de sesión fallido"),
+                (IdentitySecurityLogActionConsts.LoginLockedout, "Cuenta bloqueada por intentos fallidos"),
+                (IdentitySecurityLogActionConsts.LoginNotAllowed, "Inicio de sesión no permitido"),
+                (IdentitySecurityLogActionConsts.LoginInvalidUserName, "Usuario inexistente"),
+                (IdentitySecurityLogActionConsts.LoginInvalidUserNameOrPassword, "Usuario o contraseña incorrectos")
             };
 
             for (var index = 0; index < failedLoginActions.Length; index++)
             {
                 await _securityLogRepository.InsertAsync(
                     CreateSecurityLog(
-                        failedLoginActions[index],
+                        failedLoginActions[index].Item1,
                         $"failed-user-{index}",
                         executionTime.AddSeconds(index + 3)),
                     autoSave: true);
@@ -213,16 +234,26 @@ public class StatisticsAppService_Tests : TravelBuddyApplicationTestBase<TravelB
 
             events.ShouldContain(auditEvent => auditEvent.Action == "Usuario creado" &&
                                                auditEvent.UserName == "admin");
+            events.Count(auditEvent => auditEvent.Action == "Usuario creado").ShouldBe(2);
+            events.ShouldContain(auditEvent =>
+                auditEvent.Action == "Usuario modificado (datos o roles)");
             events.ShouldContain(auditEvent => auditEvent.Action == "Usuario eliminado");
             events.ShouldContain(auditEvent => auditEvent.Action == "Roles de usuario actualizados");
+            events.ShouldContain(auditEvent => auditEvent.Action == "Roles de usuario modificados");
+            events.ShouldContain(auditEvent => auditEvent.Action == "Usuario modificado (datos o roles)");
             events.ShouldContain(auditEvent => auditEvent.UserName == "Sistema/anónimo");
             events.ShouldContain(auditEvent => auditEvent.Action == "Favorito agregado");
-            events.ShouldContain(auditEvent => auditEvent.Action == "Favorito eliminado");
+            events.ShouldContain(auditEvent => auditEvent.Action == "Favorito modificado");
+            events.ShouldContain(auditEvent => auditEvent.Action == "Favorito quitado");
+            events.ShouldContain(auditEvent => auditEvent.Action == "Calificación creada");
             events.ShouldContain(auditEvent => auditEvent.Action == "Calificación modificada");
+            events.ShouldContain(auditEvent => auditEvent.Action == "Calificación eliminada");
 
-            foreach (var action in failedLoginActions)
+            foreach (var (action, description) in failedLoginActions)
             {
-                events.ShouldContain(auditEvent => auditEvent.Action == action && auditEvent.Result == "Fallido");
+                events.ShouldContain(auditEvent =>
+                    auditEvent.Action == description &&
+                    auditEvent.Result == "Fallido");
             }
 
             events.ShouldNotContain(auditEvent => auditEvent.UserName == "successful-user");
@@ -237,6 +268,66 @@ public class StatisticsAppService_Tests : TravelBuddyApplicationTestBase<TravelB
             var serializedEvents = JsonSerializer.Serialize(events);
             serializedEvents.ShouldNotContain("sensitive-password");
             serializedEvents.ShouldNotContain("sensitive-token");
+
+            await uow.CompleteAsync();
+        }
+    }
+
+    [Fact]
+    public async Task Should_Exclude_Internal_Configuration_Urls_And_Return_Only_Exception_Message()
+    {
+        using (var uow = _unitOfWorkManager.Begin())
+        {
+            var executionTime = DateTime.UtcNow;
+            const string exceptionJson = "[{\"message\":\"Invalid request\",\"stackTrace\":\"sensitive stack\"}]";
+            var auditLogs = new[]
+            {
+                CreateAuditLog(
+                    Guid.NewGuid(),
+                    "admin",
+                    Guid.NewGuid(),
+                    executionTime,
+                    Array.Empty<(string ServiceName, string MethodName)>(),
+                    Array.Empty<EntityChangeInfo>(),
+                    "/api/example",
+                    exceptionJson),
+                CreateAuditLog(
+                    Guid.NewGuid(),
+                    "admin",
+                    Guid.NewGuid(),
+                    executionTime.AddSeconds(1),
+                    Array.Empty<(string ServiceName, string MethodName)>(),
+                    Array.Empty<EntityChangeInfo>(),
+                    "/connect/token",
+                    exceptionJson),
+                CreateAuditLog(
+                    Guid.NewGuid(),
+                    "admin",
+                    Guid.NewGuid(),
+                    executionTime.AddSeconds(2),
+                    Array.Empty<(string ServiceName, string MethodName)>(),
+                    Array.Empty<EntityChangeInfo>(),
+                    "/Abp/ApplicationConfigurationScript",
+                    exceptionJson)
+            };
+
+            auditLogs[0].Url.ShouldBe("/api/example");
+            auditLogs[0].Exceptions.ShouldBe(exceptionJson);
+
+            foreach (var auditLog in auditLogs)
+            {
+                await _auditLogRepository.InsertAsync(auditLog, autoSave: true);
+            }
+
+            var errors = await _statisticsAppService.GetInternalErrorLogsAsync();
+
+            errors.ShouldContain(error =>
+                error.Url == "/api/example" &&
+                error.Message == "Invalid request");
+            errors.ShouldNotContain(error =>
+                error.Url == "/connect/token" ||
+                error.Url == "/Abp/ApplicationConfigurationScript");
+            errors.ShouldNotContain(error => error.Message.Contains("sensitive stack"));
 
             await uow.CompleteAsync();
         }
@@ -287,7 +378,7 @@ public class StatisticsAppService_Tests : TravelBuddyApplicationTestBase<TravelB
             events.Count.ShouldBe(100);
             events.ShouldContain(auditEvent => auditEvent.Action == "Favorito agregado");
             events.ShouldContain(auditEvent => auditEvent.Action == "Usuario creado");
-            events.ShouldContain(auditEvent => auditEvent.Action == IdentitySecurityLogActionConsts.LoginFailed);
+            events.ShouldContain(auditEvent => auditEvent.Action == "Inicio de sesión fallido");
             events.Select(auditEvent => auditEvent.ExecutionTime)
                 .ShouldBe(events.Select(auditEvent => auditEvent.ExecutionTime)
                     .OrderByDescending(time => time)
@@ -344,7 +435,9 @@ public class StatisticsAppService_Tests : TravelBuddyApplicationTestBase<TravelB
         Guid userId,
         DateTime executionTime,
         (string ServiceName, string MethodName)[] actions,
-        EntityChangeInfo[] changes)
+        EntityChangeInfo[] changes,
+        string? url = "/identity",
+        string? exceptions = null)
     {
         var entityChanges = changes
             .Select(change => new EntityChange(_guidGenerator, auditLogId, change))
@@ -378,7 +471,7 @@ public class StatisticsAppService_Tests : TravelBuddyApplicationTestBase<TravelB
             null,
             null,
             "POST",
-            "/identity",
+            url,
             200,
             null,
             null,
@@ -387,7 +480,7 @@ public class StatisticsAppService_Tests : TravelBuddyApplicationTestBase<TravelB
             new ExtraPropertyDictionary(),
             entityChanges,
             auditActions,
-            null,
+            exceptions,
             null);
     }
 

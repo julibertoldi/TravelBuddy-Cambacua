@@ -5,17 +5,15 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using TravelBuddy.Destinations;
 using TravelBuddy.Favorites;
-using TravelBuddy.Calificaciones;
 using TravelBuddy.Permissions;
 using TravelBuddy.Statistics;
 using Volo.Abp.Content;
 using Volo.Abp.AuditLogging;
-using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Repositories;
-using Volo.Abp.Identity;
 
 namespace TravelBuddy.Statistics
 {
@@ -27,17 +25,7 @@ namespace TravelBuddy.Statistics
         private readonly IRepository<Favorite> _favoriteRepository;
         private readonly IRepository<ApiCallLog, Guid> _apiCallLogRepository;
         private readonly IRepository<AuditLog, Guid> _auditLogRepository;
-        private readonly IRepository<IdentitySecurityLog, Guid> _securityLogRepository;
-        private static readonly string[] FailedLoginActions =
-        {
-            IdentitySecurityLogActionConsts.LoginFailed,
-            IdentitySecurityLogActionConsts.LoginLockedout,
-            IdentitySecurityLogActionConsts.LoginNotAllowed,
-            IdentitySecurityLogActionConsts.LoginInvalidUserName,
-            IdentitySecurityLogActionConsts.LoginInvalidUserNameOrPassword
-        };
-
-        private const int AuditEventsLimit = 100;
+        private readonly IAuditEventReader _auditEventReader;
 
         private static string Csv(string? value)
         {
@@ -56,14 +44,14 @@ namespace TravelBuddy.Statistics
             IRepository<Favorite> favoriteRepository,
             IRepository<ApiCallLog, Guid> apiCallLogRepository,
             IRepository<AuditLog, Guid> auditLogRepository,
-            IRepository<IdentitySecurityLog, Guid> securityLogRepository)
+            IAuditEventReader auditEventReader)
         {
             _searchLogRepository = searchLogRepository;
             _destinationRepository = destinationRepository;
             _favoriteRepository = favoriteRepository;
             _apiCallLogRepository = apiCallLogRepository;
             _auditLogRepository = auditLogRepository;
-            _securityLogRepository = securityLogRepository;
+            _auditEventReader = auditEventReader;
         }
 
         public async Task<AdminDashboardDto> GetDashboardStatisticsAsync()
@@ -133,12 +121,15 @@ namespace TravelBuddy.Statistics
         {
             var queryableLogs = await _auditLogRepository.GetQueryableAsync();
 
-            return await AsyncExecuter.ToListAsync(
+            var logs = await AsyncExecuter.ToListAsync(
                 queryableLogs
                     .Where(x => x.Exceptions != null && x.Exceptions != string.Empty)
+                    .Where(x => x.Url == null ||
+                                (!x.Url.StartsWith("/connect/") &&
+                                 !x.Url.StartsWith("/Abp/ApplicationConfigurationScript")))
                     .OrderByDescending(x => x.ExecutionTime)
                     .Take(50)
-                    .Select(x => new AuditLogExceptionDto
+                    .Select(x => new
                     {
                         ExecutionTime = x.ExecutionTime,
                         HttpMethod = x.HttpMethod,
@@ -146,143 +137,20 @@ namespace TravelBuddy.Statistics
                         HttpStatusCode = x.HttpStatusCode,
                         Exceptions = x.Exceptions
                     }));
+
+            return logs.Select(x => new AuditLogExceptionDto
+            {
+                ExecutionTime = x.ExecutionTime,
+                HttpMethod = x.HttpMethod,
+                Url = x.Url,
+                HttpStatusCode = x.HttpStatusCode,
+                Message = ExtractExceptionMessage(x.Exceptions)
+            }).ToList();
         }
 
         public async Task<List<AuditEventDto>> GetCriticalAuditEventsAsync()
         {
-            var favoriteType = typeof(Favorite).FullName!;
-            var ratingType = typeof(Calificacion).FullName!;
-            var auditLogsQuery = await _auditLogRepository.GetQueryableAsync();
-            var entityChangeRowsQuery = auditLogsQuery.SelectMany(
-                auditLog => auditLog.EntityChanges
-                    .Where(change =>
-                        change.EntityTypeFullName == favoriteType ||
-                        change.EntityTypeFullName == ratingType)
-                    .Select(change => new
-                    {
-                        change.EntityTypeFullName,
-                        change.ChangeType,
-                        change.ChangeTime,
-                        auditLog.UserName,
-                        auditLog.ClientIpAddress,
-                        auditLog.Exceptions,
-                        auditLog.HttpStatusCode
-                    }));
-            var entityChangeRows = await AsyncExecuter.ToListAsync(
-                entityChangeRowsQuery
-                    .OrderByDescending(change => change.ChangeTime)
-                    .Take(AuditEventsLimit));
-
-            var userActionsRowsQuery = auditLogsQuery.SelectMany(
-                auditLog => auditLog.Actions
-                    .Where(action =>
-                        action.ServiceName != null &&
-                        action.ServiceName.Contains("IdentityUser") &&
-                        (action.MethodName == "CreateAsync" ||
-                         action.MethodName == "DeleteAsync" ||
-                         action.MethodName == "UpdateRolesAsync"))
-                    .Select(action => new
-                    {
-                        action.MethodName,
-                        action.ExecutionTime,
-                        auditLog.UserName,
-                        auditLog.ClientIpAddress,
-                        auditLog.Exceptions,
-                        auditLog.HttpStatusCode
-                    }));
-            var userActionRows = await AsyncExecuter.ToListAsync(
-                userActionsRowsQuery
-                    .OrderByDescending(action => action.ExecutionTime)
-                    .Take(AuditEventsLimit));
-
-            var securityLogsQuery = await _securityLogRepository.GetQueryableAsync();
-            var failedLoginRows = await AsyncExecuter.ToListAsync(
-                securityLogsQuery
-                    .Where(log => FailedLoginActions.Contains(log.Action))
-                    .OrderByDescending(log => log.CreationTime)
-                    .Take(AuditEventsLimit)
-                    .Select(log => new
-                    {
-                        log.UserName,
-                        log.Action,
-                        log.CreationTime,
-                        log.ClientIpAddress
-                    }));
-
-            var events = new List<AuditEventDto>();
-            events.AddRange(entityChangeRows.Select(row => new AuditEventDto
-            {
-                UserName = NormalizeUserName(row.UserName),
-                Action = DescribeEntityChange(row.EntityTypeFullName, row.ChangeType),
-                ExecutionTime = row.ChangeTime,
-                ClientIpAddress = row.ClientIpAddress,
-                Result = IsFailed(row.Exceptions, row.HttpStatusCode) ? "Fallido" : "Correcto"
-            }));
-            events.AddRange(userActionRows.Select(row => new AuditEventDto
-            {
-                UserName = NormalizeUserName(row.UserName),
-                Action = DescribeIdentityAction(row.MethodName),
-                ExecutionTime = row.ExecutionTime,
-                ClientIpAddress = row.ClientIpAddress,
-                Result = IsFailed(row.Exceptions, row.HttpStatusCode) ? "Fallido" : "Correcto"
-            }));
-            events.AddRange(failedLoginRows.Select(row => new AuditEventDto
-            {
-                UserName = NormalizeUserName(row.UserName),
-                Action = row.Action,
-                ExecutionTime = row.CreationTime,
-                ClientIpAddress = row.ClientIpAddress,
-                Result = "Fallido"
-            }));
-
-            return events
-                .OrderByDescending(auditEvent => auditEvent.ExecutionTime)
-                .Take(AuditEventsLimit)
-                .ToList();
-        }
-
-        private static string NormalizeUserName(string? userName)
-        {
-            return string.IsNullOrWhiteSpace(userName) ? "Sistema/anónimo" : userName;
-        }
-
-        private static string DescribeEntityChange(string entityTypeFullName, EntityChangeType changeType)
-        {
-            if (entityTypeFullName == typeof(Favorite).FullName)
-            {
-                return (int)changeType switch
-                {
-                    0 => "Favorito agregado",
-                    1 => "Favorito modificado",
-                    2 => "Favorito eliminado",
-                    _ => throw new ArgumentOutOfRangeException(nameof(changeType), changeType, "Tipo de cambio de entidad desconocido.")
-                };
-            }
-
-            return (int)changeType switch
-            {
-                0 => "Calificación agregada",
-                1 => "Calificación modificada",
-                2 => "Calificación eliminada",
-                _ => throw new ArgumentOutOfRangeException(nameof(changeType), changeType, "Tipo de cambio de entidad desconocido.")
-            };
-        }
-
-        private static string DescribeIdentityAction(string methodName)
-        {
-            return methodName switch
-            {
-                "CreateAsync" => "Usuario creado",
-                "DeleteAsync" => "Usuario eliminado",
-                "UpdateRolesAsync" => "Roles de usuario actualizados",
-                _ => throw new ArgumentOutOfRangeException(nameof(methodName), methodName, "Acción de Identity desconocida.")
-            };
-        }
-
-        private static bool IsFailed(string? exceptions, int? httpStatusCode)
-        {
-            return !string.IsNullOrWhiteSpace(exceptions) ||
-                   (httpStatusCode.HasValue && httpStatusCode.Value >= 400);
+            return await _auditEventReader.GetCriticalAuditEventsAsync();
         }
 
         public async Task<IRemoteStreamContent> ExportApiLogsCsvAsync()
@@ -331,6 +199,61 @@ namespace TravelBuddy.Statistics
         private static void AppendMetric(StringBuilder csv, string metricName, object value)
         {
             csv.AppendLine($",,,,,,,{Csv(metricName)},{Csv(Convert.ToString(value, CultureInfo.InvariantCulture))},,");
+        }
+
+        private static string ExtractExceptionMessage(string? exceptionJson)
+        {
+            if (string.IsNullOrWhiteSpace(exceptionJson))
+            {
+                return string.Empty;
+            }
+
+            try
+            {
+                using var document = JsonDocument.Parse(exceptionJson);
+                return FindExceptionMessage(document.RootElement) ?? "Mensaje no disponible";
+            }
+            catch (JsonException)
+            {
+                return "Mensaje no disponible";
+            }
+        }
+
+        private static string? FindExceptionMessage(JsonElement element)
+        {
+            if (element.ValueKind == JsonValueKind.Object)
+            {
+                foreach (var property in element.EnumerateObject())
+                {
+                    if (string.Equals(property.Name, "message", StringComparison.OrdinalIgnoreCase) &&
+                        property.Value.ValueKind == JsonValueKind.String)
+                    {
+                        return property.Value.GetString();
+                    }
+                }
+
+                foreach (var property in element.EnumerateObject())
+                {
+                    var message = FindExceptionMessage(property.Value);
+                    if (message != null)
+                    {
+                        return message;
+                    }
+                }
+            }
+            else if (element.ValueKind == JsonValueKind.Array)
+            {
+                foreach (var item in element.EnumerateArray())
+                {
+                    var message = FindExceptionMessage(item);
+                    if (message != null)
+                    {
+                        return message;
+                    }
+                }
+            }
+
+            return null;
         }
     }
 }

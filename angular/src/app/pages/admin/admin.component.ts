@@ -5,6 +5,7 @@ import { AdminDashboardStatsDto } from '../../proxy/admin/models';
 import {
   AdminDashboardDto,
   ApiCallLogDto,
+  AuditEventDto,
   AuditLogExceptionDto,
   StatisticsService,
 } from '../../proxy/statistics';
@@ -20,6 +21,7 @@ export class AdminComponent implements OnInit {
   dashboard?: AdminDashboardDto;
   apiLogs: ApiCallLogDto[] = [];
   internalErrors: AuditLogExceptionDto[] = [];
+  auditEvents: AuditEventDto[] = [];
 
   constructor(
     private adminService: AdminService,
@@ -50,6 +52,12 @@ export class AdminComponent implements OnInit {
         this.internalErrors = data;
       },
       error: error => console.error('Error al cargar excepciones internas', error),
+    });
+    this.statisticsService.getCriticalAuditEvents().subscribe({
+      next: data => {
+        this.auditEvents = data;
+      },
+      error: error => console.error('Error al cargar las acciones críticas', error),
     });
   }
 
