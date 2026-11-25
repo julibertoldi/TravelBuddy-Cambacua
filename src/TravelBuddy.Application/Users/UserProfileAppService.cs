@@ -74,14 +74,17 @@ public class UserProfileAppService : ApplicationService, IUserProfileAppService
         };
     }
 
-    public async Task<string> UploadMyProfilePictureAsync(IRemoteStreamContent input)
+    public async Task<ProfilePictureUploadResultDto> UploadMyProfilePictureAsync(IRemoteStreamContent input)
     {
         var user = await _userManager.GetByIdAsync(CurrentUser.GetId());
-        return await ReplaceProfilePictureAsync(user, input);
+        return new ProfilePictureUploadResultDto
+        {
+            Url = await ReplaceProfilePictureAsync(user, input)
+        };
     }
 
     [Authorize(IdentityPermissions.Users.Update)]
-    public async Task<string> UploadUserProfilePictureAsync(Guid userId, IRemoteStreamContent input)
+    public async Task<ProfilePictureUploadResultDto> UploadUserProfilePictureAsync(Guid userId, IRemoteStreamContent input)
     {
         var user = await _userManager.FindByIdAsync(userId.ToString());
         if (user == null)
@@ -89,7 +92,10 @@ public class UserProfileAppService : ApplicationService, IUserProfileAppService
             throw new EntityNotFoundException(typeof(IdentityUser), userId);
         }
 
-        return await ReplaceProfilePictureAsync(user, input);
+        return new ProfilePictureUploadResultDto
+        {
+            Url = await ReplaceProfilePictureAsync(user, input)
+        };
     }
 
     public async Task DeleteMyProfilePictureAsync()

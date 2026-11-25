@@ -14,10 +14,10 @@ public interface IUserProfileAppService : IApplicationService
 
     Task<PublicUserProfileDto> GetPublicProfileAsync(Guid userId);
 
-    Task<string> UploadMyProfilePictureAsync(IRemoteStreamContent input);
+    Task<ProfilePictureUploadResultDto> UploadMyProfilePictureAsync(IRemoteStreamContent input);
 
     [RemoteService(IsEnabled = false)]
-    Task<string> UploadUserProfilePictureAsync(Guid userId, IRemoteStreamContent input);
+    Task<ProfilePictureUploadResultDto> UploadUserProfilePictureAsync(Guid userId, IRemoteStreamContent input);
 
     Task DeleteMyProfilePictureAsync();
 

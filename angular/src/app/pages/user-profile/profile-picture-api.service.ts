@@ -1,6 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 import { RestService } from '@abp/ng.core';
 
+export interface ProfilePictureUploadResult {
+  url: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class ProfilePictureApiService {
   private readonly restService = inject(RestService);
@@ -9,7 +13,7 @@ export class ProfilePictureApiService {
     const formData = new FormData();
     formData.append('input', file, file.name);
 
-    return this.restService.request<any, string>(
+    return this.restService.request<any, ProfilePictureUploadResult>(
       {
         method: 'POST',
         url: '/api/app/user-profile/upload-my-profile-picture',
@@ -23,7 +27,7 @@ export class ProfilePictureApiService {
     const formData = new FormData();
     formData.append('input', file, file.name);
 
-    return this.restService.request<any, string>(
+    return this.restService.request<any, ProfilePictureUploadResult>(
       {
         method: 'POST',
         url: `/api/admin/profile-pictures/${userId}`,

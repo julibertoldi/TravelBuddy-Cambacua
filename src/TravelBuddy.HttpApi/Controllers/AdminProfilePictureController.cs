@@ -21,6 +21,6 @@ public class AdminProfilePictureController : TravelBuddyController
 
     [HttpPost("{userId:guid}")]
     [Authorize(IdentityPermissions.Users.Update)]
-    public Task<string> UploadAsync(Guid userId, [FromForm] IRemoteStreamContent input) =>
+    public Task<ProfilePictureUploadResultDto> UploadAsync(Guid userId, [FromForm] IRemoteStreamContent input) =>
         _userProfileAppService.UploadUserProfilePictureAsync(userId, input);
 }

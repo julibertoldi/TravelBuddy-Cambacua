@@ -6,10 +6,10 @@ import {
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
-import { ConfigStateService } from '@abp/ng.core';
+import { ConfigStateService, EnvironmentService } from '@abp/ng.core';
 import { ToasterService } from '@abp/ng.theme.shared';
 import { UserProfileService } from '../../proxy/users/user-profile.service';
-import { ProfilePictureApiService } from './profile-picture-api.service';
+import { ProfilePictureApiService, ProfilePictureUploadResult } from './profile-picture-api.service';
 import { validateProfilePictureFile } from './profile-picture-validation';
 import { Observable, of, switchMap } from 'rxjs';
 
@@ -27,6 +27,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
   private profilePictureApi = inject(ProfilePictureApiService);
   private toaster = inject(ToasterService);
   private configState = inject(ConfigStateService);
+  private environmentService = inject(EnvironmentService);
 
   profileForm!: FormGroup;
 
@@ -92,7 +93,15 @@ export class UserProfileComponent implements OnInit, OnDestroy {
   }
 
   getAvatarUrl(): string {
-    return this.previewUrl || this.currentPhotoUrl || this.defaultAvatarUrl();
+    if (this.previewUrl) {
+      return this.previewUrl;
+    }
+
+    if (this.currentPhotoUrl && !this.removePhotoRequested) {
+      return this.resolveProfilePictureUrl(this.currentPhotoUrl);
+    }
+
+    return this.defaultAvatarUrl();
   }
 
   get photoChanged(): boolean {
@@ -108,6 +117,15 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     const apellido = this.profileForm?.get('apellido')?.value?.trim() || '';
     const nombreCompleto = `${nombre} ${apellido}`.trim() || 'Usuario';
     return `https://ui-avatars.com/api/?name=${encodeURIComponent(nombreCompleto)}&background=a8beb9&color=fff&size=128&bold=true`;
+  }
+
+  private resolveProfilePictureUrl(url: string): string {
+    if (/^(https?:|blob:|data:)/i.test(url)) {
+      return url;
+    }
+
+    const apiUrl = this.environmentService.getApiUrl('Default').replace(/\/+$/, '');
+    return `${apiUrl}/${url.replace(/^\/+/, '')}`;
   }
 
   clearPhoto(): void {
@@ -160,7 +178,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
       preferencias: this.profileForm.get('preferencias')?.value ?? ''
     };
 
-    let photoRequest: Observable<string | void> = of(this.currentPhotoUrl);
+    let photoRequest: Observable<ProfilePictureUploadResult | string | void> = of(this.currentPhotoUrl);
     if (this.selectedPhoto) {
       photoRequest = this.profilePictureApi.uploadMyProfilePicture(this.selectedPhoto);
     } else if (this.removePhotoRequested) {
@@ -170,8 +188,13 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     }
 
     photoRequest.pipe(
-      switchMap(photoUrl => {
-        if (typeof photoUrl === 'string') {
+      switchMap(photoResult => {
+        const photoUrl = typeof photoResult === 'string'
+          ? photoResult
+          : photoResult && 'url' in photoResult
+            ? photoResult.url
+            : undefined;
+        if (photoUrl !== undefined) {
           this.currentPhotoUrl = photoUrl;
         }
         return this.userProfileService.updateMyProfile(profileUpdate);
