@@ -1,4 +1,4 @@
-import { ApplicationConfig } from '@angular/core';
+import { ApplicationConfig, inject, provideAppInitializer } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideAbpCore, withOptions } from '@abp/ng.core';
@@ -17,10 +17,12 @@ import { environment } from '../environments/environment';
 import { APP_ROUTES } from './app.routes';    
 import { APP_ROUTE_PROVIDER } from './route.provider';
 import { identityProfilePictureOptions } from './identity/user-profile-picture-contributors';
+import { ProfilePictureHeaderService } from './identity/profile-picture-header.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(APP_ROUTES),
+    provideAppInitializer(() => inject(ProfilePictureHeaderService).initialize()),
     APP_ROUTE_PROVIDER,
     provideAnimations(),
     provideAbpCore(
