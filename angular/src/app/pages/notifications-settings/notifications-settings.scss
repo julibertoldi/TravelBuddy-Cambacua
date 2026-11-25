@@ -3,6 +3,8 @@ $color-beige-arena: #c7b9ae;
 $color-crema-pastel: #f5eed3;
 $color-verde-menta: #a8beb9;
 $color-text-dark: #4a4a4a;
+$color-save-active: #167a3f;
+$color-save-disabled: #c5dfcc;
 
 .notifications-dashboard {
   display: grid;
@@ -119,22 +121,30 @@ $color-text-dark: #4a4a4a;
 .btn-save {
   margin-top: auto;
   padding: 0.75rem;
-  background-color: $color-verde-menta;
-  color: white;
+  background-color: $color-save-disabled;
+  color: #4c6a54;
   border: none;
   border-radius: 8px;
   font-size: 0.95rem;
   font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s;
+  cursor: not-allowed;
+  transition: background 0.2s, color 0.2s;
 
-  &:hover {
-    background-color: darken($color-verde-menta, 10%);
+  &.btn-save-pending {
+    background-color: $color-save-active;
+    color: white;
+    cursor: pointer;
+
+    &:hover:not(:disabled) {
+      background-color: #105f31;
+    }
   }
 
   &:disabled {
-    opacity: 0.6;
+    background-color: $color-save-disabled;
+    color: #4c6a54;
     cursor: not-allowed;
+    opacity: 1;
   }
 }
 
