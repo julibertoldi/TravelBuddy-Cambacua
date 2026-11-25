@@ -29,6 +29,12 @@ $color-text-dark: #4a4a4a;
   border-color: $color-verde-menta;
 }
 
+.selected-photo-name {
+  color: $color-text-dark;
+  font-size: 0.9rem;
+  overflow-wrap: anywhere;
+}
+
 /* Botón en estado normal / activo */
 .btn-guardar {
   background-color: #4caf50 !important;
