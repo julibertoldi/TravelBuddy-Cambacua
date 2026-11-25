@@ -19,10 +19,11 @@ export class NotificationsSettings implements OnInit {
   notifications: NotificationDto[] = [];
   upcomingEvents: UpcomingEventNotificationDto[] = [];
   settings: NotificationSettingsDto = {
-    upcomingEventsEnabled: true,
-    emailNotificationsEnabled: true,
-    newReviewNotificationsEnabled: true
+    upcomingEventsEnabled: false,
+    emailNotificationsEnabled: false,
+    newReviewNotificationsEnabled: false
   };
+  private savedSettings: NotificationSettingsDto = { ...this.settings };
   notificationView: 'recent' | 'history' = 'recent';
 
   loadingNotifications = false;
@@ -39,11 +40,27 @@ export class NotificationsSettings implements OnInit {
   constructor(private notificationService: NotificationService) {}
 
   get visibleNotifications(): NotificationDto[] {
-    return this.notificationView === 'recent' ? this.notifications.slice(0, 5) : this.notifications;
+    return this.notificationView === 'recent' ? this.recentUnreadNotifications : this.notifications;
   }
 
   get unreadCount(): number {
-    return this.notifications.filter(notification => !notification.isRead).length;
+    return this.recentUnreadNotifications.length;
+  }
+
+  get hasUnsavedSettingsChanges(): boolean {
+    return this.settings.upcomingEventsEnabled !== this.savedSettings.upcomingEventsEnabled
+      || this.settings.emailNotificationsEnabled !== this.savedSettings.emailNotificationsEnabled
+      || this.settings.newReviewNotificationsEnabled !== this.savedSettings.newReviewNotificationsEnabled;
+  }
+
+  private get recentUnreadNotifications(): NotificationDto[] {
+    const now = Date.now();
+    const oneWeekAgo = now - 7 * 24 * 60 * 60 * 1000;
+
+    return this.notifications.filter(notification => {
+      const creationTime = new Date(notification.creationTime).getTime();
+      return !notification.isRead && creationTime >= oneWeekAgo && creationTime <= now;
+    });
   }
 
   ngOnInit(): void {
@@ -98,7 +115,8 @@ export class NotificationsSettings implements OnInit {
     this.settingsError = '';
     this.notificationService.getSettings().subscribe({
       next: (data) => {
-        if (data) this.settings = { ...this.settings, ...data };
+        this.settings = { ...this.settings, ...(data || {}) };
+        this.savedSettings = { ...this.settings };
         this.loadingSettings = false;
       },
       error: (err) => {
@@ -110,11 +128,14 @@ export class NotificationsSettings implements OnInit {
   }
 
   saveSettings(): void {
+    if (this.loadingSettings || !this.hasUnsavedSettingsChanges) return;
+
     this.loadingSettings = true;
     this.savedSuccess = false;
     this.settingsSaveError = '';
     this.notificationService.updateSettings(this.settings).subscribe({
       next: () => {
+        this.savedSettings = { ...this.settings };
         this.loadingSettings = false;
         this.savedSuccess = true;
         setTimeout(() => (this.savedSuccess = false), 3000);
@@ -125,6 +146,11 @@ export class NotificationsSettings implements OnInit {
         this.loadingSettings = false;
       }
     });
+  }
+
+  onSettingsChanged(): void {
+    this.savedSuccess = false;
+    this.settingsSaveError = '';
   }
 
   getUpcomingEvents(): void {

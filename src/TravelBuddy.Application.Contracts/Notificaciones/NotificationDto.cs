@@ -15,9 +15,9 @@ namespace TravelBuddy.Notifications
     // DTO Configuración de Preferencias
     public class NotificationSettingsDto
     {
-        public bool EmailNotificationsEnabled { get; set; } = true;
-        public bool NewReviewNotificationsEnabled { get; set; } = true;
-        public bool UpcomingEventsEnabled { get; set; } = true;
+        public bool EmailNotificationsEnabled { get; set; }
+        public bool NewReviewNotificationsEnabled { get; set; }
+        public bool UpcomingEventsEnabled { get; set; }
     }
 
 }
