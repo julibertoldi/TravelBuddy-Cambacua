@@ -1,7 +1,7 @@
 <div class="container-fluid mt-3">
   <!-- Filtros -->
   <div class="card search-container shadow-sm mb-4">
-    <div class="card-header">
+    <div class="card-header search-banner-header">
       <h5 class="mb-0">Buscador de Destinos</h5>
     </div>
     <div class="card-body">
@@ -52,9 +52,9 @@
           <div class="card-body d-flex flex-column justify-content-between">
             <div>
               <h6 class="card-title text-dark mb-1">{{ city.name }}</h6>
-                  <p class="card-subtitle text-beige small mb-3">
-                       <span *ngIf="city.region">{{ city.region }}, </span>{{ city.country }}
-                  </p>
+              <p class="card-subtitle text-beige small mb-3">
+                <span *ngIf="city.region">{{ city.region }}, </span>{{ city.country }}
+              </p>
               
               <div class="small text-secondary mb-3">
                 <div><strong>Habitantes:</strong> {{ city.population | number }}</div>
@@ -90,7 +90,6 @@
   <div *ngIf="!hasSearched" class="mt-4">
     <div class="d-flex align-items-center mb-3">
       <h5 class="fw-bold mb-0 text-dark">Destinos Sugeridos</h5>
-     
     </div>
 
     <!-- Spinner de Ciudades Destacadas -->
@@ -107,9 +106,9 @@
           <div class="card-body d-flex flex-column justify-content-between">
             <div>
               <h6 class="card-title text-dark mb-1">{{ city.name }}</h6>
-             <p class="card-subtitle text-beige small mb-3">
-  <span *ngIf="city.region">{{ city.region }}, </span>{{ city.country }}
-</p>
+              <p class="card-subtitle text-beige small mb-3">
+                <span *ngIf="city.region">{{ city.region }}, </span>{{ city.country }}
+              </p>
               
               <div class="small text-secondary mb-3">
                 <div><strong>Habitantes:</strong> {{ city.population | number }}</div>

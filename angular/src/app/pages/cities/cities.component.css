@@ -1,32 +1,54 @@
-/* Paleta de colores */
-
-
-/* marco del buscador */
+/* Marco del buscador */
 .card,
 .search-container {
   background-color: #f5eed3 !important;
   border: 1px solid #d7dca7 !important;
   border-radius: 12px;
 }
-/* cabecera buscador de destinos */
-.card-header,
-.card-header h5 {
-  background-color: #a8beb9 !important;
-  color: #000000 !important;
-  font-weight: 700 !important;
-  padding: 1rem;
-  border-bottom: 1px solid #c7b9ae !important;
+
+/* Marco completo del buscador con la imagen de fondo en todo el recuadro */
+:host ::ng-deep .search-container {
+  background-image:
+    linear-gradient(rgba(247, 241, 237, 0.72), rgba(247, 241, 237, 0.78)),
+    url('/assets/images/paisaje-buscador.png') !important;
+  background-size: cover !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+  border: 1px solid #d7dca7 !important;
+  border-radius: 12px !important;
+  overflow: hidden;
 }
 
-/* titulos y etiquetas*/
-.card-header,
-.form-label,
-h5 {
-  color: #2c2d2f !important;
-  font-weight: 600;
+/* Cabecera transparente para que se vea la imagen de fondo */
+:host ::ng-deep .search-container .search-banner-header {
+  background: transparent !important;
+  border-bottom: 1px solid rgba(44, 45, 47, 0.12) !important;
+  padding: 1.5rem 1.5rem 1rem 1.5rem !important;
 }
 
-/* inputs */
+/* Cuerpo transparente para no tapar la imagen */
+:host ::ng-deep .search-container .card-body {
+  background: transparent !important;
+}
+
+/* Título limpio sin recuadro */
+:host ::ng-deep .search-container .search-banner-header h5 {
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  color: #1f2428 !important;
+  font-size: 1.4rem;
+  font-weight: 800 !important;
+  text-shadow: 0 1px 4px rgba(255, 255, 255, 0.85);
+}
+
+/* Etiquetas */
+.form-label {
+  color: #1f2428 !important;
+  font-weight: 700;
+  text-shadow: 0 1px 3px rgba(255, 255, 255, 0.7);
+}
+/* Inputs */
 .form-control {
   background-color: #ffffff !important;
   border: 1px solid #c7b9ae !important;
@@ -34,12 +56,9 @@ h5 {
   font-weight: 500;
 }
 
-.form-control:focus {
-  border-color: #a8beb9 !important;
-  box-shadow: 0 0 0 0.2rem rgba(238, 242, 239, 0.35) !important;
-}
 
-/* boton busqueda activo */
+
+/* Botón búsqueda activo */
 .btn-custom-search,
 .btn-primary {
   background-color: #a8beb9 !important;
@@ -57,7 +76,7 @@ h5 {
   opacity: 1;
 }
 
-/* boton busqueda deshabilitado */
+/* Botón búsqueda deshabilitado */
 .btn-custom-search:disabled,
 .btn-primary:disabled {
   background-color: #e2d8be !important;
@@ -67,9 +86,9 @@ h5 {
   cursor: not-allowed;
 }
 
-/* tarjeta de ciudad */
+/* Tarjeta de ciudad */
 .city-card {
-  background-color: #a8beb9  !important;
+  background-color: #a8beb9 !important;
   border: 1px solid #b5aec7 !important;
   border-radius: 12px;
 }
@@ -78,10 +97,10 @@ h5 {
   color: #000000 !important;
 }
 
-/* boton guardar*/
+/* Botón guardar */
 .btn-custom-save {
   background: transparent;
-  border: 1px solid #bdd6d0; 
+  border: 1px solid #bdd6d0;
   color: #000000;
   width: 100%;
   padding: 8px;
@@ -94,7 +113,7 @@ h5 {
   color: #000000;
 }
 
-/*boton guardar deshabilitado*/
+/* Botón guardar deshabilitado */
 .btn-custom-save:disabled {
   background-color: #d1e7dd !important;
   border-color: #badbcc !important;
@@ -110,8 +129,8 @@ h5 {
 }
 
 @media (max-width: 575.98px) {
-  .card-header {
-    padding: 0.85rem;
+  :host ::ng-deep .search-container .search-banner-header {
+    padding: 1.5rem 1rem !important;
   }
 
   .card-body {
