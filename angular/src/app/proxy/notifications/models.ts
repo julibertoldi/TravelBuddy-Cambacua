@@ -11,6 +11,7 @@ export interface NotificationSettingsDto {
   emailNotificationsEnabled: boolean;
   newReviewNotificationsEnabled: boolean;
   upcomingEventsEnabled: boolean;
+  frequency: 'immediate' | 'weekly';
 }
 
 export interface UpcomingEventNotificationDto {

@@ -39,6 +39,19 @@
         </label>
       </div>
 
+      <div class="setting-row">
+        <div class="setting-text">
+          <strong>Frecuencia</strong>
+          <span>Recibir avisos al momento o agrupados cada semana.</span>
+        </div>
+        <select class="frequency-select"
+         [(ngModel)]="settings.frequency" (ngModelChange)="onSettingsChanged()" [disabled]="loadingSettings"
+          aria-label="Frecuencia de notificaciones">
+          <option value="immediate">Inmediata</option>
+          <option value="weekly">Resumen semanal</option>
+        </select>
+      </div>
+
       <p *ngIf="settingsError" class="error-msg" role="alert">{{ settingsError }}</p>
       <button class="btn-save" [class.btn-save-pending]="hasUnsavedSettingsChanges" (click)="saveSettings()"
         [disabled]="loadingSettings || !hasUnsavedSettingsChanges">

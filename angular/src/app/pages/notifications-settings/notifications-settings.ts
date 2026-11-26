@@ -21,7 +21,8 @@ export class NotificationsSettings implements OnInit {
   settings: NotificationSettingsDto = {
     upcomingEventsEnabled: false,
     emailNotificationsEnabled: false,
-    newReviewNotificationsEnabled: false
+    newReviewNotificationsEnabled: false,
+    frequency: 'immediate'
   };
   private savedSettings: NotificationSettingsDto = { ...this.settings };
   notificationView: 'recent' | 'history' = 'recent';
@@ -50,7 +51,8 @@ export class NotificationsSettings implements OnInit {
   get hasUnsavedSettingsChanges(): boolean {
     return this.settings.upcomingEventsEnabled !== this.savedSettings.upcomingEventsEnabled
       || this.settings.emailNotificationsEnabled !== this.savedSettings.emailNotificationsEnabled
-      || this.settings.newReviewNotificationsEnabled !== this.savedSettings.newReviewNotificationsEnabled;
+      || this.settings.newReviewNotificationsEnabled !== this.savedSettings.newReviewNotificationsEnabled
+      || this.settings.frequency !== this.savedSettings.frequency;
   }
 
   private get recentUnreadNotifications(): NotificationDto[] {

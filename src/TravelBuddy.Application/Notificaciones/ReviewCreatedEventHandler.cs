@@ -6,39 +6,28 @@ using Volo.Abp.EventBus;
 using TravelBuddy.Calificaciones;
 using TravelBuddy.Favorites;
 using Volo.Abp.Domain.Repositories;
-using TravelBuddy.Notificaciones;
 using Volo.Abp.Uow;
 using System.Linq;
 using TravelBuddy.Destinations;
-using Volo.Abp.Guids;
 using Volo.Abp.Linq;
-using Volo.Abp.Identity;
-using TravelBuddy.Users;
-using System.Text.Json;
 
 namespace TravelBuddy.Notifications
 {
     public class ReviewCreatedEventHandler : ILocalEventHandler<EntityCreatedEventData<Calificacion>>, ITransientDependency
     {
         private readonly IRepository<Favorite> _favoriteRepository;
-        private readonly IRepository<Notification, Guid> _notificationRepository;
         private readonly IRepository<Destination, Guid> _destinationRepository;
-        private readonly IGuidGenerator _guidGenerator;
-        private readonly IdentityUserManager _userManager;
+        private readonly NotificationDeliveryService _deliveryService;
         public IAsyncQueryableExecuter AsyncExecuter { get; set; }
 
         public ReviewCreatedEventHandler(
             IRepository<Favorite> favoriteRepository,
-            IRepository<Notification, Guid> notificationRepository,
             IRepository<Destination, Guid> destinationRepository,
-            IGuidGenerator guidGenerator,
-            IdentityUserManager userManager)
+            NotificationDeliveryService deliveryService)
         {
             _favoriteRepository = favoriteRepository;
-            _notificationRepository = notificationRepository;
             _destinationRepository = destinationRepository;
-            _guidGenerator = guidGenerator;
-            _userManager = userManager;
+            _deliveryService = deliveryService;
         }
 
         [UnitOfWork]
@@ -55,34 +44,11 @@ namespace TravelBuddy.Notifications
 
             foreach (var favorite in favoriteUsers)
             {
-                var user = await _userManager.GetByIdAsync(favorite.UsuarioId);
-                var preferencesJson = user.GetNotificationSettings() ?? user.GetPreferences();
-                NotificationSettingsDto settings;
-                try
-                {
-                    settings = string.IsNullOrWhiteSpace(preferencesJson)
-                        ? new NotificationSettingsDto()
-                        : JsonSerializer.Deserialize<NotificationSettingsDto>(preferencesJson,
-                            new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new NotificationSettingsDto();
-                }
-                catch (JsonException)
-                {
-                    settings = new NotificationSettingsDto();
-                }
-
-                if (!settings.NewReviewNotificationsEnabled)
-                {
-                    continue;
-                }
-
-                var notification = new Notification(
-                    _guidGenerator.Create(),
+                await _deliveryService.EnqueueAsync(
                     favorite.UsuarioId,
                     "Nueva reseña",
-                    $"Alguien ha dejado una nueva calificación de {review.Estrellas} estrellas en {destinationName}."
-                );
-
-                await _notificationRepository.InsertAsync(notification);
+                    $"Alguien ha dejado una nueva calificación de {review.Estrellas} estrellas en {destinationName}.",
+                    onlyWhenReviewsEnabled: true);
             }
         }
     }

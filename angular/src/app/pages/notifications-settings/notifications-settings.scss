@@ -270,3 +270,36 @@ $color-save-disabled: #c5dfcc;
   font-size: 0.85rem;
   margin: 0.5rem 0;
 }
+
+.frequency-select {
+  border: none;
+  outline: none;
+  background-color: #ffe6ce; /* Fondo gris azulado muy claro (o #f0f4ff para celeste suave) */
+  color: #2b3445;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 0.5rem 2.2rem 0.5rem 0.9rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+
+  /* Reemplaza la flecha nativa fea por una limpia y moderna */
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%232b3445' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+
+  &:hover:not(:disabled) {
+    background-color: #e0e5e5;
+  }
+
+  &:focus {
+    box-shadow: 0 0 0 2px rgba(99, 132, 255, 0.25); /* Resaltado suave sin borde duro al hacer clic */
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
