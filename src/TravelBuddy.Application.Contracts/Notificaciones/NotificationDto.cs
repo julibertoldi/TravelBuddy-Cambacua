@@ -18,6 +18,7 @@ namespace TravelBuddy.Notifications
         public bool EmailNotificationsEnabled { get; set; }
         public bool NewReviewNotificationsEnabled { get; set; }
         public bool UpcomingEventsEnabled { get; set; }
+        public string Frequency { get; set; } = "immediate";
     }
 
 }

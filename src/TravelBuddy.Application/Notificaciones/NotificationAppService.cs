@@ -19,7 +19,7 @@ using Volo.Abp.Emailing;
 
 namespace TravelBuddy.Notifications
 {
-    [AllowAnonymous]
+    [Authorize]
     public class NotificationAppService : ApplicationService, INotificationAppService
     {
         private readonly IRepository<Favorite> _favoriteRepository;
@@ -73,20 +73,7 @@ namespace TravelBuddy.Notifications
 
             var user = await _userManager.GetByIdAsync(userId.Value);
             var preferencesJson = user.GetNotificationSettings() ?? user.GetPreferences();
-
-            if (!string.IsNullOrWhiteSpace(preferencesJson))
-            {
-                try
-                {
-                    return JsonSerializer.Deserialize<NotificationSettingsDto>(preferencesJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new NotificationSettingsDto();
-                }
-                catch
-                {
-                    return new NotificationSettingsDto();
-                }
-            }
-
-            return new NotificationSettingsDto();
+            return NotificationSettingsStorage.Deserialize(preferencesJson).ToDto();
         }
 
         public async Task UpdateSettingsAsync(NotificationSettingsDto input)
@@ -95,7 +82,9 @@ namespace TravelBuddy.Notifications
             if (!userId.HasValue) throw new AbpAuthorizationException();
 
             var user = await _userManager.GetByIdAsync(userId.Value);
-            user.SetNotificationSettings(JsonSerializer.Serialize(input));
+            var settings = NotificationSettingsStorage.Deserialize(user.GetNotificationSettings() ?? user.GetPreferences());
+            settings.UpdateFrom(input);
+            user.SetNotificationSettings(JsonSerializer.Serialize(settings));
             await _userManager.UpdateAsync(user);
         }
 
