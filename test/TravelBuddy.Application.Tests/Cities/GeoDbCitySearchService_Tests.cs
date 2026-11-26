@@ -17,12 +17,29 @@ public class GeoDbCitySearchService_Tests
     public async Task ShouldReturnCitiesWhenSearchingByName()
     {
         var service = CreateService(
-            """{"data":[{"id":1,"city":"Rio de Janeiro","country":"Brazil","population":6000000,"latitude":-22.9,"longitude":-43.2}]}""");
+            """{"data":[{"id":1,"wikiDataId":"Q8678","city":"Rio de Janeiro","country":"Brazil","region":"Rio de Janeiro","population":6000000,"latitude":-22.9,"longitude":-43.2}]}""");
 
         var result = await service.SearchCitiesAsync(new CitySearchRequestDto { PartialName = "Rio" });
 
         result.Cities.Count.ShouldBe(1);
         result.Cities[0].Name.ShouldBe("Rio de Janeiro");
+        result.Cities[0].WikiDataId.ShouldBe("Q8678");
+        result.Cities[0].Region.ShouldBe("Rio de Janeiro");
+    }
+
+    [Fact]
+    public async Task ShouldSearchByCountryWithoutNamePrefix()
+    {
+        string? requestUrl = null;
+        var service = CreateService("""{"data":[]}""", request =>
+        {
+            requestUrl = request.RequestUri!.ToString();
+        });
+
+        await service.SearchCitiesAsync(new CitySearchRequestDto { Pais = "AR" });
+
+        requestUrl!.ShouldContain("countryIds=AR");
+        requestUrl!.ShouldNotContain("namePrefix");
     }
 
     [Fact]
@@ -35,7 +52,9 @@ public class GeoDbCitySearchService_Tests
         result.Cities.ShouldBeEmpty();
     }
 
-    private static ICitySearchService CreateService(string json)
+    private static ICitySearchService CreateService(
+        string json,
+        System.Action<HttpRequestMessage>? requestCallback = null)
     {
         var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?>
@@ -46,9 +65,13 @@ public class GeoDbCitySearchService_Tests
             })
             .Build();
         var client = new HttpClient(new FakeGeoDbHttpMessageHandler(
-            _ => new HttpResponseMessage(HttpStatusCode.OK)
+            request =>
             {
-                Content = new StringContent(json, Encoding.UTF8, "application/json")
+                requestCallback?.Invoke(request);
+                return new HttpResponseMessage(HttpStatusCode.OK)
+                {
+                    Content = new StringContent(json, Encoding.UTF8, "application/json")
+                };
             }));
 
         return new GeoDbCitySearchService(client, configuration);

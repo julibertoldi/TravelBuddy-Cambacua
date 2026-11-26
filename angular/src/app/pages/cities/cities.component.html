@@ -6,19 +6,18 @@
     </div>
     <div class="card-body">
       <form [formGroup]="searchForm" (ngSubmit)="search()" class="row g-3">
-        <div class="col-md-3">
+        <div class="col-md-4">
           <label class="form-label small">Nombre del Destino</label>
           <input type="text" class="form-control" formControlName="name" placeholder="Ej: Paraná">
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
           <label class="form-label small">País</label>
-          <input type="text" class="form-control" formControlName="country" placeholder="Ej: Argentina">
+          <select class="form-select" formControlName="country">
+            <option value="">Todos los países</option>
+            <option *ngFor="let country of countries" [value]="country.code">{{ country.name }} ({{ country.code }})</option>
+          </select>
         </div>
-        <div class="col-md-3">
-          <label class="form-label small">Región / Provincia</label>
-          <input type="text" class="form-control" formControlName="region" placeholder="Ej: Entre Ríos">
-        </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
           <label class="form-label small">Población Mínima</label>
           <input type="number" class="form-control" formControlName="minPopulation" placeholder="10000">
         </div>
@@ -48,7 +47,7 @@
     <div class="row" *ngIf="cities && cities.length > 0; else noResults">
       <div class="col-md-4 mb-4" *ngFor="let city of cities">
         <div class="card city-card h-100 border-0 shadow-sm">
-          <img [src]="city.imageUrl || 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400'" class="card-img-top" [alt]="city.name">
+          <img [src]="getImageUrl(city)" class="card-img-top" [alt]="city.name">
           <div class="card-body d-flex flex-column justify-content-between">
             <div>
               <h6 class="card-title text-dark mb-1">{{ city.name }}</h6>
@@ -102,7 +101,7 @@
     <div class="row" *ngIf="!loadingFeatured && featuredCities.length > 0">
       <div class="col-md-4 mb-4" *ngFor="let city of featuredCities">
         <div class="card city-card h-100 border-0 shadow-sm">
-          <img [src]="city.imageUrl || 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400'" class="card-img-top" [alt]="city.name">
+          <img [src]="getImageUrl(city)" class="card-img-top" [alt]="city.name">
           
           <div class="card-body d-flex flex-column justify-content-between">
             <div>

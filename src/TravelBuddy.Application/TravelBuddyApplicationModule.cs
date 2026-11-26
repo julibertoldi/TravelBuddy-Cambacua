@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.DependencyInjection;
 using TravelBuddy.Cities;
 using TravelBuddy.Calificaciones;
 using TravelBuddy.Favorites;
@@ -30,6 +32,8 @@ namespace TravelBuddy
     {
         public override void ConfigureServices(ServiceConfigurationContext context)
         {
+            context.Services.AddMemoryCache();
+
             Configure<AbpAuditingOptions>(options =>
             {
                 options.EntityHistorySelectors.Add(
@@ -54,6 +58,11 @@ namespace TravelBuddy
             // 2. Asociamos el handler al cliente HTTP de GeoDB
             context.Services.AddHttpClient<ICitySearchService, GeoDbCitySearchService>()
                 .AddHttpMessageHandler<GeoDbMetricsHandler>();
+
+            context.Services.AddHttpClient<ICityImageProvider, WikipediaCityImageProvider>(client =>
+            {
+                client.Timeout = TimeSpan.FromSeconds(3);
+            });
 
             context.Services.AddHttpClient();
         }

@@ -8,8 +8,10 @@ export interface CityDetailDto extends CityDto {
 
 export interface CityDto {
   id: number;
+  wikiDataId?: string;
   name?: string;
   country?: string;
+  region?: string;
   population: number;
   latitude: number;
   longitude: number;
@@ -19,7 +21,6 @@ export interface CityDto {
 export interface CitySearchRequestDto {
   partialName?: string;
   pais?: string;
-  region?: string;
   poblacionMinima?: number;
 }
 

@@ -8,6 +8,7 @@ internal sealed class GeoDbSingleResponse
 internal sealed class GeoDbCityData
 {
     [JsonPropertyName("id")] public int Id { get; set; }
+    [JsonPropertyName("wikiDataId")] public string? WikiDataId { get; set; }
     [JsonPropertyName("city")] public string City { get; set; } = string.Empty;
     [JsonPropertyName("country")] public string Country { get; set; } = string.Empty;
     [JsonPropertyName("region")] public string Region { get; set; } = string.Empty;

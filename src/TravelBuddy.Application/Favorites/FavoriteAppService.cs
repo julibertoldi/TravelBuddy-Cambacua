@@ -57,7 +57,7 @@ public class FavoriteAppService : ApplicationService, IFavoriteAppService
                 GuidGenerator.Create(),
                 city.Name,
                 $"Ciudad importada desde GeoDB ({city.Country})",
-                city.Region,
+                city.Region ?? string.Empty,
                 city.Country)
             {
                 GeoDbCityId = geoDbCityId,
@@ -66,7 +66,7 @@ public class FavoriteAppService : ApplicationService, IFavoriteAppService
                 Longitude = city.Longitude,
                 LastUpdated = DateTime.Now,
                 ImageUrl = string.IsNullOrWhiteSpace(city.ImageUrl)
-                    ? "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400"
+                    ? CityImageFallback.GetUrl(geoDbCityId)
                     : city.ImageUrl
             };
 

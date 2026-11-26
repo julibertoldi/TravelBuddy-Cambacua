@@ -28,12 +28,7 @@ namespace TravelBuddy.Cities
             if (!string.IsNullOrWhiteSpace(request.PartialName))
                 queryParams.Add($"namePrefix={Uri.EscapeDataString(request.PartialName)}");
 
-            // Filtro combinado de País y Región
-            if (!string.IsNullOrWhiteSpace(request.Pais) && !string.IsNullOrWhiteSpace(request.Region))
-                url = baseUrl.Replace("/cities", $"/countries/{request.Pais}/regions/{request.Region}/cities");
-
-            // Filtro solo por País
-            else if (!string.IsNullOrWhiteSpace(request.Pais))
+            if (!string.IsNullOrWhiteSpace(request.Pais))
                 queryParams.Add($"countryIds={Uri.EscapeDataString(request.Pais)}");
 
             // Filtro de Población Mínima
@@ -63,8 +58,12 @@ namespace TravelBuddy.Cities
                 result.Cities.Add(new CityDto
                 {
                     Id = city.GetProperty("id").GetInt32(),
+                    WikiDataId = city.TryGetProperty("wikiDataId", out var wikiDataId)
+                        ? wikiDataId.GetString()
+                        : null,
                     Name = city.GetProperty("city").GetString(),
                     Country = city.GetProperty("country").GetString(),
+                    Region = city.TryGetProperty("region", out var region) ? region.GetString() : null,
                     Population = city.TryGetProperty("population", out var pop) ? pop.GetInt32() : 0,
                     Latitude = city.TryGetProperty("latitude", out var lat) ? lat.GetDouble() : 0,
                     Longitude = city.TryGetProperty("longitude", out var lon) ? lon.GetDouble() : 0
@@ -94,6 +93,7 @@ namespace TravelBuddy.Cities
             return new CityDetailDto
             {
                 Id = geoDbResponse.Data.Id,
+                WikiDataId = geoDbResponse.Data.WikiDataId,
                 Name = geoDbResponse.Data.City,
                 Country = geoDbResponse.Data.Country,
                 Region = geoDbResponse.Data.Region,
@@ -128,8 +128,12 @@ namespace TravelBuddy.Cities
                 result.Cities.Add(new CityDto
                 {
                     Id = city.GetProperty("id").GetInt32(),
+                    WikiDataId = city.TryGetProperty("wikiDataId", out var wikiDataId)
+                        ? wikiDataId.GetString()
+                        : null,
                     Name = city.GetProperty("city").GetString(),
-                    Country = city.GetProperty("country").GetString()
+                    Country = city.GetProperty("country").GetString(),
+                    Region = city.TryGetProperty("region", out var region) ? region.GetString() : null
                 });
             }
 

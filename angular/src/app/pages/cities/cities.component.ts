@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { ToasterService } from '@abp/ng.theme.shared'; 
 import { RestService } from '@abp/ng.core';           
 import { DestinationService } from '../../proxy/destinations/destination.service';
+import { getCityImageUrl } from '../../shared/city-image-url';
 
 @Component({
   selector: 'app-cities',
@@ -20,6 +21,36 @@ export class CitiesComponent implements OnInit {
   searchForm!: FormGroup; 
   cities: any[] = [];
   featuredCities: any[] = []; // Lista para las ciudades de muestra al cargar
+  countries = [
+    { name: 'Argentina', code: 'AR' },
+    { name: 'Australia', code: 'AU' },
+    { name: 'Bolivia', code: 'BO' },
+    { name: 'Brasil', code: 'BR' },
+    { name: 'Canadá', code: 'CA' },
+    { name: 'Chile', code: 'CL' },
+    { name: 'China', code: 'CN' },
+    { name: 'Colombia', code: 'CO' },
+    { name: 'Costa Rica', code: 'CR' },
+    { name: 'Ecuador', code: 'EC' },
+    { name: 'España', code: 'ES' },
+    { name: 'Estados Unidos', code: 'US' },
+    { name: 'Francia', code: 'FR' },
+    { name: 'Alemania', code: 'DE' },
+    { name: 'India', code: 'IN' },
+    { name: 'Indonesia', code: 'ID' },
+    { name: 'Italia', code: 'IT' },
+    { name: 'Japón', code: 'JP' },
+    { name: 'México', code: 'MX' },
+    { name: 'Nueva Zelanda', code: 'NZ' },
+    { name: 'Países Bajos', code: 'NL' },
+    { name: 'Paraguay', code: 'PY' },
+    { name: 'Perú', code: 'PE' },
+    { name: 'Portugal', code: 'PT' },
+    { name: 'Reino Unido', code: 'GB' },
+    { name: 'Sudáfrica', code: 'ZA' },
+    { name: 'Uruguay', code: 'UY' },
+    { name: 'Venezuela', code: 'VE' }
+  ];
   favoriteCityIds: Set<string | number> = new Set();
   loading = false;
   loadingFeatured = false;
@@ -41,8 +72,7 @@ export class CitiesComponent implements OnInit {
   buildForm() {
     this.searchForm = this.fb.group({
       name: [''],          
-      country: [''],        
-      region: [''],          
+      country: [''],
       minPopulation: [null]  
     });
   }
@@ -91,19 +121,12 @@ loadFeaturedCities(): void {
   isSearchInvalid(): boolean {
     if (!this.searchForm) return true;
 
-    const { name, country, region, minPopulation } = this.searchForm.value;
+    const { name, country } = this.searchForm.value;
 
     const nameStr = (name || '').trim();
     const countryStr = (country || '').trim();
-    const regionStr = (region || '').trim();
 
-    if (!nameStr && !countryStr && !regionStr && !minPopulation) {
-      return true;
-    }
-
-    const hasValidMinLength = nameStr.length >= 3 || countryStr.length >= 3 || regionStr.length >= 3 || minPopulation > 0;
-
-    return !hasValidMinLength;
+    return !nameStr && !countryStr;
   }
 
   // Búsqueda limpia sin líneas duplicadas
@@ -115,22 +138,11 @@ loadFeaturedCities(): void {
     this.hasSearched = false;
     this.cities = [];
 
-    const { name, country, region, minPopulation } = this.searchForm.value;
+    const { name, country, minPopulation } = this.searchForm.value;
 
-    // Normalizar país básico a código ISO si escriben el nombre común
-    let countryCode = (country || '').trim();
-    if (countryCode.toLowerCase() === 'argentina') {
-      countryCode = 'AR';
-    } else if (countryCode.toLowerCase() === 'estados unidos' || countryCode.toLowerCase() === 'united states') {
-      countryCode = 'US';
-    } else if (countryCode.length > 2) {
-      countryCode = countryCode.toUpperCase(); // Por si ingresan otro código de 2 letras
-    }
-
-this.destinationService.searchCities({ 
-      partialName: name || 'a', 
-      pais: countryCode || undefined, 
-      region: region || undefined,
+    this.destinationService.searchCities({
+      partialName: (name || '').trim() || undefined,
+      pais: country || undefined,
       poblacionMinima: minPopulation ? Number(minPopulation) : undefined
     }).subscribe({
       next: (response: any) => {
@@ -154,6 +166,10 @@ this.destinationService.searchCities({
     const cityName = (city.name || city.nombre || '').toLowerCase().trim();
 
     return this.favoriteCityIds.has(cityId) || this.favoriteCityIds.has(cityName);
+  }
+
+  getImageUrl(city: any): string {
+    return getCityImageUrl(city.imageUrl, city.id);
   }
 
   // Guardar en favoritos y actualizar estado en tiempo real

@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RestService } from '@abp/ng.core';
 import { RouterLink } from '@angular/router';
 import { finalize } from 'rxjs/operators';
+import { getCityImageUrl } from '../shared/city-image-url';
 
 export interface FavoriteDto {
   usuarioId: string;
@@ -81,7 +82,12 @@ export class FavoritesComponent implements OnInit {
       return nombre.includes(busqueda) || pais.includes(busqueda) || region.includes(busqueda);
     });
   }
-onSearchChange(): void {
+
+  getImageUrl(fav: FavoriteDto): string {
+    return getCityImageUrl(fav.imageUrl || fav.imagenUrl, fav.geoDbCityId);
+  }
+
+  onSearchChange(): void {
     // Permite refrescar la lista filtrada al tipear en el input
   }
 
