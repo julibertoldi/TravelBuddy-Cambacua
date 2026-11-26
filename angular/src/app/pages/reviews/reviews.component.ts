@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RestService, ConfigStateService } from '@abp/ng.core';
+import { ActivatedRoute } from '@angular/router';
 import { FavoriteService } from '../../proxy/controllers/favorite.service';
 
 interface Destination {
@@ -53,12 +54,14 @@ export class ReviewsComponent implements OnInit {
   // Rating input state
   hoveredStars = 0;
   selectedStars = 0;
+  private requestedDestinationId: string | null = null;
 
   constructor(
     private restService: RestService,
     private configState: ConfigStateService,
     private favoriteService: FavoriteService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private route: ActivatedRoute
   ) {
     this.reviewForm = this.fb.group({
       estrellas: [0, [Validators.required, Validators.min(1), Validators.max(5)]],
@@ -69,6 +72,10 @@ export class ReviewsComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.route.queryParamMap.subscribe(params => {
+      this.requestedDestinationId = params.get('destinoId');
+      this.selectRequestedDestination();
+    });
     this.loadDestinations();
     this.currentUserId = this.getCurrentUserId();
   }
@@ -93,13 +100,29 @@ export class ReviewsComponent implements OnInit {
         }));
 
         if (this.destinations.length > 0) {
-          this.selectDestination(this.destinations[0]);
+          const requestedDestination = this.destinations.find(
+            destination => destination.id === this.requestedDestinationId
+          );
+          this.selectDestination(requestedDestination ?? this.destinations[0]);
         }
       },
       error: (err) => {
         this.errorMessage = 'Error al cargar tus favoritos.';
       }
     });
+  }
+
+  private selectRequestedDestination(): void {
+    if (!this.requestedDestinationId) {
+      return;
+    }
+
+    const destination = this.destinations.find(
+      item => item.id === this.requestedDestinationId
+    );
+    if (destination && destination.id !== this.selectedDestination?.id) {
+      this.selectDestination(destination);
+    }
   }
 
   selectDestination(destination: Destination): void {

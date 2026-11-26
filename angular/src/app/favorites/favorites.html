@@ -102,6 +102,12 @@
           </div>
 
           <div class="card-footer-actions">
+            <a *ngIf="fav.destinoId || fav.id"
+              class="btn btn-sm btn-outline-primary"
+              [routerLink]="['/reviews']"
+              [queryParams]="{ destinoId: fav.destinoId || fav.id }">
+              <i class="bi bi-pencil-square me-1"></i>Reseñar
+            </a>
             <button type="button" class="btn-heart-toggle" (click)="confirmarEliminar(fav)">
               <span class="heart-icon" [class.active]="esFavorito(fav.destinoId || fav.id!)">♥</span>
             </button>
