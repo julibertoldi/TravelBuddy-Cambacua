@@ -2,40 +2,61 @@
 
 
 :root {
+  --tb-parchment: #F7F1ED;
+  --tb-dim-grey: #5a5d5e;
+  --tb-deep-teal: #9bd5da; //botones 
+  --tb-powder-petal: #f5c7c4;//bordes
+  --tb-light-coral: #ed877f;
+
+  --bs-primary: var(--tb-deep-teal);
+  --bs-primary-rgb: 80, 118, 111;
+  --bs-success: var(--tb-deep-teal);
+  --bs-success-rgb: 80, 118, 111;
+  --bs-danger: var(--tb-light-coral);
+  --bs-danger-rgb: 224, 144, 139;
+  --bs-warning: var(--tb-light-coral);
+  --bs-warning-rgb: 224, 144, 139;
+  --bs-body-bg: var(--tb-parchment);
+  --bs-body-color: var(--tb-dim-grey);
+  --bs-border-color: var(--tb-powder-petal);
+
   --lpx-theme-light-bg: url('/assets/images/login/login-bg-img-light.svg');
   --lpx-theme-dim-bg: url('/assets/images/login/login-bg-img-dim.svg');
   --lpx-theme-dark-bg: url('/assets/images/login/login-bg-img-dark.svg');
 
   --lpx-logo-url: var(--lpx-logo-icon, url('/assets/images/logo/icon.svg'));
   --lpx-logo: var(--lpx-logo-icon)!important;
+  --lpx-brand: var(--tb-deep-teal);
+  --lpx-primary: var(--tb-deep-teal);
+}
 
-  .abp-logo {
-    background-repeat: no-repeat;
-  }
+.abp-logo {
+  background-repeat: no-repeat;
+}
 
-  .abp-support {
-    width: 178px;
-    height: 30px;
-    background-image: url('/assets/images/getting-started/abp-support.svg');
-  }
+.abp-support {
+  width: 178px;
+  height: 30px;
+  background-image: url('/assets/images/getting-started/abp-support.svg');
+}
 
-  .abp-community {
-    width: 215px;
-    height: 30px;
-    background-image: url('/assets/images/getting-started/abp-community.svg');
-  }
+.abp-community {
+  width: 215px;
+  height: 30px;
+  background-image: url('/assets/images/getting-started/abp-community.svg');
+}
 
-  .abp-blog {
-    width: 142px;
-    height: 30px;
-    background-image: url('/assets/images/getting-started/abp-blog.svg');
-  }
+.abp-blog {
+  width: 142px;
+  height: 30px;
+  background-image: url('/assets/images/getting-started/abp-blog.svg');
+}
 
-  .logo-x {
-    width: 20px;
-    height: 20px;
-    background-image: url('/assets/images/getting-started/x.svg');
-  }
+.logo-x {
+  width: 20px;
+  height: 20px;
+  background-image: url('/assets/images/getting-started/x.svg');
+}
 
 /* --- Bloqueo de registro público de ABP --- */
 app-register, 
@@ -55,6 +76,8 @@ body {
   min-width: 320px;
   max-width: 100%;
   overflow-x: clip;
+  background-color: var(--tb-parchment);
+  color: var(--tb-dim-grey);
 }
 
 img,
@@ -99,10 +122,10 @@ code {
 
 /* Contenedor de aviso amigable cuando se intenta acceder al registro */
 .register-disabled-notice {
-  background-color: #fff3cd;
-  color: #856404;
+  background-color: var(--tb-powder-petal);
+  color: var(--tb-deep-teal);
   padding: 20px;
-  border: 1px solid #ffeeba;
+  border: 1px solid var(--tb-light-coral);
   border-radius: 8px;
   text-align: center;
   font-family: inherit;
@@ -120,4 +143,207 @@ code {
     font-size: 14px;
   }
 }
+
+#travelbuddy-app,
+#travelbuddy-app .lpx-content,
+#travelbuddy-app .lpx-content-container,
+#travelbuddy-app .lpx-main-content,
+#travelbuddy-app .lpx-layout-container {
+  background-color: var(--tb-parchment) !important;
+  color: var(--tb-dim-grey) !important;
+}
+
+#travelbuddy-app .lpx-navbar,
+#travelbuddy-app .lpx-sidebar,
+#travelbuddy-app .lpx-sidebar-container {
+  background-color: var(--tb-deep-teal) !important;
+  color: var(--tb-parchment) !important;
+}
+
+#travelbuddy-app .card,
+#travelbuddy-app .card-box,
+#travelbuddy-app .favorite-card,
+#travelbuddy-app .city-card,
+#travelbuddy-app .search-container,
+#travelbuddy-app .item-card,
+#travelbuddy-app .custom-modal-card,
+#travelbuddy-app .modal-card,
+#travelbuddy-app .bg-glass {
+  background-color: var(--tb-parchment) !important;
+  border-color: var(--tb-powder-petal) !important;
+  color: var(--tb-dim-grey) !important;
+}
+
+#travelbuddy-app .card-header,
+#travelbuddy-app .favorites-header-bar,
+#travelbuddy-app .dropdown-header {
+  background-color: var(--tb-deep-teal) !important;
+  border-color: var(--tb-deep-teal) !important;
+  color: var(--tb-parchment) !important;
+}
+
+#travelbuddy-app .card-header *,
+#travelbuddy-app .dropdown-header * {
+  color: inherit;
+}
+
+#travelbuddy-app .btn-primary,
+#travelbuddy-app .btn-success,
+#travelbuddy-app .btn-brand,
+#travelbuddy-app .btn-custom-search,
+#travelbuddy-app .btn-custom-save,
+#travelbuddy-app .btn-guardar,
+#travelbuddy-app .btn-save.btn-save-pending,
+#travelbuddy-app .notification-tabs button[aria-selected='true'] {
+  background-color: var(--tb-deep-teal) !important;
+  border-color: var(--tb-deep-teal) !important;
+  color: var(--tb-parchment) !important;
+}
+
+#travelbuddy-app .btn-primary:hover:not(:disabled),
+#travelbuddy-app .btn-success:hover:not(:disabled),
+#travelbuddy-app .btn-brand:hover:not(:disabled),
+#travelbuddy-app .btn-custom-search:hover:not(:disabled),
+#travelbuddy-app .btn-custom-save:hover:not(:disabled),
+#travelbuddy-app .btn-guardar:hover:not(:disabled) {
+  background-color: color-mix(in srgb, var(--tb-deep-teal) 86%, black) !important;
+  border-color: color-mix(in srgb, var(--tb-deep-teal) 86%, black) !important;
+}
+
+#travelbuddy-app .btn-secondary,
+#travelbuddy-app .btn-search-muted {
+  background-color: var(--tb-dim-grey) !important;
+  border-color: var(--tb-dim-grey) !important;
+  color: var(--tb-parchment) !important;
+}
+
+#travelbuddy-app .btn-danger,
+#travelbuddy-app .btn-modal-confirm,
+#travelbuddy-app .btn-outline-danger:hover:not(:disabled) {
+  background-color: var(--tb-light-coral) !important;
+  border-color: var(--tb-light-coral) !important;
+  color: var(--tb-deep-teal) !important;
+}
+
+#travelbuddy-app .btn-outline-primary,
+#travelbuddy-app .btn-modal-cancel {
+  border-color: var(--tb-deep-teal) !important;
+  color: var(--tb-deep-teal) !important;
+}
+
+#travelbuddy-app .btn-outline-primary:hover:not(:disabled),
+#travelbuddy-app .btn-modal-cancel:hover {
+  background-color: var(--tb-deep-teal) !important;
+  color: var(--tb-parchment) !important;
+}
+
+#travelbuddy-app .btn-outline-danger {
+  border-color: var(--tb-light-coral) !important;
+  color: var(--tb-deep-teal) !important;
+}
+
+#travelbuddy-app .btn:disabled,
+#travelbuddy-app .btn-save:disabled,
+#travelbuddy-app .btn-custom-search:disabled,
+#travelbuddy-app .btn-custom-save:disabled {
+  background-color: var(--tb-powder-petal) !important;
+  border-color: var(--tb-powder-petal) !important;
+  color: var(--tb-dim-grey) !important;
+}
+
+#travelbuddy-app .form-control,
+#travelbuddy-app .form-select,
+#travelbuddy-app textarea.form-control {
+  background-color: var(--tb-parchment) !important;
+  border-color: var(--tb-powder-petal) !important;
+  color: var(--tb-dim-grey) !important;
+}
+
+#travelbuddy-app .form-control:focus,
+#travelbuddy-app .form-select:focus,
+#travelbuddy-app textarea.form-control:focus {
+  border-color: var(--tb-deep-teal) !important;
+  box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--tb-deep-teal) 24%, transparent) !important;
+}
+
+#travelbuddy-app a,
+#travelbuddy-app .text-primary,
+#travelbuddy-app .text-dark-blue,
+#travelbuddy-app .text-beige {
+  color: var(--tb-deep-teal) !important;
+}
+
+#travelbuddy-app .text-muted,
+#travelbuddy-app .text-secondary {
+  color: var(--tb-dim-grey) !important;
+}
+
+#travelbuddy-app .text-danger,
+#travelbuddy-app .error-msg {
+  color: var(--tb-deep-teal) !important;
+}
+
+#travelbuddy-app .text-warning,
+#travelbuddy-app .rating-stars .fas,
+#travelbuddy-app .star-rating-input .text-warning,
+#travelbuddy-app .btn-heart-toggle .heart-icon.active {
+  color: var(--tb-light-coral) !important;
+}
+
+#travelbuddy-app .bg-primary,
+#travelbuddy-app .bg-success {
+  background-color: var(--tb-deep-teal) !important;
+  color: var(--tb-parchment) !important;
+}
+
+#travelbuddy-app .bg-info,
+#travelbuddy-app .alert-info,
+#travelbuddy-app .alert-warning {
+  background-color: var(--tb-powder-petal) !important;
+  border-color: var(--tb-powder-petal) !important;
+  color: var(--tb-deep-teal) !important;
+}
+
+#travelbuddy-app .bg-danger,
+#travelbuddy-app .alert-danger,
+#travelbuddy-app .error-msg {
+  background-color: var(--tb-light-coral) !important;
+  border-color: var(--tb-light-coral) !important;
+  color: var(--tb-deep-teal) !important;
+}
+
+#travelbuddy-app .badge,
+#travelbuddy-app .city-tag,
+#travelbuddy-app .badge-gris-azulado,
+#travelbuddy-app .badge-solo-lectura {
+  background-color: var(--tb-deep-teal) !important;
+  color: var(--tb-parchment) !important;
+}
+
+#travelbuddy-app .table {
+  --bs-table-bg: var(--tb-parchment);
+  --bs-table-color: var(--tb-dim-grey);
+  --bs-table-border-color: var(--tb-powder-petal);
+}
+
+#travelbuddy-app .table thead th {
+  background-color: var(--tb-deep-teal) !important;
+  color: var(--tb-parchment) !important;
+}
+
+#travelbuddy-app .destination-item.active {
+  background: var(--tb-deep-teal) !important;
+  color: var(--tb-parchment) !important;
+}
+
+#travelbuddy-app .price-badge,
+#travelbuddy-app .user-avatar,
+#travelbuddy-app .frequency-select {
+  background-color: var(--tb-powder-petal) !important;
+  border-color: var(--tb-light-coral) !important;
+  color: var(--tb-deep-teal) !important;
+}
+
+#travelbuddy-app .logo-spinning:hover i {
+  color: var(--tb-deep-teal) !important;
 }
