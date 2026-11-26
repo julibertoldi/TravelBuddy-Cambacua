@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using TravelBuddy.Cities;
 using TravelBuddy.Infraestructure;
+using TravelBuddy.Notifications;
 using Volo.Abp.Account;
 using Volo.Abp.AutoMapper;
 using Volo.Abp.FeatureManagement;
@@ -39,6 +40,7 @@ namespace TravelBuddy
                 .AddHttpMessageHandler<GeoDbMetricsHandler>();
 
             context.Services.AddHttpClient();
+            context.Services.AddHostedService<NotificationBackgroundWorker>();
         }
     }
 }
