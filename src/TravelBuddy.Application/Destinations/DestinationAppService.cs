@@ -15,6 +15,7 @@ using Volo.Abp.Users;
 
 namespace TravelBuddy.Destinations
 {
+    [Authorize]
     public class DestinationAppService :
         CrudAppService<
             Destination,
