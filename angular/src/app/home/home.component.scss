@@ -25,3 +25,16 @@
     height: 100% !important;
   }
 }
+
+@media (max-width: 767.98px) {
+  .card-bg-image {
+    width: min(100%, 420px);
+    max-height: 55%;
+    object-fit: contain;
+    opacity: 0.18;
+  }
+
+  .starting-content {
+    padding-right: 0 !important;
+  }
+}

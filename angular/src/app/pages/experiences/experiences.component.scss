@@ -57,4 +57,16 @@ table td {
   .modal-card {
     padding: 1rem;
   }
+
+  .container > .d-flex h2 {
+    font-size: 1.4rem;
+  }
+
+  form > .mt-3.d-flex {
+    flex-wrap: wrap;
+  }
+
+  .modal-card .d-flex.justify-content-end {
+    flex-wrap: wrap;
+  }
 }

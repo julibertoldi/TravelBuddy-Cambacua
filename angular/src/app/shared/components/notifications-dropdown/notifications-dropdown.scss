@@ -45,7 +45,8 @@ $color-text-dark: #4a4a4a;
     position: absolute;
     right: 0;
     top: 50px;
-    width: 320px;
+    width: min(320px, calc(100vw - 1rem));
+    max-width: calc(100vw - 1rem);
     max-height: 420px;
     background-color: #ffffff;
     border: 2px solid $color-beige-arena;
@@ -151,5 +152,12 @@ $color-text-dark: #4a4a4a;
         }
       }
     }
+  }
+}
+
+@media (max-width: 575.98px) {
+  .notifications-container .dropdown-menu {
+    right: -0.5rem;
+    top: 46px;
   }
 }

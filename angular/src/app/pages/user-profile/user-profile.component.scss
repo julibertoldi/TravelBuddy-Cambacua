@@ -58,3 +58,22 @@ $color-text-dark: #4a4a4a;
 .invalid-feedback {
   font-size: 0.85em;
 }
+
+@media (max-width: 575.98px) {
+  .card-body {
+    padding: 1rem !important;
+  }
+
+  .card-header {
+    padding-inline: 1rem !important;
+  }
+
+  .selected-photo-name {
+    flex: 1 1 100%;
+  }
+
+  .btn-guardar {
+    width: 100%;
+    justify-content: center;
+  }
+}

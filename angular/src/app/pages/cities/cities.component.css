@@ -102,3 +102,23 @@ h5 {
   cursor: not-allowed;
   opacity: 0.85;
 }
+
+.city-card .card-img-top {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+@media (max-width: 575.98px) {
+  .card-header {
+    padding: 0.85rem;
+  }
+
+  .card-body {
+    padding: 1rem;
+  }
+
+  .btn-custom-search {
+    width: 100%;
+  }
+}

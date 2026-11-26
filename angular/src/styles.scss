@@ -44,6 +44,59 @@ form[name="registerForm"] {
   display: none !important;
 }
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-width: 320px;
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+img,
+picture,
+svg,
+video,
+canvas {
+  max-width: 100%;
+}
+
+.container,
+.container-fluid,
+.row,
+[class^='col-'],
+[class*=' col-'],
+.card,
+.card-body,
+form {
+  min-width: 0;
+}
+
+pre,
+code {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 767.98px) {
+  .container-fluid {
+    --bs-gutter-x: 1rem;
+  }
+
+  .table-responsive {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .modal-card,
+  .custom-modal-card {
+    max-height: calc(100dvh - 2rem);
+    overflow-y: auto;
+  }
+}
+
 /* Contenedor de aviso amigable cuando se intenta acceder al registro */
 .register-disabled-notice {
   background-color: #fff3cd;

@@ -15,9 +15,9 @@ $color-save-disabled: #c5dfcc;
   font-family: system-ui, -apple-system, sans-serif;
   align-items: start;
 
-  // Responsive para pantallas chicas
+  // Two columns for tablet-sized screens.
   @media (max-width: 1200px) {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -32,7 +32,7 @@ $color-save-disabled: #c5dfcc;
   padding: 1.5rem;
   border: 1px solid $color-beige-arena;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
-  min-height: 480px;
+  min-height: 360px;
   display: flex;
   flex-direction: column;
 
@@ -301,5 +301,42 @@ $color-save-disabled: #c5dfcc;
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .notifications-dashboard {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .card-box {
+    min-height: 0;
+    padding: 1rem;
+  }
+
+  .setting-row {
+    gap: 0.75rem;
+    align-items: flex-start;
+  }
+
+  .frequency-select {
+    max-width: 48%;
+  }
+
+  .items-list {
+    max-height: 360px;
+  }
+}
+
+@media (max-width: 359.98px) {
+  .setting-row {
+    flex-wrap: wrap;
+  }
+
+  .frequency-select {
+    max-width: 100%;
+    width: 100%;
   }
 }
