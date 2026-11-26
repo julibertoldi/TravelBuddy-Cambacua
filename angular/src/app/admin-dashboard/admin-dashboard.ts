@@ -2,7 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AdminService } from '../proxy/admin/admin.service';
 import { AdminDashboardStatsDto } from '../proxy/admin/models'; // <-- Lo importamos desde models
-import { StatisticsService, ApiCallLogDto, AdminDashboardDto } from '../proxy/statistics';
+import { StatisticsService, ApiCallLogDto, AdminDashboardDto, AuditEventDto } from '../proxy/statistics';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -18,6 +18,7 @@ export class AdminDashboardComponent implements OnInit {
   // Estadísticas y logs de la API externa
   statisticsData?: AdminDashboardDto;
   apiLogs: ApiCallLogDto[] = [];
+  auditEvents: AuditEventDto[] = [];
 
   constructor(
     private adminService: AdminService,
@@ -29,6 +30,7 @@ export class AdminDashboardComponent implements OnInit {
     this.loadGeneralStats();
     this.loadApiStatistics();
     this.loadApiLogs();
+    this.loadAuditEvents();
   }
 
   loadGeneralStats() {
@@ -58,6 +60,16 @@ export class AdminDashboardComponent implements OnInit {
         this.cdr.detectChanges();
       },
       error: (err) => console.error('Error al cargar los logs de la API', err)
+    });
+  }
+
+  loadAuditEvents() {
+    this.statisticsService.getCriticalAuditEvents().subscribe({
+      next: (data) => {
+        this.auditEvents = data;
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Error al cargar los eventos de auditoría', err)
     });
   }
 

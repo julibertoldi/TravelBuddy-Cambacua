@@ -32,6 +32,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TravelBuddy.Domain\TravelBuddy.Domain.csproj" />
+    <ProjectReference Include="..\TravelBuddy.Application.Contracts\TravelBuddy.Application.Contracts.csproj" />
   </ItemGroup>
 
 </Project>

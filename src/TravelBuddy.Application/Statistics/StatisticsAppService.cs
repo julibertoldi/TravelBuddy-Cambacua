@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using TravelBuddy.Destinations;
 using TravelBuddy.Favorites;
@@ -24,6 +25,8 @@ namespace TravelBuddy.Statistics
         private readonly IRepository<Favorite> _favoriteRepository;
         private readonly IRepository<ApiCallLog, Guid> _apiCallLogRepository;
         private readonly IRepository<AuditLog, Guid> _auditLogRepository;
+        private readonly IAuditEventReader _auditEventReader;
+
         private static string Csv(string? value)
         {
             if (string.IsNullOrEmpty(value)) return "\"\"";
@@ -40,13 +43,15 @@ namespace TravelBuddy.Statistics
             IRepository<Destination, Guid> destinationRepository,
             IRepository<Favorite> favoriteRepository,
             IRepository<ApiCallLog, Guid> apiCallLogRepository,
-            IRepository<AuditLog, Guid> auditLogRepository)
+            IRepository<AuditLog, Guid> auditLogRepository,
+            IAuditEventReader auditEventReader)
         {
             _searchLogRepository = searchLogRepository;
             _destinationRepository = destinationRepository;
             _favoriteRepository = favoriteRepository;
             _apiCallLogRepository = apiCallLogRepository;
             _auditLogRepository = auditLogRepository;
+            _auditEventReader = auditEventReader;
         }
 
         public async Task<AdminDashboardDto> GetDashboardStatisticsAsync()
@@ -116,12 +121,15 @@ namespace TravelBuddy.Statistics
         {
             var queryableLogs = await _auditLogRepository.GetQueryableAsync();
 
-            return await AsyncExecuter.ToListAsync(
+            var logs = await AsyncExecuter.ToListAsync(
                 queryableLogs
                     .Where(x => x.Exceptions != null && x.Exceptions != string.Empty)
+                    .Where(x => x.Url == null ||
+                                (!x.Url.StartsWith("/connect/") &&
+                                 !x.Url.StartsWith("/Abp/ApplicationConfigurationScript")))
                     .OrderByDescending(x => x.ExecutionTime)
                     .Take(50)
-                    .Select(x => new AuditLogExceptionDto
+                    .Select(x => new
                     {
                         ExecutionTime = x.ExecutionTime,
                         HttpMethod = x.HttpMethod,
@@ -129,6 +137,20 @@ namespace TravelBuddy.Statistics
                         HttpStatusCode = x.HttpStatusCode,
                         Exceptions = x.Exceptions
                     }));
+
+            return logs.Select(x => new AuditLogExceptionDto
+            {
+                ExecutionTime = x.ExecutionTime,
+                HttpMethod = x.HttpMethod,
+                Url = x.Url,
+                HttpStatusCode = x.HttpStatusCode,
+                Message = ExtractExceptionMessage(x.Exceptions)
+            }).ToList();
+        }
+
+        public async Task<List<AuditEventDto>> GetCriticalAuditEventsAsync()
+        {
+            return await _auditEventReader.GetCriticalAuditEventsAsync();
         }
 
         public async Task<IRemoteStreamContent> ExportApiLogsCsvAsync()
@@ -177,6 +199,61 @@ namespace TravelBuddy.Statistics
         private static void AppendMetric(StringBuilder csv, string metricName, object value)
         {
             csv.AppendLine($",,,,,,,{Csv(metricName)},{Csv(Convert.ToString(value, CultureInfo.InvariantCulture))},,");
+        }
+
+        private static string ExtractExceptionMessage(string? exceptionJson)
+        {
+            if (string.IsNullOrWhiteSpace(exceptionJson))
+            {
+                return string.Empty;
+            }
+
+            try
+            {
+                using var document = JsonDocument.Parse(exceptionJson);
+                return FindExceptionMessage(document.RootElement) ?? "Mensaje no disponible";
+            }
+            catch (JsonException)
+            {
+                return "Mensaje no disponible";
+            }
+        }
+
+        private static string? FindExceptionMessage(JsonElement element)
+        {
+            if (element.ValueKind == JsonValueKind.Object)
+            {
+                foreach (var property in element.EnumerateObject())
+                {
+                    if (string.Equals(property.Name, "message", StringComparison.OrdinalIgnoreCase) &&
+                        property.Value.ValueKind == JsonValueKind.String)
+                    {
+                        return property.Value.GetString();
+                    }
+                }
+
+                foreach (var property in element.EnumerateObject())
+                {
+                    var message = FindExceptionMessage(property.Value);
+                    if (message != null)
+                    {
+                        return message;
+                    }
+                }
+            }
+            else if (element.ValueKind == JsonValueKind.Array)
+            {
+                foreach (var item in element.EnumerateArray())
+                {
+                    var message = FindExceptionMessage(item);
+                    if (message != null)
+                    {
+                        return message;
+                    }
+                }
+            }
+
+            return null;
         }
     }
 }
